@@ -1,4 +1,4 @@
-// Schema do Garcia Bot
+// Schema Garcia Sadler - CRM de atendimento WhatsApp
 // docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -10,15 +10,212 @@ datasource db {
   provider = "postgresql"
 }
 
-model Conversation {
-  id          String    @id @default(cuid())
-  phone       String    @unique
-  name        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  messages    Message[]
+// ============================================================
+// CORE: multi-tenancy
+// ============================================================
 
-  @@index([phone])
+model Workspace {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  plan              String   @default("free")
+  active            Boolean  @default(true)
+
+  evolutionUrl      String?
+  evolutionKey      String?
+  evolutionInstance String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  users         User[]
+  contacts      Contact[]
+  conversations Conversation[]
+  labels        Label[]
+  settings      Setting[]
+  agentConfig   AgentConfig?
+  automations   Automation[]
+  kanbanColumns KanbanColumn[]
+  quickReplies  QuickReply[]
+  followUps     FollowUp[]
+  userInvites   UserInvite[]
+  auditLogs     AuditLog[]
+}
+
+// ============================================================
+// AUTH: usuários, sessões, convites
+// ============================================================
+
+enum UserRole {
+  owner
+  admin
+  agent
+}
+
+model User {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name         String
+  email        String    @unique
+  password     String?
+  emailVerified DateTime?
+  image        String?
+
+  role         UserRole  @default(agent)
+  avatar       String?
+  color        String?
+  isOnline     Boolean   @default(false)
+  lastLoginAt  DateTime?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  accounts             Account[]
+  sessions             Session[]
+  sentMessages         Message[]               @relation("MessageSender")
+  assignments          ConversationAssignment[]
+  invitesSent          UserInvite[]            @relation("InviteSender")
+
+  @@index([workspaceId])
+}
+
+// NextAuth.js v5 models (Account, Session, VerificationToken)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model UserInvite {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  email        String
+  role         UserRole  @default(agent)
+  token        String    @unique
+  invitedById  String
+  invitedBy    User      @relation("InviteSender", fields: [invitedById], references: [id])
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([workspaceId])
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+}
+
+// ============================================================
+// CRM: contatos, conversas, mensagens
+// ============================================================
+
+enum ContactStatus {
+  active
+  archived
+  blocked
+}
+
+model Contact {
+  id              String   @id @default(cuid())
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name            String
+  phone           String
+  email           String?
+  avatar          String?
+  notes           String?
+  productInterest String?
+  source          String?
+  status          ContactStatus @default(active)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  conversations   Conversation[]
+
+  @@unique([workspaceId, phone])
+  @@index([workspaceId])
+}
+
+enum ConversationStatus {
+  open
+  pending
+  resolved
+  archived
+}
+
+enum ConversationChannel {
+  whatsapp
+  web
+  instagram
+}
+
+model Conversation {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  contactId    String
+  contact      Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  status       ConversationStatus  @default(open)
+  channel      ConversationChannel @default(whatsapp)
+  unreadCount  Int      @default(0)
+  lastMessage  String?
+  lastMessageAt DateTime?
+  aiEnabled    Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  messages     Message[]
+  assignments  ConversationAssignment[]
+  labels       ConversationLabel[]
+  kanbanCard   KanbanCard?
+
+  @@index([workspaceId, status])
+  @@index([contactId])
 }
 
 enum MessageRole {
@@ -28,15 +225,266 @@ enum MessageRole {
   system
 }
 
+enum MessageType {
+  text
+  image
+  audio
+  video
+  document
+  location
+}
+
+enum MessageDirection {
+  inbound
+  outbound
+}
+
+enum MessageStatus {
+  pending
+  sent
+  delivered
+  read
+  failed
+}
+
 model Message {
   id              String       @id @default(cuid())
   conversationId  String
   conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId        String?
+  sender          User?        @relation("MessageSender", fields: [senderId], references: [id])
+
   role            MessageRole
+  direction       MessageDirection
+  type            MessageType   @default(text)
+  status          MessageStatus @default(sent)
+
   content         String
+  mediaUrl        String?
+  mediaBase64     String?
+  fileName        String?
+
+  evolutionId     String?      @unique
   toolCalls       Json?
   toolCallId      String?
+
   createdAt       DateTime     @default(now())
 
   @@index([conversationId, createdAt])
+  @@index([evolutionId])
+}
+
+model ConversationAssignment {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt     DateTime @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+// ============================================================
+// CRM auxiliar: labels, quick replies, settings
+// ============================================================
+
+model Label {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  color       String   @default("#6366f1")
+  createdAt   DateTime @default(now())
+
+  conversations ConversationLabel[]
+
+  @@unique([workspaceId, name])
+}
+
+model ConversationLabel {
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  labelId        String
+  label          Label   @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, labelId])
+}
+
+model QuickReply {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  title       String
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+model Setting {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  key         String
+  value       String
+
+  @@unique([workspaceId, key])
+}
+
+// ============================================================
+// PIPELINE: Kanban
+// ============================================================
+
+model KanbanColumn {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  color       String   @default("#6366f1")
+  order       Int      @default(0)
+  wipLimit    Int?
+  createdAt   DateTime @default(now())
+
+  cards       KanbanCard[]
+
+  @@index([workspaceId])
+}
+
+model KanbanCard {
+  id             String   @id @default(cuid())
+  columnId       String
+  column         KanbanColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  conversationId String   @unique
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  title          String?
+  notes          String?
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([columnId, order])
+}
+
+// ============================================================
+// AI: agent config
+// ============================================================
+
+model AgentConfig {
+  id               String   @id @default(cuid())
+  workspaceId      String   @unique
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  enabled          Boolean  @default(false)
+  systemPrompt     String?
+  stopCommand      String?  @default("/parar")
+  model            String   @default("gpt-4o-mini")
+  apiKey           String?
+
+  tokensUsedTotal  Int      @default(0)
+  tokensUsedMonth  Int      @default(0)
+  tokensResetAt    DateTime @default(now())
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// ============================================================
+// AUTOMATIONS + FOLLOWUPS
+// ============================================================
+
+enum AutomationTriggerType {
+  keyword
+  first_message
+  no_reply
+}
+
+model Automation {
+  id                String   @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name              String
+  enabled           Boolean  @default(true)
+  triggerType       AutomationTriggerType
+  keywords          String[]
+  assignUserId      String?
+  pipelineColumnId  String?
+  addLabelName      String?
+  replyMessage      String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([workspaceId, enabled])
+}
+
+enum FollowUpTriggerType {
+  inactivity
+  column_entry
+}
+
+model FollowUp {
+  id                String   @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name              String
+  enabled           Boolean  @default(true)
+  triggerType       FollowUpTriggerType
+  inactivityHours   Int?
+  columnId          String?
+  message           String
+  transferToUserId  String?
+  maxTimes          Int      @default(1)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  logs              FollowUpLog[]
+
+  @@index([workspaceId, enabled])
+}
+
+model FollowUpLog {
+  id             String   @id @default(cuid())
+  followUpId     String
+  followUp       FollowUp @relation(fields: [followUpId], references: [id], onDelete: Cascade)
+  conversationId String
+  sentCount      Int      @default(1)
+  lastSentAt     DateTime @default(now())
+
+  @@unique([followUpId, conversationId])
+}
+
+// ============================================================
+// INFRA: rate limit, audit log
+// ============================================================
+
+model RateLimit {
+  id       String   @id @default(cuid())
+  key      String   @unique
+  attempts Int      @default(1)
+  resetAt  DateTime
+
+  @@index([resetAt])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  userId      String?
+  action      String
+  target      String?
+  meta        Json?
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([userId])
 }

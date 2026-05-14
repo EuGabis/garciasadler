@@ -1,6 +1,10 @@
 import { env } from "@/lib/env";
 
 export async function sendWhatsAppText(to: string, text: string): Promise<void> {
+  if (!env.EVOLUTION_API_URL || !env.EVOLUTION_API_KEY || !env.EVOLUTION_INSTANCE) {
+    throw new Error("Evolution API não configurada (faltam EVOLUTION_API_URL/KEY/INSTANCE)");
+  }
+
   const url = `${env.EVOLUTION_API_URL}/message/sendText/${env.EVOLUTION_INSTANCE}`;
 
   const r = await fetch(url, {

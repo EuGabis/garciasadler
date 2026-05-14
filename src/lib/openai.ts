@@ -1,3 +1,7 @@
+// Camada de IA — desativada na Fase 1.
+// Será religada na Fase 9 (AgentConfig por workspace + tool use).
+// Mantida no codebase como esqueleto pronto pra plugar quando chegar a hora.
+
 import OpenAI from "openai";
 import type {
   ChatCompletionMessageParam,
@@ -7,34 +11,19 @@ import { env } from "@/lib/env";
 import { prisma } from "@/lib/db";
 import { buscarProduto, listarPorCategoria } from "@/lib/produtos";
 
-const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-
-const SYSTEM_PROMPT = `Você é o atendente virtual da Garcia Materiais de Construção, uma loja física que vende cimento, areia, brita, tijolos, blocos, hidráulica, elétrica e pintura.
-
-Diretrizes:
-- Atenda em português brasileiro, de forma cordial, objetiva e profissional.
-- Quando o cliente perguntar sobre preço, estoque, disponibilidade ou características de um produto específico, SEMPRE use a ferramenta "buscar_produto" antes de responder. Nunca invente valores.
-- Quando o cliente pedir opções de uma categoria (ex: "que tipos de tijolo vocês têm"), use "listar_por_categoria".
-- Se a ferramenta retornar erro, peça mais detalhes ao cliente (nome correto, SKU, marca).
-- Não invente prazo de entrega, frete, formas de pagamento ou promoções que não estejam nos dados.
-- Se o cliente pedir algo que você não tem dados pra confirmar, ofereça transferir pra um atendente humano.
-- Respostas curtas e diretas. Sem floreios. Quando listar produtos, mostre nome, preço e unidade.`;
+const DEFAULT_SYSTEM = `Você é o atendente virtual da Garcia Sadler Materiais de Construção.
+Atenda em português brasileiro, cordial e objetivo.
+Use as ferramentas pra consultar produtos antes de dar preço/estoque. Nunca invente valores.`;
 
 const TOOLS: ChatCompletionTool[] = [
   {
     type: "function",
     function: {
       name: "buscar_produto",
-      description:
-        "Consulta um produto específico pelo SKU ou nome. Retorna preço, estoque, unidade e descrição.",
+      description: "Consulta um produto pelo SKU ou nome. Retorna preço, estoque, unidade.",
       parameters: {
         type: "object",
-        properties: {
-          termo: {
-            type: "string",
-            description: "SKU exato (ex: CIM-50) ou parte do nome do produto (ex: cimento)",
-          },
-        },
+        properties: { termo: { type: "string", description: "SKU ou parte do nome" } },
         required: ["termo"],
       },
     },
@@ -43,13 +32,10 @@ const TOOLS: ChatCompletionTool[] = [
     type: "function",
     function: {
       name: "listar_por_categoria",
-      description:
-        "Lista todos os produtos de uma categoria (ex: Cimento, Agregados, Cerâmica, Hidráulica, Elétrica, Pintura).",
+      description: "Lista produtos por categoria.",
       parameters: {
         type: "object",
-        properties: {
-          categoria: { type: "string", description: "Nome da categoria" },
-        },
+        properties: { categoria: { type: "string" } },
         required: ["categoria"],
       },
     },
@@ -70,10 +56,11 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
 const MAX_HISTORY = 20;
 const MAX_TOOL_ROUNDS = 5;
 
-export async function generateReply(conversationId: string, userText: string): Promise<string> {
-  await prisma.message.create({
-    data: { conversationId, role: "user", content: userText },
-  });
+export async function generateReply(conversationId: string, systemPrompt?: string): Promise<string> {
+  if (!env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY não configurada");
+  }
+  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
 
   const history = await prisma.message.findMany({
     where: { conversationId },
@@ -83,7 +70,7 @@ export async function generateReply(conversationId: string, userText: string): P
   history.reverse();
 
   const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: systemPrompt ?? DEFAULT_SYSTEM },
     ...history.map((m): ChatCompletionMessageParam => {
       if (m.role === "tool") {
         return {
@@ -101,7 +88,7 @@ export async function generateReply(conversationId: string, userText: string): P
         };
       }
       return {
-        role: m.role as "user" | "assistant" | "system",
+        role: m.role === "user" ? "user" : "assistant",
         content: m.content,
       };
     }),
@@ -123,6 +110,8 @@ export async function generateReply(conversationId: string, userText: string): P
         data: {
           conversationId,
           role: "assistant",
+          direction: "outbound",
+          type: "text",
           content: choice.content ?? "",
           toolCalls: JSON.parse(JSON.stringify(choice.tool_calls)),
         },
@@ -143,6 +132,8 @@ export async function generateReply(conversationId: string, userText: string): P
           data: {
             conversationId,
             role: "tool",
+            direction: "outbound",
+            type: "text",
             content: resultStr,
             toolCallId: call.id,
           },
@@ -154,17 +145,18 @@ export async function generateReply(conversationId: string, userText: string): P
 
     const finalText = choice.content?.trim() ?? "";
     await prisma.message.create({
-      data: { conversationId, role: "assistant", content: finalText },
+      data: {
+        conversationId,
+        role: "assistant",
+        direction: "outbound",
+        type: "text",
+        content: finalText,
+      },
     });
     return finalText;
   }
 
-  const fallback =
-    "Desculpe, não consegui processar sua solicitação agora. Pode reformular ou tentar de novo daqui a pouco?";
-  await prisma.message.create({
-    data: { conversationId, role: "assistant", content: fallback },
-  });
-  return fallback;
+  return "";
 }
 
 function safeParseJson(s: string): Record<string, unknown> {
