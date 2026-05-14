@@ -1,0 +1,42 @@
+// Schema do Garcia Bot
+// docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  phone       String    @unique
+  name        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  messages    Message[]
+
+  @@index([phone])
+}
+
+enum MessageRole {
+  user
+  assistant
+  tool
+  system
+}
+
+model Message {
+  id              String       @id @default(cuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role            MessageRole
+  content         String
+  toolCalls       Json?
+  toolCallId      String?
+  createdAt       DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
