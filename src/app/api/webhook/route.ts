@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
+import { publishRealtime } from "@/lib/pusher-server";
 
 export const dynamic = "force-dynamic";
 
@@ -119,6 +120,12 @@ export async function POST(req: NextRequest) {
       content: text,
       evolutionId: evolutionId ?? undefined,
     },
+  });
+
+  await publishRealtime(workspace.id, {
+    type: "message:new",
+    conversationId: conversation.id,
+    preview: truncate(text),
   });
 
   // IA fica desligada por padrão — será reativada na Fase 9 (AgentConfig por workspace)

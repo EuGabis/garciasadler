@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { listConversations } from "@/lib/conversations";
 import { formatRelativeTime } from "@/lib/format";
 import { MessageSquare } from "lucide-react";
+import { ConversationsRealtime } from "./realtime";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export default async function ConversationsLayout({ children }: { children: Reac
 
   return (
     <div className="flex h-screen">
+      <ConversationsRealtime workspaceId={workspaceId} />
       <aside className="w-80 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col">
         <header className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
           <h1 className="text-base font-semibold">Conversas</h1>
@@ -64,7 +66,8 @@ export default async function ConversationsLayout({ children }: { children: Reac
 
         <footer className="px-4 py-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center gap-1.5 text-xs text-zinc-500">
           <MessageSquare className="h-3 w-3" />
-          Atualize a página pra ver novas mensagens
+          <span>Mensagens em tempo real</span>
+          <span className="ml-auto inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
         </footer>
       </aside>
 

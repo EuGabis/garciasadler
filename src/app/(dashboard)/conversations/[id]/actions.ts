@@ -5,6 +5,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { sendWhatsAppText } from "@/lib/evolution";
+import { publishRealtime } from "@/lib/pusher-server";
 
 const schema = z.object({
   conversationId: z.string().min(1),
@@ -76,6 +77,12 @@ export async function sendMessageAction(
       },
     }),
   ]);
+
+  await publishRealtime(session.user.workspaceId, {
+    type: "message:new",
+    conversationId,
+    preview: text.length > 80 ? text.slice(0, 79) + "…" : text,
+  });
 
   revalidatePath(`/conversations/${conversationId}`);
   revalidatePath("/conversations");

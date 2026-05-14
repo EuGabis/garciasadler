@@ -17,6 +17,11 @@ const schema = z.object({
   PRODUTOS_API_KEY: z.string().optional(),
 
   WEBHOOK_SECRET: z.string().optional(),
+
+  PUSHER_APP_ID: z.string().optional(),
+  PUSHER_SECRET: z.string().optional(),
+  NEXT_PUBLIC_PUSHER_KEY: z.string().optional(),
+  NEXT_PUBLIC_PUSHER_CLUSTER: z.string().optional(),
 });
 
 export const env = schema.parse(process.env);
