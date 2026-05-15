@@ -22,6 +22,8 @@ const schema = z.object({
   PUSHER_SECRET: z.string().optional(),
   NEXT_PUBLIC_PUSHER_KEY: z.string().optional(),
   NEXT_PUBLIC_PUSHER_CLUSTER: z.string().optional(),
+
+  CRON_SECRET: z.string().optional(),
 });
 
 export const env = schema.parse(process.env);

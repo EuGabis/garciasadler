@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
+import { runAutomations } from "@/lib/automations";
 import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -122,7 +123,11 @@ function mapStatus(raw: string | number | undefined): MessageStatus | null {
   return null;
 }
 
-async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId: string) {
+async function handleMessageUpsert(
+  payload: EvolutionMessageUpsert,
+  workspaceId: string,
+  evolutionConfig: { url: string; key: string; instance: string } | null
+) {
   const fromMe = !!payload.data?.key?.fromMe;
   const remoteJid = payload.data?.key?.remoteJid;
   const evolutionId = payload.data?.key?.id ?? null;
@@ -164,6 +169,7 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
 
   const reusedId = openOrPending?.id ?? lastArchived?.id ?? null;
   const previewText = truncate(extracted.content);
+  const isFirstMessage = !openOrPending && !lastArchived;
 
   const conversation = reusedId
     ? await prisma.conversation.update({
@@ -256,6 +262,16 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
     preview: previewText,
   });
 
+  // Automações: roda em background sem bloquear o ack do webhook
+  runAutomations({
+    workspaceId,
+    conversationId: conversation.id,
+    isFirstMessage,
+    messageText: extracted.content,
+    contactPhone: phone,
+    evolutionConfig,
+  }).catch((e) => console.error("[webhook] automations failed:", e));
+
   return Response.json({ ok: true, messageId: message.id });
 }
 
@@ -322,12 +338,26 @@ export async function POST(req: NextRequest) {
 
   const workspace = await prisma.workspace.findFirst({
     where: { evolutionInstance: instance, active: true },
-    select: { id: true },
+    select: {
+      id: true,
+      evolutionUrl: true,
+      evolutionKey: true,
+      evolutionInstance: true,
+    },
   });
   if (!workspace) return Response.json({ ok: true, ignored: "workspace not found" });
 
+  const evolutionConfig =
+    workspace.evolutionUrl && workspace.evolutionKey && workspace.evolutionInstance
+      ? {
+          url: workspace.evolutionUrl,
+          key: workspace.evolutionKey,
+          instance: workspace.evolutionInstance,
+        }
+      : null;
+
   if (event === "messages.upsert" || event === "" || event === "MESSAGES_UPSERT") {
-    return await handleMessageUpsert(payload as EvolutionMessageUpsert, workspace.id);
+    return await handleMessageUpsert(payload as EvolutionMessageUpsert, workspace.id, evolutionConfig);
   }
 
   if (event === "messages.update" || event === "MESSAGES_UPDATE") {
