@@ -1,10 +1,18 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { Send, Paperclip, X } from "lucide-react";
+import { Send, Paperclip, X, Sparkles } from "lucide-react";
 import { sendMessageAction, sendMediaAction, type SendState } from "./actions";
 
-export function MessageForm({ conversationId }: { conversationId: string }) {
+type QuickReply = { id: string; title: string; content: string };
+
+export function MessageForm({
+  conversationId,
+  quickReplies,
+}: {
+  conversationId: string;
+  quickReplies: QuickReply[];
+}) {
   const [textState, textAction, textPending] = useActionState<SendState, FormData>(
     sendMessageAction,
     null
@@ -17,7 +25,9 @@ export function MessageForm({ conversationId }: { conversationId: string }) {
   const textFormRef = useRef<HTMLFormElement>(null);
   const mediaFormRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   useEffect(() => {
     if (textState?.ok) textFormRef.current?.reset();
@@ -32,6 +42,14 @@ export function MessageForm({ conversationId }: { conversationId: string }) {
 
   const error = textState?.error ?? mediaState?.error;
   const pending = textPending || mediaPending;
+
+  function applyQuickReply(content: string) {
+    setQuickOpen(false);
+    if (textareaRef.current) {
+      textareaRef.current.value = content;
+      textareaRef.current.focus();
+    }
+  }
 
   if (pickedFile) {
     const previewUrl = URL.createObjectURL(pickedFile);
@@ -101,7 +119,7 @@ export function MessageForm({ conversationId }: { conversationId: string }) {
     <form
       ref={textFormRef}
       action={textAction}
-      className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"
+      className="relative border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3"
     >
       <input type="hidden" name="conversationId" value={conversationId} />
       <input
@@ -112,6 +130,25 @@ export function MessageForm({ conversationId }: { conversationId: string }) {
         onChange={(e) => setPickedFile(e.target.files?.[0] ?? null)}
       />
 
+      {quickOpen && quickReplies.length > 0 && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setQuickOpen(false)} />
+          <div className="absolute bottom-full left-3 mb-1 z-20 w-80 max-h-64 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg py-1">
+            {quickReplies.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => applyQuickReply(r.content)}
+                className="w-full text-left px-3 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+              >
+                <p className="text-xs font-medium">{r.title}</p>
+                <p className="text-[11px] text-zinc-500 line-clamp-2 mt-0.5">{r.content}</p>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="flex gap-2 items-end">
         <button
           type="button"
@@ -121,8 +158,23 @@ export function MessageForm({ conversationId }: { conversationId: string }) {
         >
           <Paperclip className="h-4 w-4" />
         </button>
+        <button
+          type="button"
+          onClick={() => setQuickOpen((s) => !s)}
+          disabled={quickReplies.length === 0}
+          className="shrink-0 h-9 px-2 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-1 transition disabled:opacity-40 disabled:hover:bg-transparent"
+          title={
+            quickReplies.length === 0
+              ? "Sem respostas rápidas (crie em /respostas-rapidas)"
+              : "Respostas rápidas"
+          }
+        >
+          <Sparkles className="h-4 w-4" />
+          <span className="text-xs">Rápidas</span>
+        </button>
 
         <textarea
+          ref={textareaRef}
           name="text"
           required
           rows={1}

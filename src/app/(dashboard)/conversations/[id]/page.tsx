@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { Check, CheckCheck, Clock, AlertCircle } from "lucide-react";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { getConversationWithMessages, markConversationRead } from "@/lib/conversations";
 import { formatTime, formatPhone } from "@/lib/format";
 import { MessageForm } from "./message-form";
 import { MediaBubble } from "./media-bubble";
+import { LabelPicker, AttachedLabels } from "./label-picker";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
@@ -29,17 +31,43 @@ export default async function ConversationPage({ params }: { params: Promise<Par
     await markConversationRead(conversation.id);
   }
 
+  const [availableLabels, quickReplies] = await Promise.all([
+    prisma.label.findMany({
+      where: { workspaceId: session!.user.workspaceId },
+      select: { id: true, name: true, color: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.quickReply.findMany({
+      where: { workspaceId: session!.user.workspaceId },
+      select: { id: true, title: true, content: true },
+      orderBy: { title: "asc" },
+    }),
+  ]);
+  const attachedLabels = conversation.labels.map((l) => l.label);
+
   return (
     <div className="h-full flex flex-col">
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-3 flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-semibold flex items-center justify-center">
-          {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-3">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-semibold flex items-center justify-center">
+            {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
+            <p className="text-xs text-zinc-500">{formatPhone(conversation.contact.phone)}</p>
+          </div>
+          <LabelPicker
+            conversationId={conversation.id}
+            attached={attachedLabels}
+            available={availableLabels}
+          />
+          <span className="text-xs text-zinc-500 capitalize">{conversation.status}</span>
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
-          <p className="text-xs text-zinc-500">{formatPhone(conversation.contact.phone)}</p>
-        </div>
-        <span className="text-xs text-zinc-500 capitalize">{conversation.status}</span>
+        {attachedLabels.length > 0 && (
+          <div className="mt-2">
+            <AttachedLabels conversationId={conversation.id} labels={attachedLabels} />
+          </div>
+        )}
       </header>
 
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2">
@@ -94,7 +122,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
         )}
       </div>
 
-      <MessageForm conversationId={conversation.id} />
+      <MessageForm conversationId={conversation.id} quickReplies={quickReplies} />
     </div>
   );
 }

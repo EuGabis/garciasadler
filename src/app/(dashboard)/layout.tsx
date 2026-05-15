@@ -11,6 +11,7 @@ import {
   Zap,
   Settings,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { Notifications } from "./notifications";
 
@@ -20,6 +21,7 @@ const nav = [
   { href: "/contatos", label: "Contatos", icon: Users },
   { href: "/pipeline", label: "Pipeline", icon: Kanban },
   { href: "/etiquetas", label: "Etiquetas", icon: Tag },
+  { href: "/respostas-rapidas", label: "Respostas rápidas", icon: Sparkles },
   { href: "/automacoes", label: "Automações", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/configuracoes", label: "Configurações", icon: Settings },

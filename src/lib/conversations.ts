@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db";
 
+export type ConversationLabelInfo = { id: string; name: string; color: string };
+
 export type ConversationListItem = {
   id: string;
   contactName: string;
@@ -8,11 +10,18 @@ export type ConversationListItem = {
   lastMessageAt: Date | null;
   unreadCount: number;
   status: string;
+  labels: ConversationLabelInfo[];
 };
 
-export async function listConversations(workspaceId: string): Promise<ConversationListItem[]> {
+export async function listConversations(
+  workspaceId: string,
+  options: { includeArchived?: boolean } = {}
+): Promise<ConversationListItem[]> {
   const rows = await prisma.conversation.findMany({
-    where: { workspaceId },
+    where: {
+      workspaceId,
+      ...(options.includeArchived ? {} : { status: { in: ["open", "pending"] } }),
+    },
     orderBy: [{ lastMessageAt: { sort: "desc", nulls: "last" } }, { updatedAt: "desc" }],
     select: {
       id: true,
@@ -21,6 +30,7 @@ export async function listConversations(workspaceId: string): Promise<Conversati
       lastMessage: true,
       lastMessageAt: true,
       contact: { select: { name: true, phone: true } },
+      labels: { select: { label: { select: { id: true, name: true, color: true } } } },
     },
     take: 100,
   });
@@ -33,6 +43,7 @@ export async function listConversations(workspaceId: string): Promise<Conversati
     lastMessageAt: r.lastMessageAt,
     unreadCount: r.unreadCount,
     status: r.status,
+    labels: r.labels.map((l) => l.label),
   }));
 }
 
@@ -45,6 +56,7 @@ export async function getConversationWithMessages(workspaceId: string, conversat
       channel: true,
       unreadCount: true,
       contact: { select: { id: true, name: true, phone: true, avatar: true } },
+      labels: { select: { label: { select: { id: true, name: true, color: true } } } },
       messages: {
         orderBy: { createdAt: "asc" },
         select: {

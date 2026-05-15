@@ -149,21 +149,27 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
     create: { workspaceId, phone, name: pushName, source: "whatsapp" },
   });
 
-  const existing = await prisma.conversation.findFirst({
-    where: {
-      workspaceId,
-      contactId: contact.id,
-      status: { in: ["open", "pending"] },
-    },
+  // Prioriza conversa aberta; se não houver, reabre a última arquivada (preserva histórico)
+  const openOrPending = await prisma.conversation.findFirst({
+    where: { workspaceId, contactId: contact.id, status: { in: ["open", "pending"] } },
     select: { id: true },
   });
+  const lastArchived = openOrPending
+    ? null
+    : await prisma.conversation.findFirst({
+        where: { workspaceId, contactId: contact.id, status: { in: ["archived", "resolved"] } },
+        orderBy: { lastMessageAt: "desc" },
+        select: { id: true },
+      });
 
+  const reusedId = openOrPending?.id ?? lastArchived?.id ?? null;
   const previewText = truncate(extracted.content);
 
-  const conversation = existing
+  const conversation = reusedId
     ? await prisma.conversation.update({
-        where: { id: existing.id },
+        where: { id: reusedId },
         data: {
+          status: "open",
           lastMessage: previewText,
           lastMessageAt: new Date(),
           ...(fromMe ? {} : { unreadCount: { increment: 1 } }),

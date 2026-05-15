@@ -56,6 +56,22 @@ export default async function ConversationsLayout({ children }: { children: Reac
                           </span>
                         )}
                       </div>
+                      {c.labels.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {c.labels.slice(0, 3).map((l) => (
+                            <span
+                              key={l.id}
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                              style={{
+                                backgroundColor: `${l.color}22`,
+                                color: l.color,
+                              }}
+                            >
+                              {l.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>
