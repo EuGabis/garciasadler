@@ -26,5 +26,17 @@ const schema = z.object({
   CRON_SECRET: z.string().optional(),
 });
 
-export const env = schema.parse(process.env);
+/**
+ * Remove valores vazios pra que .optional() funcione no Zod.
+ * Sem isso, env vars setadas como "" no .env/Vercel quebrariam .min(N).optional().
+ */
+function cleanEnv(source: NodeJS.ProcessEnv): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(source)) {
+    if (typeof v === "string" && v.length > 0) out[k] = v;
+  }
+  return out;
+}
+
+export const env = schema.parse(cleanEnv(process.env));
 export type Env = z.infer<typeof schema>;
