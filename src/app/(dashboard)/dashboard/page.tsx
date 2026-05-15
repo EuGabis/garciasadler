@@ -94,9 +94,12 @@ export default async function DashboardPage() {
       >
         <ol className="text-sm space-y-2 text-stone-600 dark:text-stone-400 list-decimal list-inside">
           <li>
-            Confira a configuração do Evolution API em{" "}
-            <Link className="text-brand-600 hover:underline font-medium" href="/configuracoes">
-              Configurações
+            Confira o Evolution API em{" "}
+            <Link
+              className="text-brand-600 hover:underline font-medium"
+              href="/configuracoes?tab=workspace"
+            >
+              Configurações → Workspace
             </Link>
           </li>
           <li>
@@ -108,12 +111,22 @@ export default async function DashboardPage() {
           </li>
           <li>
             Configure automações em{" "}
-            <Link className="text-brand-600 hover:underline font-medium" href="/automacoes">
-              /automacoes
-            </Link>{" "}
-            pra responder primeira mensagem automaticamente
+            <Link
+              className="text-brand-600 hover:underline font-medium"
+              href="/configuracoes?tab=automacoes"
+            >
+              Configurações → Automações
+            </Link>
           </li>
-          <li>Convide sua equipe em /equipe pra dividir os atendimentos</li>
+          <li>
+            Convide sua equipe em{" "}
+            <Link
+              className="text-brand-600 hover:underline font-medium"
+              href="/configuracoes?tab=equipe"
+            >
+              Configurações → Equipe
+            </Link>
+          </li>
         </ol>
       </SectionCard>
     </div>

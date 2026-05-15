@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Building2, Webhook, UserCircle, Bot } from "lucide-react";
+import {
+  Building2,
+  Webhook,
+  UserCircle,
+  Bot,
+  Zap,
+  Sparkles,
+  UserCog,
+} from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { PageHeader, cn } from "@/components/ui";
@@ -8,6 +16,9 @@ import { WorkspaceTab } from "./workspace-tab";
 import { WebhookTab } from "./webhook-tab";
 import { AccountTab } from "./account-tab";
 import { AiTab } from "./ai-tab";
+import { AutomacoesTab } from "./automacoes-tab";
+import { RespostasRapidasTab } from "./respostas-rapidas-tab";
+import { EquipeTab } from "./equipe-tab";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +27,9 @@ type Search = { tab?: string };
 const TABS = [
   { value: "workspace", label: "Workspace", icon: Building2 },
   { value: "webhook", label: "Webhook", icon: Webhook },
+  { value: "automacoes", label: "Automações", icon: Zap },
+  { value: "respostas-rapidas", label: "Respostas rápidas", icon: Sparkles },
+  { value: "equipe", label: "Equipe", icon: UserCog },
   { value: "conta", label: "Conta", icon: UserCircle },
   { value: "ia", label: "IA", icon: Bot },
 ] as const;
@@ -23,7 +37,8 @@ const TABS = [
 type TabValue = (typeof TABS)[number]["value"];
 
 function validTab(s: string | undefined): TabValue {
-  if (s === "workspace" || s === "webhook" || s === "conta" || s === "ia") return s;
+  const valid = TABS.map((t) => t.value) as readonly string[];
+  if (s && valid.includes(s)) return s as TabValue;
   return "workspace";
 }
 
@@ -68,7 +83,7 @@ export default async function ConfiguracoesPage({
     <div className="p-6 lg:p-8 max-w-5xl">
       <PageHeader
         title="Configurações"
-        description="Workspace, integrações, conta e equipe."
+        description="Workspace, integrações, equipe e automações."
       />
 
       <nav className="mb-6 flex flex-wrap gap-1 p-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-sm">
@@ -99,6 +114,13 @@ export default async function ConfiguracoesPage({
         {activeTab === "webhook" && (
           <WebhookTab workspaceConfigured={workspaceConfigured} />
         )}
+        {activeTab === "automacoes" && (
+          <AutomacoesTab workspaceId={session!.user.workspaceId} />
+        )}
+        {activeTab === "respostas-rapidas" && (
+          <RespostasRapidasTab workspaceId={session!.user.workspaceId} />
+        )}
+        {activeTab === "equipe" && <EquipeTab />}
         {activeTab === "conta" && <AccountTab user={user} />}
         {activeTab === "ia" && <AiTab />}
       </div>

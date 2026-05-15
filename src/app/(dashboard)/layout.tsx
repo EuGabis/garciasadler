@@ -8,11 +8,8 @@ import {
   Tag,
   Columns3,
   BarChart3,
-  Zap,
   Settings,
   LogOut,
-  Sparkles,
-  UserCog,
 } from "lucide-react";
 import { Notifications } from "./notifications";
 import { ThemeToggle } from "@/components/ui";
@@ -23,10 +20,7 @@ const nav = [
   { href: "/contatos", label: "Contatos", icon: Users },
   { href: "/pipeline", label: "Pipeline", icon: Columns3 },
   { href: "/etiquetas", label: "Etiquetas", icon: Tag },
-  { href: "/respostas-rapidas", label: "Respostas rápidas", icon: Sparkles },
-  { href: "/automacoes", label: "Automações", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/equipe", label: "Equipe", icon: UserCog },
   { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
