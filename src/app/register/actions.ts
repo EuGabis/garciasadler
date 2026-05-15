@@ -29,6 +29,12 @@ export async function registerAction(
   _prev: RegisterState,
   formData: FormData
 ): Promise<RegisterState> {
+  // Defense in depth: a page já bloqueia, mas o action também
+  // recusa se o registro público estiver desativado.
+  if (process.env.ENABLE_PUBLIC_REGISTRATION !== "true") {
+    return { error: "Registro público desativado." };
+  }
+
   const parsed = schema.safeParse({
     workspaceName: formData.get("workspaceName"),
     name: formData.get("name"),

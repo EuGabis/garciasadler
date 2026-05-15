@@ -318,11 +318,14 @@ async function handleMessageUpdate(payload: EvolutionMessageUpdate, workspaceId:
 }
 
 export async function POST(req: NextRequest) {
-  if (env.WEBHOOK_SECRET) {
-    const provided = req.headers.get("x-webhook-secret");
-    if (provided !== env.WEBHOOK_SECRET) {
-      return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
-    }
+  // Fail-closed: webhook precisa de secret. Sem env setada, recusa todas as requests.
+  if (!env.WEBHOOK_SECRET) {
+    console.error("[webhook] WEBHOOK_SECRET não configurada — recusando request");
+    return Response.json({ ok: false, error: "webhook secret not configured" }, { status: 503 });
+  }
+  const provided = req.headers.get("x-webhook-secret");
+  if (provided !== env.WEBHOOK_SECRET) {
+    return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
   let payload: EvolutionMessageUpsert | EvolutionMessageUpdate;

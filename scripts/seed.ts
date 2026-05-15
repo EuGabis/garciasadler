@@ -7,13 +7,30 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 
-async function main() {
-  const WORKSPACE_NAME = "Garcia Sadler";
-  const WORKSPACE_SLUG = "garcia-sadler";
+function readEnv(name: string): string {
+  const v = process.env[name];
+  if (!v || v.trim().length === 0) {
+    console.error(
+      `\n[seed] env var "${name}" ausente. Setá-la em .env.local antes de rodar.\n` +
+        `Exemplo:\n  SEED_OWNER_EMAIL=...\n  SEED_OWNER_PASSWORD=...\n  SEED_OWNER_NAME=...\n`
+    );
+    process.exit(1);
+  }
+  return v.trim();
+}
 
-  const OWNER_EMAIL = "owner@example.com";
-  const OWNER_NAME = "Gabriel Pereira";
-  const OWNER_PASSWORD = "***REDACTED***";
+async function main() {
+  const WORKSPACE_NAME = process.env.SEED_WORKSPACE_NAME ?? "Garcia Sadler";
+  const WORKSPACE_SLUG = process.env.SEED_WORKSPACE_SLUG ?? "garcia-sadler";
+
+  const OWNER_EMAIL = readEnv("SEED_OWNER_EMAIL");
+  const OWNER_NAME = readEnv("SEED_OWNER_NAME");
+  const OWNER_PASSWORD = readEnv("SEED_OWNER_PASSWORD");
+
+  if (OWNER_PASSWORD.length < 8) {
+    console.error("[seed] SEED_OWNER_PASSWORD precisa ter ao menos 8 caracteres.");
+    process.exit(1);
+  }
 
   const EVOLUTION_URL = process.env.EVOLUTION_API_URL ?? "";
   const EVOLUTION_KEY = process.env.EVOLUTION_API_KEY ?? "";
@@ -25,9 +42,9 @@ async function main() {
       where: { id: existing.id },
       data: {
         name: WORKSPACE_NAME,
-        evolutionUrl: EVOLUTION_URL,
-        evolutionKey: EVOLUTION_KEY,
-        evolutionInstance: EVOLUTION_INSTANCE,
+        evolutionUrl: EVOLUTION_URL || null,
+        evolutionKey: EVOLUTION_KEY || null,
+        evolutionInstance: EVOLUTION_INSTANCE || null,
       },
     });
     console.log(`Workspace existente atualizado: ${existing.id}`);
@@ -36,9 +53,9 @@ async function main() {
       data: {
         name: WORKSPACE_NAME,
         slug: WORKSPACE_SLUG,
-        evolutionUrl: EVOLUTION_URL,
-        evolutionKey: EVOLUTION_KEY,
-        evolutionInstance: EVOLUTION_INSTANCE,
+        evolutionUrl: EVOLUTION_URL || null,
+        evolutionKey: EVOLUTION_KEY || null,
+        evolutionInstance: EVOLUTION_INSTANCE || null,
       },
     });
     console.log(`Workspace criado: ${w.id}`);
@@ -74,9 +91,8 @@ async function main() {
     console.log(`Owner criado: ${OWNER_EMAIL}`);
   }
 
-  console.log("\nSetup completo. Use estas credenciais pra logar:");
-  console.log(`  email: ${OWNER_EMAIL}`);
-  console.log(`  senha: ${OWNER_PASSWORD}`);
+  console.log(`\nSetup completo. Login: ${OWNER_EMAIL}`);
+  console.log("(Senha foi lida de env e NÃO é ecoada aqui.)");
 }
 
 main()

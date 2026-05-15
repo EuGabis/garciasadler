@@ -1,98 +1,101 @@
-# Garcia Bot
+# Garcia Sadler CRM
 
-Atendimento via WhatsApp para loja de materiais de construção.
-Stack: Next.js 16 + TypeScript + Prisma (Postgres) + OpenAI (tool use) + Evolution API.
-
-## Fluxo
-
-```
-Cliente WhatsApp
-     │ mensagem
-     ▼
-Evolution API ──► POST /api/webhook
-                       │
-                       ▼
-              [salva conversation + message]
-                       │
-                       ▼
-              generateReply (OpenAI)
-                  │           ▲
-                  │ tool_use  │ tool_result
-                  ▼           │
-              buscarProduto / listarPorCategoria
-                  │
-                  ▼ (mock ou API real)
-              resposta final
-                       │
-                       ▼
-              sendWhatsAppText (Evolution)
-                       │
-                       ▼
-                  Cliente recebe
-```
+CRM de atendimento WhatsApp para loja de materiais de construção.
+Stack: Next.js 16 + TypeScript + Prisma 7 (Postgres) + NextAuth v5 + Evolution API + Pusher.
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env   # preencher valores
-npx prisma migrate dev --name init
+cp .env.example .env.local      # preencher valores
+npx prisma migrate deploy
+npm run db:seed                 # cria workspace + owner (lê de SEED_*)
 npm run dev
 ```
 
 ## Variáveis obrigatórias
 
-| Variável             | O que é                                                |
-|----------------------|--------------------------------------------------------|
-| `DATABASE_URL`       | String pública do Postgres (Railway)                   |
-| `OPENAI_API_KEY`     | Chave OpenAI (sk-...)                                  |
-| `OPENAI_MODEL`       | Modelo (default `gpt-4o-mini`)                         |
-| `EVOLUTION_API_URL`  | URL do servidor Evolution                              |
-| `EVOLUTION_API_KEY`  | API key global da sua Evolution                        |
-| `EVOLUTION_INSTANCE` | Nome da instância (WhatsApp conectado)                 |
+| Variável         | O que é                                                                     |
+|------------------|-----------------------------------------------------------------------------|
+| `DATABASE_URL`   | URL do Postgres                                                             |
+| `AUTH_SECRET`    | Secret do NextAuth (min 32 chars — gere com `openssl rand -hex 32`)         |
+| `WEBHOOK_SECRET` | Header `x-webhook-secret` exigido em `POST /api/webhook` (fail-closed)      |
+| `CRON_SECRET`    | `Authorization: Bearer ...` exigido em `/api/cron/followups` (fail-closed)  |
+
+> **Importante**: sem `WEBHOOK_SECRET` e `CRON_SECRET` setados, os respectivos endpoints retornam 503. Isso é proposital — fail-closed.
 
 ## Variáveis opcionais
 
-| Variável             | O que é                                                |
-|----------------------|--------------------------------------------------------|
-| `PRODUTOS_API_URL`   | API externa de produtos. Sem isso, roda em modo mock.  |
-| `PRODUTOS_API_KEY`   | Bearer token da API de produtos                        |
-| `WEBHOOK_SECRET`     | Se setado, exige header `x-webhook-secret` no webhook  |
+| Variável                       | O que é                                                          |
+|--------------------------------|------------------------------------------------------------------|
+| `EVOLUTION_API_URL`/`_KEY`/`_INSTANCE` | Cliente Evolution (também pode ser por workspace no DB)   |
+| `OPENAI_API_KEY`               | Liga IA (tool use)                                               |
+| `OPENAI_MODEL`                 | Default `gpt-4o-mini`                                            |
+| `PRODUTOS_API_URL`/`_KEY`      | API real de produtos. Sem isso, modo mock.                       |
+| `PUSHER_APP_ID`/`SECRET`/`KEY` | Realtime (servidor + client)                                     |
+| `ENABLE_PUBLIC_REGISTRATION`   | `true` reabre `/register`. Default `false` (404).                |
 
-## Modo mock
+## Procedimentos de segurança
 
-Sem `PRODUTOS_API_URL`, o `src/lib/produtos.ts` usa um catálogo fictício
-(8 produtos) pra você testar tool use antes de plugar a API real.
+### Rotacionar senha de um usuário
 
-## Como plugar a API real
+```bash
+ROTATE_EMAIL=owner@example.com ROTATE_NEW_PASSWORD='nova-senha-forte' \
+  npm run db:rotate-password
+```
 
-Edite `src/lib/produtos.ts`:
-- Ajuste o tipo `Produto` pro formato que sua API retorna
-- Ajuste as URLs em `buscarProduto` e `listarPorCategoria`
-- Setar `PRODUTOS_API_URL` (e `PRODUTOS_API_KEY` se autenticada) no `.env`
+Senha nunca aparece em log nem é commitada. Lê só de env.
 
-## Webhook Evolution
+### Trocar a própria senha pela UI
 
-No painel da sua instância Evolution, configure:
+Logue, vá em `/configuracoes` → aba **Conta** → trocar senha.
+
+### Configurar o webhook Evolution
+
+No painel da Evolution:
 - **URL**: `https://seu-dominio/api/webhook`
-- **Eventos**: `messages.upsert` (apenas)
-- Se setou `WEBHOOK_SECRET`, adicione o header `x-webhook-secret`
+- **Eventos**: `messages.upsert`, `messages.update`
+- **Header customizado**: `x-webhook-secret: <valor de WEBHOOK_SECRET>`
+
+Sem esse header com o valor exato, o webhook retorna 401.
+
+### Cron do Vercel
+
+`vercel.json` agenda `POST /api/cron/followups` 1×/dia (9h UTC, limite do plano Hobby). O Vercel envia `Authorization: Bearer ${CRON_SECRET}` automaticamente — só precisa setar a env var.
+
+### Registro público
+
+Por padrão fica fechado (`/register` → 404). Pra criar um workspace adicional:
+
+1. Setar `ENABLE_PUBLIC_REGISTRATION=true` no Vercel
+2. Acessar `/register`, criar
+3. Voltar `ENABLE_PUBLIC_REGISTRATION=false`
 
 ## Estrutura
 
 ```
 src/
 ├── app/
-│   ├── api/webhook/route.ts   ← recebe do Evolution
-│   ├── page.tsx               ← painel de status
+│   ├── (dashboard)/             ← rotas autenticadas
+│   ├── api/
+│   │   ├── webhook/route.ts     ← recebe Evolution (precisa WEBHOOK_SECRET)
+│   │   └── cron/followups/      ← Vercel Cron (precisa CRON_SECRET)
+│   ├── login/, register/, page.tsx
 │   └── layout.tsx
 ├── lib/
-│   ├── db.ts                  ← Prisma singleton
-│   ├── env.ts                 ← validação Zod
-│   ├── openai.ts              ← tool use + histórico
-│   ├── evolution.ts           ← cliente Evolution
-│   └── produtos.ts            ← mock + API real
-└── generated/prisma/          ← gerado pelo Prisma (gitignored)
+│   ├── db.ts, env.ts, auth/
+│   ├── openai.ts, evolution.ts, produtos.ts
+│   ├── automations.ts, followups.ts, analytics.ts
+│   └── kanban.ts, conversations.ts, contacts.ts, team.ts
+├── auth.ts, auth.config.ts, proxy.ts (middleware)
+└── generated/prisma/            ← gerado (gitignored)
 prisma/
-└── schema.prisma
+├── schema.prisma                ← 18 modelos multi-tenant
+└── migrations/
+scripts/
+├── seed.ts                      ← cria workspace + owner (env-driven)
+├── rotate-password.ts           ← rotaciona senha de usuário (env-driven)
+├── check-state.ts               ← lista workspaces/usuários
+├── import-history.ts            ← importa histórico do Evolution
+└── close-all.ts                 ← arquiva todas conversas (precisa CONFIRM=yes)
 ```

@@ -5,11 +5,13 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Endpoint disparado pelo Vercel Cron a cada N minutos.
+ * Endpoint disparado pelo Vercel Cron uma vez por dia (Hobby plan).
  *
- * Autenticação:
- * - O Vercel Cron envia automaticamente o header `Authorization: Bearer ${CRON_SECRET}`.
- * - Se `CRON_SECRET` estiver setado nas env vars, validamos. Senão, aceita (útil em dev).
+ * Autenticação (fail-closed):
+ * - Exige header `Authorization: Bearer ${CRON_SECRET}`.
+ * - Sem `CRON_SECRET` setado nas env vars, retorna 503 (não 200) pra
+ *   garantir que o endpoint nunca processa sem autenticação.
+ * - O Vercel Cron envia o header automaticamente quando a env var existe.
  *
  * Documentação: https://vercel.com/docs/cron-jobs
  */
@@ -23,11 +25,16 @@ export async function GET(req: NextRequest) {
 
 async function handle(req: NextRequest) {
   const expected = process.env.CRON_SECRET;
-  if (expected) {
-    const auth = req.headers.get("authorization") ?? "";
-    if (auth !== `Bearer ${expected}`) {
-      return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
-    }
+  if (!expected) {
+    console.error("[cron/followups] CRON_SECRET não configurada — recusando request");
+    return Response.json(
+      { ok: false, error: "cron secret not configured" },
+      { status: 503 }
+    );
+  }
+  const auth = req.headers.get("authorization") ?? "";
+  if (auth !== `Bearer ${expected}`) {
+    return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
   const startedAt = Date.now();
