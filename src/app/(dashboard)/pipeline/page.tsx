@@ -18,11 +18,11 @@ export default async function PipelinePage() {
     return (
       <div className="p-8 max-w-3xl">
         <h1 className="text-2xl font-bold tracking-tight mb-2">Pipeline</h1>
-        <p className="text-sm text-slate-500 mb-8">Visualize o funil de atendimento em colunas.</p>
-        <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
-          <p className="text-sm text-slate-500 mb-4">Você ainda não tem colunas no pipeline.</p>
+        <p className="text-sm text-stone-500 mb-8">Visualize o funil de atendimento em colunas.</p>
+        <div className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 p-12 text-center">
+          <p className="text-sm text-stone-500 mb-4">Você ainda não tem colunas no pipeline.</p>
           <SeedButton />
-          <p className="text-xs text-slate-400 mt-3">Você pode editar as colunas depois.</p>
+          <p className="text-xs text-stone-400 mt-3">Você pode editar as colunas depois.</p>
         </div>
       </div>
     );
@@ -33,7 +33,7 @@ export default async function PipelinePage() {
       <header className="flex items-center justify-between mb-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Pipeline</h1>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <p className="mt-0.5 text-xs text-stone-500">
             Arraste cards entre colunas. {unassigned.length} conversa(s) sem card.
           </p>
         </div>

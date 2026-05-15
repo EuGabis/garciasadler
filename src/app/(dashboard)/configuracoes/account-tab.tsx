@@ -35,17 +35,17 @@ function ProfileForm({ user }: { user: User }) {
   return (
     <SectionCard title="Perfil" description="Como você aparece pra equipe.">
       <form action={formAction} className="space-y-4">
-        <div className="flex items-center gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
-          <div className="h-14 w-14 rounded-full bg-brand-orange-500 text-white text-lg font-bold flex items-center justify-center shadow-md shadow-brand-orange-500/30">
+        <div className="flex items-center gap-4 pb-4 border-b border-stone-100 dark:border-stone-800">
+          <div className="h-14 w-14 rounded-full bg-brand-500 text-white text-lg font-bold flex items-center justify-center shadow-md shadow-brand-500/30">
             {user.name?.[0]?.toUpperCase() ?? "?"}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold truncate">{user.name}</p>
-            <p className="text-xs text-slate-500 truncate flex items-center gap-1">
+            <p className="text-xs text-stone-500 truncate flex items-center gap-1">
               <Mail className="h-3 w-3" />
               {user.email}
             </p>
-            <span className="mt-1 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-brand-orange-500/10 text-brand-orange-600">
+            <span className="mt-1 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-brand-500/10 text-brand-600">
               {user.role}
             </span>
           </div>
@@ -125,7 +125,7 @@ function PasswordForm() {
             />
           </div>
         </div>
-        <p className="text-[11px] text-slate-500">Mínimo 8 caracteres.</p>
+        <p className="text-[11px] text-stone-500">Mínimo 8 caracteres.</p>
 
         {state?.ok && <p className="text-sm text-emerald-600">Senha atualizada.</p>}
         {state?.error && <p className="text-sm text-red-600">{state.error}</p>}

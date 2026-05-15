@@ -23,8 +23,8 @@ export function FilterTabs({ mineOnly }: { mineOnly: boolean }) {
         disabled={pending}
         className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition ${
           !mineOnly
-            ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
-            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+            ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
+            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
         }`}
       >
         Todas
@@ -35,8 +35,8 @@ export function FilterTabs({ mineOnly }: { mineOnly: boolean }) {
         disabled={pending}
         className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition ${
           mineOnly
-            ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900"
-            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+            ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
+            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
         }`}
       >
         Minhas

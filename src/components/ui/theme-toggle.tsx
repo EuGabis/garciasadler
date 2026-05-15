@@ -19,7 +19,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Alternar tema"
       className={
         className ??
-        "inline-flex items-center justify-center h-9 w-9 rounded-lg text-slate-300 hover:bg-white/10 transition"
+        "inline-flex items-center justify-center h-9 w-9 rounded-lg text-stone-300 hover:bg-white/10 transition"
       }
     >
       {!mounted ? (

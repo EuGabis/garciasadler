@@ -22,7 +22,7 @@ export function ReplyRow({ reply }: { reply: Reply }) {
 
   if (editing) {
     return (
-      <form action={formAction} className="p-4 bg-slate-50 dark:bg-slate-800 space-y-2">
+      <form action={formAction} className="p-4 bg-stone-50 dark:bg-stone-800 space-y-2">
         <input type="hidden" name="id" value={reply.id} />
         <input
           name="title"
@@ -30,7 +30,7 @@ export function ReplyRow({ reply }: { reply: Reply }) {
           required
           maxLength={60}
           placeholder="Título (atalho)"
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
+          className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <textarea
           name="content"
@@ -38,13 +38,13 @@ export function ReplyRow({ reply }: { reply: Reply }) {
           required
           maxLength={2000}
           rows={3}
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500 resize-none"
+          className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
         />
         <div className="flex items-center gap-2">
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-xs font-medium transition"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-xs font-medium transition"
           >
             <Check className="h-3 w-3" />
             Salvar
@@ -52,7 +52,7 @@ export function ReplyRow({ reply }: { reply: Reply }) {
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-xs font-medium transition"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-xs font-medium transition"
           >
             <X className="h-3 w-3" />
             Cancelar
@@ -67,12 +67,12 @@ export function ReplyRow({ reply }: { reply: Reply }) {
     <div className="p-4 flex items-start gap-3">
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{reply.title}</p>
-        <p className="text-xs text-slate-500 mt-1 line-clamp-2 whitespace-pre-wrap">{reply.content}</p>
+        <p className="text-xs text-stone-500 mt-1 line-clamp-2 whitespace-pre-wrap">{reply.content}</p>
       </div>
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="p-1.5 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+        className="p-1.5 rounded text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 shrink-0"
         title="Editar"
       >
         <Pencil className="h-3.5 w-3.5" />
@@ -101,13 +101,13 @@ export function CreateReplyForm() {
   );
 
   return (
-    <form action={formAction} className="p-4 border-b border-slate-200 dark:border-slate-800 space-y-2">
+    <form action={formAction} className="p-4 border-b border-stone-200 dark:border-stone-800 space-y-2">
       <input
         name="title"
         required
         maxLength={60}
         placeholder="Título (ex: bom-dia)"
-        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
+        className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
       />
       <textarea
         name="content"
@@ -115,13 +115,13 @@ export function CreateReplyForm() {
         maxLength={2000}
         rows={2}
         placeholder="Conteúdo da resposta..."
-        className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500 resize-none"
+        className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
       />
       <div className="flex items-center gap-2">
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-1.5 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-sm font-medium transition"
+          className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition"
         >
           {pending ? "..." : "Criar"}
         </button>

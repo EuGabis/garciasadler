@@ -12,11 +12,11 @@ export function KpiCard({
   trend?: { direction: "up" | "down"; label: string } | null;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
+      <p className="text-xs text-stone-500">{label}</p>
       <p className="mt-1 text-2xl font-bold tracking-tight">{value}</p>
       {(hint || trend) && (
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500">
+        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-stone-500">
           {trend && (
             <span
               className={`inline-flex items-center gap-0.5 font-medium ${
@@ -49,10 +49,10 @@ export function BarList({
 }) {
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
       <h2 className="text-sm font-semibold mb-4">{title}</h2>
       {items.length === 0 ? (
-        <p className="text-xs text-slate-500 py-2">{emptyText}</p>
+        <p className="text-xs text-stone-500 py-2">{emptyText}</p>
       ) : (
         <ul className="space-y-2.5">
           {items.map((item, i) => {
@@ -60,10 +60,10 @@ export function BarList({
             return (
               <li key={i}>
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="truncate text-slate-700 dark:text-slate-300">{item.label}</span>
-                  <span className="text-slate-500 font-medium tabular-nums">{item.value}</span>
+                  <span className="truncate text-stone-700 dark:text-stone-300">{item.label}</span>
+                  <span className="text-stone-500 font-medium tabular-nums">{item.value}</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div className="h-1.5 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -113,12 +113,12 @@ export function MessagesChart({
   const tickIdxs = data.length <= 2 ? data.map((_, i) => i) : [0, Math.floor((data.length - 1) / 2), data.length - 1];
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold">Mensagens por dia</h2>
-        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+        <div className="flex items-center gap-3 text-[11px] text-stone-500">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-3 rounded-sm bg-brand-orange-500" /> Recebidas
+            <span className="h-1.5 w-3 rounded-sm bg-brand-500" /> Recebidas
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1.5 w-3 rounded-sm bg-emerald-500" /> Enviadas
@@ -184,7 +184,7 @@ export function MessagesChart({
 export function HourHeatmap({ data }: { data: Array<{ hour: number; count: number }> }) {
   const max = Math.max(1, ...data.map((d) => d.count));
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
       <h2 className="text-sm font-semibold mb-3">Distribuição por hora do dia</h2>
       <div className="grid grid-cols-24 gap-0.5" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
         {data.map((d) => {
@@ -201,7 +201,7 @@ export function HourHeatmap({ data }: { data: Array<{ hour: number; count: numbe
           );
         })}
       </div>
-      <div className="mt-2 flex justify-between text-[10px] text-slate-500">
+      <div className="mt-2 flex justify-between text-[10px] text-stone-500">
         <span>0h</span>
         <span>6h</span>
         <span>12h</span>

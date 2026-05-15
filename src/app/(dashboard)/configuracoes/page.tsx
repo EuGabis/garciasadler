@@ -71,7 +71,7 @@ export default async function ConfiguracoesPage({
         description="Workspace, integrações, conta e equipe."
       />
 
-      <nav className="mb-6 flex flex-wrap gap-1 p-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
+      <nav className="mb-6 flex flex-wrap gap-1 p-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-sm">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.value;
           return (
@@ -81,8 +81,8 @@ export default async function ConfiguracoesPage({
               className={cn(
                 "flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all",
                 isActive
-                  ? "bg-brand-orange-500 text-white shadow-md shadow-brand-orange-500/30"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                  ? "bg-brand-500 text-white shadow-md shadow-brand-500/30"
+                  : "text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/60"
               )}
             >
               <tab.icon className="h-3.5 w-3.5" />

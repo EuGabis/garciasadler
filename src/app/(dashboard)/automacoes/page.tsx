@@ -33,13 +33,13 @@ export default async function AutomationsPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Automações</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-stone-500">
               Disparam ao receber mensagem. Encadeiam ações: atribuição, etiqueta, pipeline, resposta.
             </p>
           </div>
           <Link
             href="/automacoes/followups"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 transition shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-xs text-stone-700 dark:text-stone-300 transition shrink-0"
           >
             <Clock className="h-3.5 w-3.5" />
             Follow-ups

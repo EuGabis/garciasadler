@@ -5,44 +5,54 @@
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Marca Garcia Sadler — paleta laranja + navy (slate como neutro) */
-  --color-brand-orange-50: #fff5ef;
-  --color-brand-orange-100: #ffe6d6;
-  --color-brand-orange-200: #ffc9a7;
-  --color-brand-orange-300: #ffa570;
-  --color-brand-orange-400: #ff7a3e;
-  --color-brand-orange-500: #f26522;
-  --color-brand-orange-600: #d24e13;
-  --color-brand-orange-700: #ad3d0c;
-  --color-brand-orange-800: #7f2c07;
-  --color-brand-orange-900: #4a1903;
+  /* Garcia Sadler — identidade própria
+   *
+   * brand   : terracota tijolo (alusão a material de construção; raro em CRMs)
+   * carbon  : aço escuro (surfaces escuras, sidebar)
+   * accent  : âmbar quente (destaques, alerta, info)
+   * Stone como neutro (mais quente que slate, harmoniza com tijolo)
+   */
 
-  --color-brand-navy-50: #eef0f8;
-  --color-brand-navy-100: #d6dcec;
-  --color-brand-navy-200: #a5b0d2;
-  --color-brand-navy-300: #6c7bb1;
-  --color-brand-navy-400: #3f5093;
-  --color-brand-navy-500: #1b2862;
-  --color-brand-navy-600: #141e4a;
-  --color-brand-navy-700: #0e1638;
-  --color-brand-navy-800: #080d22;
-  --color-brand-navy-900: #03060f;
+  --color-brand-50:  #fbf2ee;
+  --color-brand-100: #f6dccf;
+  --color-brand-200: #ecb59f;
+  --color-brand-300: #e08b6f;
+  --color-brand-400: #d26443;
+  --color-brand-500: #b5491a;
+  --color-brand-600: #963a13;
+  --color-brand-700: #762d0f;
+  --color-brand-800: #561f0a;
+  --color-brand-900: #321105;
+
+  --color-carbon-50:  #f1f3f6;
+  --color-carbon-100: #dde3ec;
+  --color-carbon-200: #b6c1d0;
+  --color-carbon-300: #7e8fa8;
+  --color-carbon-400: #4f607a;
+  --color-carbon-500: #2c3a52;
+  --color-carbon-600: #1f2a3e;
+  --color-carbon-700: #161e2d;
+  --color-carbon-800: #0c121d;
+  --color-carbon-900: #050810;
+
+  --color-accent-500: #d97706;
+  --color-accent-600: #b45309;
 }
 
 :root {
-  --bg: #f8fafc;
+  --bg: #fafaf9;
   --surface: #ffffff;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --text-muted: #64748b;
+  --border: #e7e5e4;
+  --text: #1c1917;
+  --text-muted: #78716c;
 }
 
 html.dark {
-  --bg: #020617;
-  --surface: #0f172a;
-  --border: #1e293b;
-  --text: #f1f5f9;
-  --text-muted: #94a3b8;
+  --bg: #0c0a09;
+  --surface: #1c1917;
+  --border: #292524;
+  --text: #fafaf9;
+  --text-muted: #a8a29e;
   color-scheme: dark;
 }
 
@@ -59,25 +69,35 @@ body {
 }
 
 ::selection {
-  background-color: rgba(242, 101, 34, 0.25);
+  background-color: rgba(181, 73, 26, 0.25);
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-brand-orange-500);
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
 }
 
 /* Utilities */
 .gradient-brand {
-  background: linear-gradient(135deg, #f26522 0%, #d24e13 100%);
+  background: linear-gradient(135deg, #b5491a 0%, #762d0f 100%);
 }
 
-.gradient-brand-navy {
-  background: linear-gradient(180deg, #1b2862 0%, #141e4a 100%);
+.gradient-carbon {
+  background:
+    radial-gradient(ellipse at top, rgba(181, 73, 26, 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, #161e2d 0%, #0c121d 100%);
 }
 
 .glow-brand {
-  box-shadow: 0 8px 24px -6px rgba(242, 101, 34, 0.5);
+  box-shadow: 0 8px 24px -6px rgba(181, 73, 26, 0.45);
+}
+
+.glow-brand-sm {
+  box-shadow: 0 4px 12px -2px rgba(181, 73, 26, 0.25);
+}
+
+.ring-brand-soft {
+  box-shadow: 0 0 0 1px rgba(181, 73, 26, 0.12), 0 1px 3px rgba(28, 25, 23, 0.04);
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -102,7 +122,21 @@ body {
   animation: fade-in 250ms ease-out;
 }
 
-/* Scrollbar custom */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 220ms ease-out;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -111,14 +145,13 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.3);
+  background-color: rgba(168, 162, 158, 0.35);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.5);
+  background-color: rgba(168, 162, 158, 0.55);
 }
 
-/* Anti zoom iOS em inputs */
 @media (max-width: 768px) {
   input,
   textarea,

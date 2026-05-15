@@ -61,7 +61,7 @@ export function AutomationList({
         <button
           type="button"
           onClick={() => setCreating(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 text-white text-sm font-medium transition"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition"
         >
           <Plus className="h-3.5 w-3.5" />
           Nova automação
@@ -80,29 +80,29 @@ export function AutomationList({
         />
       )}
 
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 overflow-hidden">
         {automations.length === 0 ? (
-          <div className="p-12 text-center text-sm text-slate-500">
+          <div className="p-12 text-center text-sm text-stone-500">
             Sem automações ainda. Crie a primeira no botão acima.
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {automations.map((a) => (
               <li key={a.id} className="px-5 py-3">
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className={`text-sm font-medium ${!a.enabled && "opacity-50"}`}>{a.name}</p>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
                         {triggerLabel[a.triggerType]}
                       </span>
                       {!a.enabled && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200 dark:bg-slate-700 text-slate-500">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-200 dark:bg-stone-700 text-stone-500">
                           desativada
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-xs text-slate-500 space-y-0.5">
+                    <div className="mt-1 text-xs text-stone-500 space-y-0.5">
                       {a.triggerType === "keyword" && a.keywords.length > 0 && (
                         <p>Keywords: {a.keywords.join(", ")}</p>
                       )}
@@ -130,7 +130,7 @@ export function AutomationList({
                     className={`p-1.5 rounded transition ${
                       a.enabled
                         ? "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                        : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        : "text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
                     }`}
                     title={a.enabled ? "Desativar" : "Ativar"}
                   >
@@ -139,7 +139,7 @@ export function AutomationList({
                   <button
                     type="button"
                     onClick={() => setEditing(a)}
-                    className="p-1.5 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="p-1.5 rounded text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />

@@ -25,7 +25,7 @@ export function ColumnManager({ columns }: { columns: Column[] }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 transition"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-xs text-stone-700 dark:text-stone-300 transition"
       >
         <SettingsIcon className="h-3.5 w-3.5" />
         Gerenciar colunas
@@ -34,15 +34,15 @@ export function ColumnManager({ columns }: { columns: Column[] }) {
       {open && (
         <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setOpen(false)}>
           <div
-            className="absolute right-0 top-0 h-full w-96 max-w-full bg-white dark:bg-slate-900 shadow-xl flex flex-col"
+            className="absolute right-0 top-0 h-full w-96 max-w-full bg-white dark:bg-stone-900 shadow-xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <header className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+            <header className="flex items-center justify-between px-5 py-4 border-b border-stone-200 dark:border-stone-800">
               <h2 className="text-base font-semibold">Colunas do pipeline</h2>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
+                className="text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -50,7 +50,7 @@ export function ColumnManager({ columns }: { columns: Column[] }) {
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               <CreateColumnForm />
-              <div className="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-1">
+              <div className="border-t border-stone-200 dark:border-stone-800 pt-3 space-y-1">
                 {columns.map((col) => (
                   <ColumnRow key={col.id} column={col} />
                 ))}
@@ -71,8 +71,8 @@ function CreateColumnForm() {
   const [color, setColor] = useState("#6366f1");
 
   return (
-    <form action={formAction} className="space-y-2 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-      <p className="text-xs font-semibold text-slate-500">Nova coluna</p>
+    <form action={formAction} className="space-y-2 p-3 rounded-lg border border-stone-200 dark:border-stone-800">
+      <p className="text-xs font-semibold text-stone-500">Nova coluna</p>
       <div className="flex gap-2 items-center">
         <input
           type="color"
@@ -86,7 +86,7 @@ function CreateColumnForm() {
           required
           maxLength={40}
           placeholder="Nome"
-          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
+          className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
       </div>
       <div className="flex gap-2 items-center">
@@ -96,12 +96,12 @@ function CreateColumnForm() {
           min={0}
           max={999}
           placeholder="Limite WIP (opcional)"
-          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
+          className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-xs font-medium transition"
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-xs font-medium transition"
         >
           <Plus className="h-3 w-3" />
           Criar
@@ -139,7 +139,7 @@ function ColumnRow({ column }: { column: Column }) {
     return (
       <form
         action={formAction}
-        className="p-3 rounded-lg border border-brand-orange-300 dark:border-brand-orange-700 bg-brand-orange-50 dark:bg-brand-orange-500/10 space-y-2"
+        className="p-3 rounded-lg border border-brand-300 dark:border-brand-700 bg-brand-50 dark:bg-brand-500/10 space-y-2"
       >
         <input type="hidden" name="id" value={column.id} />
         <div className="flex gap-2 items-center">
@@ -154,7 +154,7 @@ function ColumnRow({ column }: { column: Column }) {
             defaultValue={column.name}
             required
             maxLength={40}
-            className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm"
+            className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm"
           />
         </div>
         <div className="flex gap-2 items-center">
@@ -165,7 +165,7 @@ function ColumnRow({ column }: { column: Column }) {
             min={0}
             max={999}
             placeholder="Limite WIP"
-            className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm"
+            className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm"
           />
           <button
             type="submit"
@@ -177,7 +177,7 @@ function ColumnRow({ column }: { column: Column }) {
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="p-1.5 rounded text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"
+            className="p-1.5 rounded text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700"
           >
             <X className="h-4 w-4" />
           </button>
@@ -188,14 +188,14 @@ function ColumnRow({ column }: { column: Column }) {
   }
 
   return (
-    <div className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+    <div className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition">
       <span
         className="inline-block h-3 w-3 rounded-full shrink-0"
         style={{ backgroundColor: column.color }}
       />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate">{column.name}</p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-stone-500">
           {column.cardCount} {column.cardCount === 1 ? "card" : "cards"}
           {column.wipLimit ? ` · limite ${column.wipLimit}` : ""}
         </p>
@@ -203,7 +203,7 @@ function ColumnRow({ column }: { column: Column }) {
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="p-1.5 rounded text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"
+        className="p-1.5 rounded text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700"
       >
         <Pencil className="h-3.5 w-3.5" />
       </button>

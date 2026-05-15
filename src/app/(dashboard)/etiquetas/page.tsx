@@ -23,19 +23,19 @@ export default async function LabelsPage() {
     <div className="p-8 max-w-3xl">
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Etiquetas</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-stone-500">
           Organize conversas com tags coloridas.
         </p>
       </header>
 
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 overflow-hidden">
         <CreateLabelForm />
         {labels.length === 0 ? (
-          <div className="p-12 text-center text-sm text-slate-500">
+          <div className="p-12 text-center text-sm text-stone-500">
             Sem etiquetas ainda. Crie a primeira acima.
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {labels.map((l) => (
               <li key={l.id}>
                 <LabelRow

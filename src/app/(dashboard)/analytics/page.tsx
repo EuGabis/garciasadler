@@ -32,7 +32,7 @@ export default async function AnalyticsPage({
       <header className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-stone-500">
             {metrics.period.label} ·{" "}
             {metrics.period.from.toLocaleDateString("pt-BR")} →{" "}
             {metrics.period.to.toLocaleDateString("pt-BR")}

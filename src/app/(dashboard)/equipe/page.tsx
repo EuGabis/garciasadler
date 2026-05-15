@@ -12,7 +12,7 @@ export default async function TeamPage() {
     <div className="p-8 max-w-3xl">
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Equipe</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-stone-500">
           Quem pode acessar o workspace e atender conversas.
         </p>
       </header>

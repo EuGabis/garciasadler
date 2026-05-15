@@ -25,8 +25,8 @@ export default async function DashboardPage() {
       total: conversations,
       href: "/conversations",
       icon: MessageSquare,
-      iconBg: "bg-brand-orange-500/10",
-      iconColor: "text-brand-orange-500",
+      iconBg: "bg-brand-500/10",
+      iconColor: "text-brand-500",
     },
     {
       label: "Contatos",
@@ -66,10 +66,10 @@ export default async function DashboardPage() {
           <Link
             key={label}
             href={href}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 hover:border-brand-orange-500/40 transition group"
+            className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 hover:border-brand-500/40 transition group"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-medium text-stone-500 uppercase tracking-wider">
                 {label}
               </span>
               <span
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-bold tracking-tight">{value}</span>
               {total !== undefined && total !== value && (
-                <span className="text-sm text-slate-500">/ {total}</span>
+                <span className="text-sm text-stone-500">/ {total}</span>
               )}
             </div>
           </Link>
@@ -92,23 +92,23 @@ export default async function DashboardPage() {
         title="Próximos passos"
         description="Configure o workspace pra começar a atender."
       >
-        <ol className="text-sm space-y-2 text-slate-600 dark:text-slate-400 list-decimal list-inside">
+        <ol className="text-sm space-y-2 text-stone-600 dark:text-stone-400 list-decimal list-inside">
           <li>
             Confira a configuração do Evolution API em{" "}
-            <Link className="text-brand-orange-600 hover:underline font-medium" href="/configuracoes">
+            <Link className="text-brand-600 hover:underline font-medium" href="/configuracoes">
               Configurações
             </Link>
           </li>
           <li>
             Crie etiquetas em{" "}
-            <Link className="text-brand-orange-600 hover:underline font-medium" href="/etiquetas">
+            <Link className="text-brand-600 hover:underline font-medium" href="/etiquetas">
               /etiquetas
             </Link>{" "}
             pra organizar conversas
           </li>
           <li>
             Configure automações em{" "}
-            <Link className="text-brand-orange-600 hover:underline font-medium" href="/automacoes">
+            <Link className="text-brand-600 hover:underline font-medium" href="/automacoes">
               /automacoes
             </Link>{" "}
             pra responder primeira mensagem automaticamente

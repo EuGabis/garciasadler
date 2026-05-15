@@ -35,13 +35,13 @@ export default async function ContactsPage({
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Contatos</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-stone-500">
             {contacts.length} {contacts.length === 1 ? "contato" : "contatos"}
           </p>
         </div>
         <Link
           href="/contatos/new"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 text-white text-sm font-medium transition"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition"
         >
           <Plus className="h-3.5 w-3.5" />
           Novo contato
@@ -50,12 +50,12 @@ export default async function ContactsPage({
 
       <form className="mb-4 flex gap-2" method="get">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
           <input
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Buscar por nome, telefone, e-mail ou interesse..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
         {params.status && <input type="hidden" name="status" value={params.status} />}
@@ -76,8 +76,8 @@ export default async function ContactsPage({
               href={href}
               className={`px-3 py-1 rounded-full text-xs font-medium transition ${
                 isActive
-                  ? "bg-brand-orange-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  ? "bg-brand-500 text-white"
+                  : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
               }`}
             >
               {opt.label}
@@ -86,20 +86,20 @@ export default async function ContactsPage({
         })}
       </div>
 
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 overflow-hidden">
         {contacts.length === 0 ? (
-          <div className="p-12 text-center text-sm text-slate-500">
+          <div className="p-12 text-center text-sm text-stone-500">
             Nenhum contato encontrado.
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {contacts.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/contatos/${c.id}`}
-                  className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                  className="flex items-center gap-3 px-5 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 transition"
                 >
-                  <div className="h-10 w-10 shrink-0 rounded-full bg-brand-orange-500/10 dark:bg-brand-orange-500/20 text-brand-orange-700 dark:text-brand-orange-300 text-sm font-semibold flex items-center justify-center">
+                  <div className="h-10 w-10 shrink-0 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-sm font-semibold flex items-center justify-center">
                     {c.name[0]?.toUpperCase() ?? "?"}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -114,22 +114,22 @@ export default async function ContactsPage({
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 truncate">
+                    <p className="text-xs text-stone-500 truncate">
                       {formatPhone(c.phone)}
                       {c.email ? ` · ${c.email}` : ""}
                     </p>
                     {c.productInterest && (
-                      <p className="text-xs text-slate-500 mt-0.5 truncate">
+                      <p className="text-xs text-stone-500 mt-0.5 truncate">
                         Interesse: {c.productInterest}
                       </p>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-stone-500">
                       {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "—"}
                     </p>
                     {c.status !== "active" && (
-                      <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 capitalize">
+                      <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 capitalize">
                         {c.status}
                       </span>
                     )}

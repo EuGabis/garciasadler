@@ -55,15 +55,15 @@ export function WorkspaceTab({
               defaultValue={workspace.name}
               disabled={!canEdit}
             />
-            <p className="mt-1 text-[11px] text-slate-500">
-              Slug: <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">{workspace.slug}</code>{" "}
+            <p className="mt-1 text-[11px] text-stone-500">
+              Slug: <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded">{workspace.slug}</code>{" "}
               (não editável)
             </p>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="pt-4 border-t border-stone-100 dark:border-stone-800">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <span className="text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300">
                 Evolution API
               </span>
               <span
@@ -119,7 +119,7 @@ export function WorkspaceTab({
                   defaultValue={workspace.evolutionKey ?? ""}
                   disabled={!canEdit}
                 />
-                <p className="mt-1 text-[11px] text-slate-500">
+                <p className="mt-1 text-[11px] text-stone-500">
                   Salva criptografada. Só admins/owners veem o valor completo.
                 </p>
               </div>

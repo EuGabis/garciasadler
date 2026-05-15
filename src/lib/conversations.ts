@@ -62,7 +62,21 @@ export async function getConversationWithMessages(workspaceId: string, conversat
       status: true,
       channel: true,
       unreadCount: true,
-      contact: { select: { id: true, name: true, phone: true, avatar: true } },
+      createdAt: true,
+      contact: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          email: true,
+          avatar: true,
+          notes: true,
+          productInterest: true,
+          source: true,
+          status: true,
+          createdAt: true,
+        },
+      },
       labels: { select: { label: { select: { id: true, name: true, color: true } } } },
       assignments: { select: { user: { select: { id: true, name: true } } } },
       messages: {

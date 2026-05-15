@@ -13,14 +13,14 @@ export function WebhookTab({ workspaceConfigured }: { workspaceConfigured: boole
         title="Webhook do Evolution"
         description="URL que recebe mensagens em tempo real."
       >
-        <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4">
+        <div className="rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Webhook className="h-4 w-4 text-brand-orange-500" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <Webhook className="h-4 w-4 text-brand-500" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300">
               Endpoint
             </span>
           </div>
-          <code className="block text-xs font-mono text-slate-900 dark:text-slate-100 break-all">
+          <code className="block text-xs font-mono text-stone-900 dark:text-stone-100 break-all">
             {webhookUrl}
           </code>
         </div>
@@ -63,18 +63,18 @@ export function WebhookTab({ workspaceConfigured }: { workspaceConfigured: boole
             },
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">
-              <div className="shrink-0 h-9 w-9 rounded-xl bg-brand-orange-500/10 text-brand-orange-500 flex items-center justify-center font-bold text-xs">
+              <div className="shrink-0 h-9 w-9 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold text-xs">
                 {i + 1}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold flex items-center gap-1.5">
-                  <step.icon className="h-3.5 w-3.5 text-slate-400" />
+                  <step.icon className="h-3.5 w-3.5 text-stone-400" />
                   {step.title}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-500">{step.text}</p>
+                <p className="mt-0.5 text-xs text-stone-500">{step.text}</p>
               </div>
               {i < 3 && (
-                <ArrowRight className="hidden md:block h-3.5 w-3.5 text-slate-300 mt-3" />
+                <ArrowRight className="hidden md:block h-3.5 w-3.5 text-stone-300 mt-3" />
               )}
             </li>
           ))}
@@ -87,18 +87,18 @@ export function WebhookTab({ workspaceConfigured }: { workspaceConfigured: boole
       >
         <ul className="space-y-2">
           <li className="flex items-center gap-3 text-sm">
-            <code className="px-2 py-0.5 rounded bg-brand-orange-500/10 text-brand-orange-600 text-xs font-mono">
+            <code className="px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 text-xs font-mono">
               messages.upsert
             </code>
-            <span className="text-slate-600 dark:text-slate-400">
+            <span className="text-stone-600 dark:text-stone-400">
               Nova mensagem recebida ou enviada (sincronização do celular)
             </span>
           </li>
           <li className="flex items-center gap-3 text-sm">
-            <code className="px-2 py-0.5 rounded bg-brand-orange-500/10 text-brand-orange-600 text-xs font-mono">
+            <code className="px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 text-xs font-mono">
               messages.update
             </code>
-            <span className="text-slate-600 dark:text-slate-400">
+            <span className="text-stone-600 dark:text-stone-400">
               ACK do WhatsApp (entregue/lido)
             </span>
           </li>

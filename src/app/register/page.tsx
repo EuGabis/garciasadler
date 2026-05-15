@@ -12,14 +12,14 @@ export default function RegisterPage() {
   );
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-6">
+    <main className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-brand-orange-500/30 mb-4">
+          <div className="mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-brand-500/30 mb-4">
             G
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Criar workspace</h1>
-          <p className="mt-1 text-sm text-slate-500">Você será o owner do workspace</p>
+          <p className="mt-1 text-sm text-stone-500">Você será o owner do workspace</p>
         </div>
 
         <form action={formAction} className="space-y-4">
@@ -52,7 +52,7 @@ export default function RegisterPage() {
               minLength={8}
               autoComplete="new-password"
             />
-            <p className="mt-1 text-[11px] text-slate-500">Mínimo 8 caracteres</p>
+            <p className="mt-1 text-[11px] text-stone-500">Mínimo 8 caracteres</p>
           </div>
 
           {state?.error && (
@@ -64,11 +64,11 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-6 text-center text-sm text-stone-500">
           Já tem conta?{" "}
           <Link
             href="/login"
-            className="font-semibold text-brand-orange-600 hover:text-brand-orange-700"
+            className="font-semibold text-brand-600 hover:text-brand-700"
           >
             Entrar
           </Link>
