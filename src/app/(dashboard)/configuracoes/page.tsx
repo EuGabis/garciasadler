@@ -7,6 +7,7 @@ import {
   Zap,
   Sparkles,
   UserCog,
+  Plug,
 } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
@@ -19,6 +20,7 @@ import { AiTab } from "./ai-tab";
 import { AutomacoesTab } from "./automacoes-tab";
 import { RespostasRapidasTab } from "./respostas-rapidas-tab";
 import { EquipeTab } from "./equipe-tab";
+import { ExatoTab } from "./exato-tab";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,7 @@ type Search = { tab?: string };
 const TABS = [
   { value: "workspace", label: "Workspace", icon: Building2 },
   { value: "webhook", label: "Webhook", icon: Webhook },
+  { value: "exato", label: "Integração Exato", icon: Plug },
   { value: "automacoes", label: "Automações", icon: Zap },
   { value: "respostas-rapidas", label: "Respostas rápidas", icon: Sparkles },
   { value: "equipe", label: "Equipe", icon: UserCog },
@@ -51,7 +54,7 @@ export default async function ConfiguracoesPage({
   const activeTab = validTab(params.tab);
 
   const session = await auth();
-  const [workspace, user] = await Promise.all([
+  const [workspace, user, integExato] = await Promise.all([
     prisma.workspace.findUnique({
       where: { id: session!.user.workspaceId },
       select: {
@@ -66,6 +69,17 @@ export default async function ConfiguracoesPage({
       where: { id: session!.user.id },
       select: { id: true, name: true, email: true, role: true },
     }),
+    prisma.integracaoExato.findUnique({
+      where: { workspaceId: session!.user.workspaceId },
+      select: {
+        usuario: true,
+        lojaId: true,
+        lojaNome: true,
+        lojaCodigoAcesso: true,
+        ultimoLoginEm: true,
+        ultimoErro: true,
+      },
+    }),
   ]);
 
   if (!workspace || !user) {
@@ -78,6 +92,16 @@ export default async function ConfiguracoesPage({
     workspace.evolutionKey &&
     workspace.evolutionInstance
   );
+
+  const integExatoView = {
+    hasCredentials: !!integExato,
+    usuario: integExato?.usuario ?? null,
+    lojaId: integExato?.lojaId ?? null,
+    lojaNome: integExato?.lojaNome ?? null,
+    lojaCodigoAcesso: integExato?.lojaCodigoAcesso ?? null,
+    ultimoLoginEm: integExato?.ultimoLoginEm ?? null,
+    ultimoErro: integExato?.ultimoErro ?? null,
+  };
 
   return (
     <div className="p-6 lg:p-8 max-w-5xl">
@@ -114,6 +138,7 @@ export default async function ConfiguracoesPage({
         {activeTab === "webhook" && (
           <WebhookTab workspaceConfigured={workspaceConfigured} />
         )}
+        {activeTab === "exato" && <ExatoTab integ={integExatoView} canEdit={canManage} />}
         {activeTab === "automacoes" && (
           <AutomacoesTab workspaceId={session!.user.workspaceId} />
         )}

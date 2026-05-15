@@ -28,18 +28,19 @@ model Workspace {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  users         User[]
-  contacts      Contact[]
-  conversations Conversation[]
-  labels        Label[]
-  settings      Setting[]
-  agentConfig   AgentConfig?
-  automations   Automation[]
-  kanbanColumns KanbanColumn[]
-  quickReplies  QuickReply[]
-  followUps     FollowUp[]
-  userInvites   UserInvite[]
-  auditLogs     AuditLog[]
+  users           User[]
+  contacts        Contact[]
+  conversations   Conversation[]
+  labels          Label[]
+  settings        Setting[]
+  agentConfig     AgentConfig?
+  automations     Automation[]
+  kanbanColumns   KanbanColumn[]
+  quickReplies    QuickReply[]
+  followUps       FollowUp[]
+  userInvites     UserInvite[]
+  auditLogs       AuditLog[]
+  integracaoExato IntegracaoExato?
 }
 
 // ============================================================
@@ -487,4 +488,35 @@ model AuditLog {
 
   @@index([workspaceId, createdAt])
   @@index([userId])
+}
+
+// ============================================================
+// INTEGRAÇÃO EXATO (PML Sistemas)
+// Cada workspace tem no máximo uma integração.
+// Senha guardada criptografada (AES-GCM via INTEGRATION_ENCRYPTION_KEY).
+// ============================================================
+
+model IntegracaoExato {
+  id               String    @id @default(cuid())
+  workspaceId      String    @unique
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  usuario          String
+  senhaEncrypted   String
+
+  // Loja escolhida (preenchida após "Sincronizar lojas")
+  lojaId           Int?
+  lojaNome         String?
+  lojaCodigoAcesso String?
+
+  // Cache de token (refresh evita refazer login a cada chamada)
+  tokenAtual       String?
+  refreshToken     String?
+  tokenExpiraEm    DateTime?
+
+  ultimoLoginEm    DateTime?
+  ultimoErro       String?
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
