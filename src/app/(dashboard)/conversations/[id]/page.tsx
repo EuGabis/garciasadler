@@ -1,8 +1,18 @@
 import { notFound } from "next/navigation";
+import { Check, CheckCheck, Clock, AlertCircle } from "lucide-react";
 import { auth } from "@/auth";
 import { getConversationWithMessages, markConversationRead } from "@/lib/conversations";
 import { formatTime, formatPhone } from "@/lib/format";
 import { MessageForm } from "./message-form";
+
+function StatusIcon({ status }: { status: string }) {
+  if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
+  if (status === "delivered") return <CheckCheck className="h-3 w-3 text-indigo-200" />;
+  if (status === "sent") return <Check className="h-3 w-3 text-indigo-200" />;
+  if (status === "pending") return <Clock className="h-3 w-3 text-indigo-200" />;
+  if (status === "failed") return <AlertCircle className="h-3 w-3 text-red-300" />;
+  return null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -55,15 +65,21 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                   }`}
                 >
                   <p className="whitespace-pre-wrap break-words">{m.content}</p>
-                  <p
-                    className={`mt-1 text-[10px] ${
+                  <div
+                    className={`mt-1 flex items-center gap-1 text-[10px] ${
                       isInbound ? "text-zinc-500" : "text-indigo-200"
                     }`}
                   >
-                    {!isInbound && m.sender?.name ? `${m.sender.name} · ` : ""}
-                    {formatTime(m.createdAt)}
-                    {!isInbound && ` · ${m.status}`}
-                  </p>
+                    {!isInbound && m.sender?.name && <span>{m.sender.name}</span>}
+                    {!isInbound && m.sender?.name && <span>·</span>}
+                    <span>{formatTime(m.createdAt)}</span>
+                    {!isInbound && (
+                      <>
+                        <span>·</span>
+                        <StatusIcon status={m.status} />
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             );

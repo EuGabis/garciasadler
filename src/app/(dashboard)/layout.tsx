@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { Notifications } from "./notifications";
 
 const nav = [
   { href: "/dashboard", label: "Visão geral", icon: LayoutDashboard },
@@ -30,6 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen flex bg-zinc-50 dark:bg-zinc-950">
+      <Notifications workspaceId={session.user.workspaceId} />
       <aside className="w-60 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col">
         <div className="px-5 py-5 border-b border-zinc-200 dark:border-zinc-800">
           <h1 className="text-base font-bold tracking-tight">Garcia Sadler</h1>
