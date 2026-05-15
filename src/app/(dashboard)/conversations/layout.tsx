@@ -1,16 +1,22 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { listConversations } from "@/lib/conversations";
 import { formatRelativeTime } from "@/lib/format";
 import { MessageSquare } from "lucide-react";
 import { ConversationsRealtime } from "./realtime";
+import { FilterTabs } from "./filter-tabs";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConversationsLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const workspaceId = session!.user.workspaceId;
-  const conversations = await listConversations(workspaceId);
+  const cookieStore = await cookies();
+  const mineOnly = cookieStore.get("conv_mine_only")?.value === "1";
+  const conversations = await listConversations(workspaceId, {
+    assignedToUserId: mineOnly ? session!.user.id : undefined,
+  });
 
   return (
     <div className="flex h-screen">
@@ -18,8 +24,11 @@ export default async function ConversationsLayout({ children }: { children: Reac
       <aside className="w-80 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col">
         <header className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
           <h1 className="text-base font-semibold">Conversas</h1>
-          <p className="text-xs text-zinc-500 mt-0.5">{conversations.length} no total</p>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            {conversations.length} {mineOnly ? "atribuída(s) a você" : "no total"}
+          </p>
         </header>
+        <FilterTabs mineOnly={mineOnly} />
 
         <ul className="flex-1 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">
           {conversations.length === 0 ? (
@@ -56,8 +65,17 @@ export default async function ConversationsLayout({ children }: { children: Reac
                           </span>
                         )}
                       </div>
-                      {c.labels.length > 0 && (
-                        <div className="mt-1 flex flex-wrap gap-1">
+                      {(c.labels.length > 0 || c.assignedTo.length > 0) && (
+                        <div className="mt-1 flex flex-wrap items-center gap-1">
+                          {c.assignedTo.slice(0, 3).map((u) => (
+                            <span
+                              key={u.id}
+                              title={u.name}
+                              className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[8px] font-bold ring-1 ring-white dark:ring-zinc-900"
+                            >
+                              {u.name[0]?.toUpperCase() ?? "?"}
+                            </span>
+                          ))}
                           {c.labels.slice(0, 3).map((l) => (
                             <span
                               key={l.id}

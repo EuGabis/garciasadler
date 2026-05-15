@@ -7,6 +7,7 @@ import { formatTime, formatPhone } from "@/lib/format";
 import { MessageForm } from "./message-form";
 import { MediaBubble } from "./media-bubble";
 import { LabelPicker, AttachedLabels } from "./label-picker";
+import { AssignPicker, AssignedBadges } from "./assign-picker";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
@@ -31,7 +32,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
     await markConversationRead(conversation.id);
   }
 
-  const [availableLabels, quickReplies] = await Promise.all([
+  const [availableLabels, quickReplies, team] = await Promise.all([
     prisma.label.findMany({
       where: { workspaceId: session!.user.workspaceId },
       select: { id: true, name: true, color: true },
@@ -42,8 +43,14 @@ export default async function ConversationPage({ params }: { params: Promise<Par
       select: { id: true, title: true, content: true },
       orderBy: { title: "asc" },
     }),
+    prisma.user.findMany({
+      where: { workspaceId: session!.user.workspaceId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
   ]);
   const attachedLabels = conversation.labels.map((l) => l.label);
+  const assignedUsers = conversation.assignments.map((a) => a.user);
 
   return (
     <div className="h-full flex flex-col">
@@ -56,6 +63,11 @@ export default async function ConversationPage({ params }: { params: Promise<Par
             <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
             <p className="text-xs text-zinc-500">{formatPhone(conversation.contact.phone)}</p>
           </div>
+          <AssignPicker
+            conversationId={conversation.id}
+            assigned={assignedUsers}
+            team={team}
+          />
           <LabelPicker
             conversationId={conversation.id}
             attached={attachedLabels}
@@ -63,9 +75,14 @@ export default async function ConversationPage({ params }: { params: Promise<Par
           />
           <span className="text-xs text-zinc-500 capitalize">{conversation.status}</span>
         </div>
-        {attachedLabels.length > 0 && (
-          <div className="mt-2">
-            <AttachedLabels conversationId={conversation.id} labels={attachedLabels} />
+        {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {assignedUsers.length > 0 && (
+              <AssignedBadges conversationId={conversation.id} assigned={assignedUsers} />
+            )}
+            {attachedLabels.length > 0 && (
+              <AttachedLabels conversationId={conversation.id} labels={attachedLabels} />
+            )}
           </div>
         )}
       </header>

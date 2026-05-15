@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  UserCog,
 } from "lucide-react";
 import { Notifications } from "./notifications";
 
@@ -24,6 +25,7 @@ const nav = [
   { href: "/respostas-rapidas", label: "Respostas rápidas", icon: Sparkles },
   { href: "/automacoes", label: "Automações", icon: Zap },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/equipe", label: "Equipe", icon: UserCog },
   { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 

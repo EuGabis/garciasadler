@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 
 export type ConversationLabelInfo = { id: string; name: string; color: string };
+export type AssignedUserInfo = { id: string; name: string };
 
 export type ConversationListItem = {
   id: string;
@@ -11,16 +12,20 @@ export type ConversationListItem = {
   unreadCount: number;
   status: string;
   labels: ConversationLabelInfo[];
+  assignedTo: AssignedUserInfo[];
 };
 
 export async function listConversations(
   workspaceId: string,
-  options: { includeArchived?: boolean } = {}
+  options: { includeArchived?: boolean; assignedToUserId?: string } = {}
 ): Promise<ConversationListItem[]> {
   const rows = await prisma.conversation.findMany({
     where: {
       workspaceId,
       ...(options.includeArchived ? {} : { status: { in: ["open", "pending"] } }),
+      ...(options.assignedToUserId
+        ? { assignments: { some: { userId: options.assignedToUserId } } }
+        : {}),
     },
     orderBy: [{ lastMessageAt: { sort: "desc", nulls: "last" } }, { updatedAt: "desc" }],
     select: {
@@ -31,6 +36,7 @@ export async function listConversations(
       lastMessageAt: true,
       contact: { select: { name: true, phone: true } },
       labels: { select: { label: { select: { id: true, name: true, color: true } } } },
+      assignments: { select: { user: { select: { id: true, name: true } } } },
     },
     take: 100,
   });
@@ -44,6 +50,7 @@ export async function listConversations(
     unreadCount: r.unreadCount,
     status: r.status,
     labels: r.labels.map((l) => l.label),
+    assignedTo: r.assignments.map((a) => a.user),
   }));
 }
 
@@ -57,6 +64,7 @@ export async function getConversationWithMessages(workspaceId: string, conversat
       unreadCount: true,
       contact: { select: { id: true, name: true, phone: true, avatar: true } },
       labels: { select: { label: { select: { id: true, name: true, color: true } } } },
+      assignments: { select: { user: { select: { id: true, name: true } } } },
       messages: {
         orderBy: { createdAt: "asc" },
         select: {
