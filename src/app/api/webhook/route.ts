@@ -3,23 +3,33 @@ import { prisma } from "@/lib/db";
 import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
-import type { MessageStatus } from "@/generated/prisma/client";
+import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
+
+type EvolutionMediaMessage = {
+  url?: string;
+  mimetype?: string;
+  caption?: string;
+  fileName?: string;
+  base64?: string;
+};
 
 type EvolutionMessageUpsert = {
   event?: string;
   instance?: string;
   data?: {
-    key?: {
-      remoteJid?: string;
-      fromMe?: boolean;
-      id?: string;
-    };
+    key?: { remoteJid?: string; fromMe?: boolean; id?: string };
     pushName?: string;
     message?: {
       conversation?: string;
       extendedTextMessage?: { text?: string };
+      imageMessage?: EvolutionMediaMessage;
+      audioMessage?: EvolutionMediaMessage;
+      videoMessage?: EvolutionMediaMessage;
+      documentMessage?: EvolutionMediaMessage;
+      stickerMessage?: EvolutionMediaMessage;
+      base64?: string;
     };
     messageType?: string;
   };
@@ -40,10 +50,58 @@ type EvolutionMessageUpdate = {
 
 const OUTBOUND_DEDUP_WINDOW_MS = 15_000;
 
-function extractText(payload: EvolutionMessageUpsert): string | null {
+type ExtractedMessage = {
+  type: MessageType;
+  content: string;
+  mediaBase64: string | null;
+  mediaUrl: string | null;
+  fileName: string | null;
+};
+
+function extract(payload: EvolutionMessageUpsert): ExtractedMessage | null {
   const msg = payload.data?.message;
   if (!msg) return null;
-  return msg.conversation ?? msg.extendedTextMessage?.text ?? null;
+
+  // Texto puro
+  if (msg.conversation) {
+    return { type: "text", content: msg.conversation, mediaBase64: null, mediaUrl: null, fileName: null };
+  }
+  if (msg.extendedTextMessage?.text) {
+    return {
+      type: "text",
+      content: msg.extendedTextMessage.text,
+      mediaBase64: null,
+      mediaUrl: null,
+      fileName: null,
+    };
+  }
+
+  // Mídia: o base64 vem em msg.base64 (no nível do message) quando habilitado no webhook
+  const inlineBase64 = msg.base64 ?? null;
+
+  const mediaTypes: Array<[keyof typeof msg, MessageType, string]> = [
+    ["imageMessage", "image", "[imagem]"],
+    ["videoMessage", "video", "[vídeo]"],
+    ["audioMessage", "audio", "[áudio]"],
+    ["documentMessage", "document", "[documento]"],
+    ["stickerMessage", "image", "[figurinha]"],
+  ];
+
+  for (const [key, type, placeholder] of mediaTypes) {
+    const media = msg[key] as EvolutionMediaMessage | undefined;
+    if (!media) continue;
+    const base64 = inlineBase64 ?? media.base64 ?? null;
+    const caption = media.caption?.trim() ?? "";
+    return {
+      type,
+      content: caption || placeholder,
+      mediaBase64: base64,
+      mediaUrl: media.url ?? null,
+      fileName: media.fileName ?? null,
+    };
+  }
+
+  return null;
 }
 
 function truncate(s: string, n = 80): string {
@@ -51,8 +109,7 @@ function truncate(s: string, n = 80): string {
 }
 
 /**
- * Map Baileys/Evolution ack code or string to our MessageStatus enum.
- * Baileys: 0=ERROR 1=PENDING 2=SERVER_ACK 3=DELIVERY_ACK 4=READ 5=PLAYED
+ * Baileys ack: 0=ERROR 1=PENDING 2=SERVER_ACK 3=DELIVERY_ACK 4=READ 5=PLAYED
  */
 function mapStatus(raw: string | number | undefined): MessageStatus | null {
   if (raw === undefined || raw === null) return null;
@@ -80,8 +137,8 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
     if (exists) return Response.json({ ok: true, ignored: "duplicate evolutionId" });
   }
 
-  const text = extractText(payload);
-  if (!text) return Response.json({ ok: true, ignored: "no text" });
+  const extracted = extract(payload);
+  if (!extracted) return Response.json({ ok: true, ignored: "unsupported message type" });
 
   const phone = normalizePhone(remoteJid);
   const pushName = payload.data?.pushName ?? phone;
@@ -101,11 +158,13 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
     select: { id: true },
   });
 
+  const previewText = truncate(extracted.content);
+
   const conversation = existing
     ? await prisma.conversation.update({
         where: { id: existing.id },
         data: {
-          lastMessage: truncate(text),
+          lastMessage: previewText,
           lastMessageAt: new Date(),
           ...(fromMe ? {} : { unreadCount: { increment: 1 } }),
         },
@@ -116,31 +175,34 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
           contactId: contact.id,
           channel: "whatsapp",
           status: "open",
-          lastMessage: truncate(text),
+          lastMessage: previewText,
           lastMessageAt: new Date(),
           unreadCount: fromMe ? 0 : 1,
         },
       });
 
   if (fromMe) {
-    const pending = await prisma.message.findFirst({
-      where: {
-        conversationId: conversation.id,
-        direction: "outbound",
-        content: text,
-        evolutionId: null,
-        createdAt: { gte: new Date(Date.now() - OUTBOUND_DEDUP_WINDOW_MS) },
-      },
-      orderBy: { createdAt: "desc" },
-      select: { id: true },
-    });
-
-    if (pending) {
-      await prisma.message.update({
-        where: { id: pending.id },
-        data: { evolutionId: evolutionId ?? undefined, status: "sent" },
+    // Dedup com mensagem de texto enviada pelo painel (sem evolutionId)
+    if (extracted.type === "text") {
+      const pending = await prisma.message.findFirst({
+        where: {
+          conversationId: conversation.id,
+          direction: "outbound",
+          type: "text",
+          content: extracted.content,
+          evolutionId: null,
+          createdAt: { gte: new Date(Date.now() - OUTBOUND_DEDUP_WINDOW_MS) },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
       });
-      return Response.json({ ok: true, deduped: true, messageId: pending.id });
+      if (pending) {
+        await prisma.message.update({
+          where: { id: pending.id },
+          data: { evolutionId: evolutionId ?? undefined, status: "sent" },
+        });
+        return Response.json({ ok: true, deduped: true, messageId: pending.id });
+      }
     }
 
     const message = await prisma.message.create({
@@ -148,9 +210,12 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
         conversationId: conversation.id,
         role: "assistant",
         direction: "outbound",
-        type: "text",
+        type: extracted.type,
         status: "sent",
-        content: text,
+        content: extracted.content,
+        mediaBase64: extracted.mediaBase64,
+        mediaUrl: extracted.mediaUrl,
+        fileName: extracted.fileName,
         evolutionId: evolutionId ?? undefined,
       },
     });
@@ -158,7 +223,7 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
     await publishRealtime(workspaceId, {
       type: "message:new",
       conversationId: conversation.id,
-      preview: truncate(text),
+      preview: previewText,
     });
 
     return Response.json({ ok: true, source: "device", messageId: message.id });
@@ -169,9 +234,12 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
       conversationId: conversation.id,
       role: "user",
       direction: "inbound",
-      type: "text",
+      type: extracted.type,
       status: "delivered",
-      content: text,
+      content: extracted.content,
+      mediaBase64: extracted.mediaBase64,
+      mediaUrl: extracted.mediaUrl,
+      fileName: extracted.fileName,
       evolutionId: evolutionId ?? undefined,
     },
   });
@@ -179,7 +247,7 @@ async function handleMessageUpsert(payload: EvolutionMessageUpsert, workspaceId:
   await publishRealtime(workspaceId, {
     type: "message:new",
     conversationId: conversation.id,
-    preview: truncate(text),
+    preview: previewText,
   });
 
   return Response.json({ ok: true, messageId: message.id });
@@ -203,7 +271,6 @@ async function handleMessageUpdate(payload: EvolutionMessageUpdate, workspaceId:
     return Response.json({ ok: true, ignored: "message not found in workspace" });
   }
 
-  // Não regredir status: read > delivered > sent > pending > failed
   const order: Record<MessageStatus, number> = {
     failed: 0,
     pending: 1,

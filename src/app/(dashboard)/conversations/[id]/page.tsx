@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { getConversationWithMessages, markConversationRead } from "@/lib/conversations";
 import { formatTime, formatPhone } from "@/lib/format";
 import { MessageForm } from "./message-form";
+import { MediaBubble } from "./media-bubble";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
@@ -64,7 +65,13 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                       : "bg-indigo-600 text-white"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap break-words">{m.content}</p>
+                  <MediaBubble
+                    type={m.type}
+                    content={m.content}
+                    mediaBase64={m.mediaBase64}
+                    mediaUrl={m.mediaUrl}
+                    fileName={m.fileName}
+                  />
                   <div
                     className={`mt-1 flex items-center gap-1 text-[10px] ${
                       isInbound ? "text-zinc-500" : "text-indigo-200"
