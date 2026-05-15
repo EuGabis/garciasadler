@@ -30,15 +30,15 @@ export default async function FollowUpsPage() {
   return (
     <div className="p-8 max-w-3xl">
       <header className="mb-6">
-        <nav className="text-xs text-zinc-500 mb-2 flex gap-3">
-          <Link href="/automacoes" className="hover:text-zinc-900 dark:hover:text-zinc-100">
+        <nav className="text-xs text-slate-500 mb-2 flex gap-3">
+          <Link href="/automacoes" className="hover:text-slate-900 dark:hover:text-slate-100">
             Automações
           </Link>
           <span>·</span>
-          <span className="text-zinc-900 dark:text-zinc-100 font-medium">Follow-ups</span>
+          <span className="text-slate-900 dark:text-slate-100 font-medium">Follow-ups</span>
         </nav>
         <h1 className="text-2xl font-bold tracking-tight">Follow-ups</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-slate-500">
           Mensagens automáticas pra reengajar conversas. Executam a cada 10 minutos via cron.
         </p>
       </header>

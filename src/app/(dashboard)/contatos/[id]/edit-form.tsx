@@ -26,7 +26,7 @@ export function EditForm({ contact }: { contact: Contact }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             Nome
           </label>
           <input
@@ -35,39 +35,39 @@ export function EditForm({ contact }: { contact: Contact }) {
             required
             minLength={1}
             maxLength={120}
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             Telefone
           </label>
           <input
             name="phone"
             defaultValue={contact.phone}
             required
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             E-mail
           </label>
           <input
             name="email"
             type="email"
             defaultValue={contact.email ?? ""}
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             Status
           </label>
           <select
             name="status"
             defaultValue={contact.status}
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           >
             <option value="active">Ativo</option>
             <option value="archived">Arquivado</option>
@@ -75,31 +75,31 @@ export function EditForm({ contact }: { contact: Contact }) {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             Produto/serviço de interesse
           </label>
           <input
             name="productInterest"
             defaultValue={contact.productInterest ?? ""}
             placeholder="ex: cimento, tijolos, areia..."
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             Origem
           </label>
           <input
             name="source"
             defaultValue={contact.source ?? ""}
             placeholder="ex: whatsapp, indicação, anúncio"
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
           Anotações internas
         </label>
         <textarea
@@ -108,7 +108,7 @@ export function EditForm({ contact }: { contact: Contact }) {
           rows={4}
           maxLength={2000}
           placeholder="Visíveis só pra equipe..."
-          className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500 resize-none"
         />
       </div>
 
@@ -116,7 +116,7 @@ export function EditForm({ contact }: { contact: Contact }) {
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium transition"
+          className="px-4 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-sm font-medium transition"
         >
           {pending ? "Salvando..." : "Salvar"}
         </button>

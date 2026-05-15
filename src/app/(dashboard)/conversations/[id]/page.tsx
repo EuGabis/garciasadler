@@ -11,9 +11,9 @@ import { AssignPicker, AssignedBadges } from "./assign-picker";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
-  if (status === "delivered") return <CheckCheck className="h-3 w-3 text-indigo-200" />;
-  if (status === "sent") return <Check className="h-3 w-3 text-indigo-200" />;
-  if (status === "pending") return <Clock className="h-3 w-3 text-indigo-200" />;
+  if (status === "delivered") return <CheckCheck className="h-3 w-3 text-brand-orange-100" />;
+  if (status === "sent") return <Check className="h-3 w-3 text-brand-orange-100" />;
+  if (status === "pending") return <Clock className="h-3 w-3 text-brand-orange-100" />;
   if (status === "failed") return <AlertCircle className="h-3 w-3 text-red-300" />;
   return null;
 }
@@ -54,14 +54,14 @@ export default async function ConversationPage({ params }: { params: Promise<Par
 
   return (
     <div className="h-full flex flex-col">
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-3">
+      <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-3">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-sm font-semibold flex items-center justify-center">
+          <div className="h-9 w-9 rounded-full bg-brand-orange-500/10 dark:bg-brand-orange-500/20 text-brand-orange-700 dark:text-brand-orange-300 text-sm font-semibold flex items-center justify-center">
             {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
-            <p className="text-xs text-zinc-500">{formatPhone(conversation.contact.phone)}</p>
+            <p className="text-xs text-slate-500">{formatPhone(conversation.contact.phone)}</p>
           </div>
           <AssignPicker
             conversationId={conversation.id}
@@ -73,7 +73,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
             attached={attachedLabels}
             available={availableLabels}
           />
-          <span className="text-xs text-zinc-500 capitalize">{conversation.status}</span>
+          <span className="text-xs text-slate-500 capitalize">{conversation.status}</span>
         </div>
         {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -89,7 +89,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
 
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2">
         {conversation.messages.length === 0 ? (
-          <div className="text-center text-sm text-zinc-500 py-12">
+          <div className="text-center text-sm text-slate-500 py-12">
             Nenhuma mensagem ainda.
           </div>
         ) : (
@@ -106,8 +106,8 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                 <div
                   className={`max-w-[70%] rounded-2xl px-3.5 py-2 text-sm ${
                     isInbound
-                      ? "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
-                      : "bg-indigo-600 text-white"
+                      ? "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                      : "bg-brand-orange-500 text-white"
                   }`}
                 >
                   <MediaBubble
@@ -119,7 +119,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                   />
                   <div
                     className={`mt-1 flex items-center gap-1 text-[10px] ${
-                      isInbound ? "text-zinc-500" : "text-indigo-200"
+                      isInbound ? "text-slate-500" : "text-brand-orange-100"
                     }`}
                   >
                     {!isInbound && m.sender?.name && <span>{m.sender.name}</span>}

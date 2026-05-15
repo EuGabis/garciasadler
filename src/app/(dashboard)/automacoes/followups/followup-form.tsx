@@ -57,12 +57,12 @@ export function FollowUpFormModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-900 rounded-xl shadow-xl"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-xl shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex items-center justify-between px-5 py-4 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 bg-white dark:bg-zinc-900">
+        <header className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900">
           <h2 className="text-base font-semibold">{isEdit ? "Editar" : "Novo"} follow-up</h2>
-          <button type="button" onClick={onClose} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
+          <button type="button" onClick={onClose} className="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -71,7 +71,7 @@ export function FollowUpFormModal({
           {isEdit && <input type="hidden" name="id" value={initial.id} />}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Nome
             </label>
             <input
@@ -80,7 +80,7 @@ export function FollowUpFormModal({
               maxLength={80}
               defaultValue={initial?.name ?? ""}
               placeholder="ex: Reengajamento 24h"
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
             />
           </div>
 
@@ -90,13 +90,13 @@ export function FollowUpFormModal({
               name="enabled"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
-              className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 rounded text-brand-orange-600 focus:ring-brand-orange-500"
             />
             <span className="text-sm">Ativo</span>
           </label>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Quando disparar
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -108,8 +108,8 @@ export function FollowUpFormModal({
                   key={t.value}
                   className={`px-3 py-2 rounded-lg border cursor-pointer text-sm text-center ${
                     triggerType === t.value
-                      ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30"
-                      : "border-zinc-300 dark:border-zinc-700"
+                      ? "border-brand-orange-500 bg-brand-orange-50 dark:bg-brand-orange-500/10"
+                      : "border-slate-300 dark:border-slate-700"
                   }`}
                 >
                   <input
@@ -128,7 +128,7 @@ export function FollowUpFormModal({
 
           {triggerType === "inactivity" ? (
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Após quantas horas sem resposta?
               </label>
               <input
@@ -138,22 +138,22 @@ export function FollowUpFormModal({
                 max={720}
                 required
                 defaultValue={initial?.inactivityHours ?? 24}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
               />
-              <p className="mt-1 text-[10px] text-zinc-500">
+              <p className="mt-1 text-[10px] text-slate-500">
                 Só dispara se a última mensagem foi do cliente.
               </p>
             </div>
           ) : (
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Coluna do pipeline
               </label>
               <select
                 name="columnId"
                 required
                 defaultValue={initial?.columnId ?? ""}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"
               >
                 <option value="">— Selecione —</option>
                 {columns.map((c) => (
@@ -166,7 +166,7 @@ export function FollowUpFormModal({
           )}
 
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
               Mensagem que será enviada
             </label>
             <textarea
@@ -176,13 +176,13 @@ export function FollowUpFormModal({
               rows={3}
               defaultValue={initial?.message ?? ""}
               placeholder="Olá! Notei que ainda não tive seu retorno..."
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm resize-none"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm resize-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Repetir no máximo
               </label>
               <input
@@ -191,17 +191,17 @@ export function FollowUpFormModal({
                 min={1}
                 max={10}
                 defaultValue={initial?.maxTimes ?? 1}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Transferir pra agente (opcional)
               </label>
               <select
                 name="transferToUserId"
                 defaultValue={initial?.transferToUserId ?? ""}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"
               >
                 <option value="">— Ninguém —</option>
                 {team.map((u) => (
@@ -219,14 +219,14 @@ export function FollowUpFormModal({
             <button
               type="submit"
               disabled={pending}
-              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium transition"
+              className="px-4 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-sm font-medium transition"
             >
               {pending ? "Salvando..." : isEdit ? "Salvar" : "Criar"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 text-sm font-medium transition"
+              className="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-sm font-medium transition"
             >
               Cancelar
             </button>

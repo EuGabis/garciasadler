@@ -88,22 +88,22 @@ export function Board({
         return (
           <div
             key={col.id}
-            className={`w-72 shrink-0 rounded-xl border bg-white dark:bg-zinc-900 flex flex-col ${
+            className={`w-72 shrink-0 rounded-xl border bg-white dark:bg-slate-900 flex flex-col ${
               overColumn === col.id
-                ? "border-indigo-400 dark:border-indigo-500 ring-2 ring-indigo-100 dark:ring-indigo-900"
-                : "border-zinc-200 dark:border-zinc-800"
+                ? "border-brand-orange-400 dark:border-brand-orange-500 ring-2 ring-brand-orange-100 dark:ring-brand-orange-900"
+                : "border-slate-200 dark:border-slate-800"
             }`}
             onDragOver={(e) => onDragOver(e, col.id)}
             onDragLeave={() => onDragLeave(col.id)}
             onDrop={(e) => onDrop(e, col.id)}
           >
-            <header className="px-3 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-2">
+            <header className="px-3 py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: col.color }}
               />
               <h3 className="text-sm font-semibold truncate flex-1">{col.name}</h3>
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-slate-500">
                 {col.cards.length}
                 {col.wipLimit ? `/${col.wipLimit}` : ""}
               </span>
@@ -111,7 +111,7 @@ export function Board({
 
             <ul className="flex-1 p-2 space-y-2 min-h-[60px]">
               {col.cards.length === 0 ? (
-                <li className="text-center text-[11px] text-zinc-400 py-4 italic">
+                <li className="text-center text-[11px] text-slate-400 py-4 italic">
                   arraste cards pra cá
                 </li>
               ) : (
@@ -127,22 +127,22 @@ export function Board({
                       e.stopPropagation();
                       onDrop(e, col.id, idx);
                     }}
-                    className={`group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2.5 hover:border-indigo-300 dark:hover:border-indigo-700 transition cursor-grab active:cursor-grabbing ${
+                    className={`group rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 hover:border-brand-orange-300 dark:hover:border-brand-orange-700 transition cursor-grab active:cursor-grabbing ${
                       dragCardId === card.id ? "opacity-40" : ""
                     }`}
                   >
                     <div className="flex items-start gap-2">
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[11px] font-semibold flex items-center justify-center">
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-brand-orange-500/10 dark:bg-brand-orange-500/20 text-brand-orange-700 dark:text-brand-orange-300 text-[11px] font-semibold flex items-center justify-center">
                         {card.contactName[0]?.toUpperCase() ?? "?"}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{card.contactName}</p>
-                        <p className="text-[11px] text-zinc-500 truncate">{card.lastMessage ?? "—"}</p>
+                        <p className="text-[11px] text-slate-500 truncate">{card.lastMessage ?? "—"}</p>
                       </div>
                       <button
                         type="button"
                         onClick={() => removeCard(card.id)}
-                        className="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-red-500 transition"
+                        className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition"
                         title="Remover do pipeline"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -163,7 +163,7 @@ export function Board({
                     )}
                     <Link
                       href={`/conversations/${card.conversationId}`}
-                      className="block mt-1.5 text-[10px] text-indigo-600 hover:underline"
+                      className="block mt-1.5 text-[10px] text-brand-orange-600 hover:underline"
                     >
                       abrir conversa →
                     </Link>
@@ -172,14 +172,14 @@ export function Board({
               )}
             </ul>
 
-            <footer className="p-2 border-t border-zinc-200 dark:border-zinc-800 relative">
+            <footer className="p-2 border-t border-slate-200 dark:border-slate-800 relative">
               <button
                 type="button"
                 onClick={() =>
                   setPickerOpenFor((cur) => (cur === col.id ? null : col.id))
                 }
                 disabled={!!overLimit || unassigned.length === 0}
-                className="w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:hover:bg-transparent transition"
+                className="w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-transparent transition"
                 title={
                   overLimit
                     ? "Limite WIP atingido"
@@ -195,9 +195,9 @@ export function Board({
               {pickerOpenFor === col.id && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setPickerOpenFor(null)} />
-                  <div className="absolute bottom-full left-2 right-2 mb-1 z-20 max-h-60 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg py-1">
+                  <div className="absolute bottom-full left-2 right-2 mb-1 z-20 max-h-60 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg py-1">
                     {unassigned.length === 0 ? (
-                      <p className="px-3 py-3 text-xs text-zinc-500">
+                      <p className="px-3 py-3 text-xs text-slate-500">
                         Sem conversas disponíveis.
                       </p>
                     ) : (
@@ -206,10 +206,10 @@ export function Board({
                           key={c.id}
                           type="button"
                           onClick={() => addCard(col.id, c.id)}
-                          className="w-full text-left px-3 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+                          className="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                         >
                           <p className="text-xs font-medium truncate">{c.contact.name}</p>
-                          <p className="text-[10px] text-zinc-500 truncate">
+                          <p className="text-[10px] text-slate-500 truncate">
                             {c.lastMessage ?? c.contact.phone}
                           </p>
                         </button>

@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { MessageSquare, Users, Tag, Kanban } from "lucide-react";
+import { MessageSquare, Users, Tag, Columns3 } from "lucide-react";
+import { PageHeader, SectionCard } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -9,61 +10,112 @@ export default async function DashboardPage() {
   const session = await auth();
   const workspaceId = session!.user.workspaceId;
 
-  const [conversations, contacts, labels, openConversations] = await Promise.all([
+  const [conversations, contacts, labels, openConversations, columns] = await Promise.all([
     prisma.conversation.count({ where: { workspaceId } }),
     prisma.contact.count({ where: { workspaceId } }),
     prisma.label.count({ where: { workspaceId } }),
     prisma.conversation.count({ where: { workspaceId, status: "open" } }),
+    prisma.kanbanColumn.count({ where: { workspaceId } }),
   ]);
 
   const cards = [
-    { label: "Conversas abertas", value: openConversations, total: conversations, href: "/conversations", icon: MessageSquare, color: "indigo" },
-    { label: "Contatos", value: contacts, href: "/contatos", icon: Users, color: "emerald" },
-    { label: "Etiquetas", value: labels, href: "/etiquetas", icon: Tag, color: "amber" },
-    { label: "Pipeline", value: 0, href: "/pipeline", icon: Kanban, color: "rose" },
+    {
+      label: "Conversas abertas",
+      value: openConversations,
+      total: conversations,
+      href: "/conversations",
+      icon: MessageSquare,
+      iconBg: "bg-brand-orange-500/10",
+      iconColor: "text-brand-orange-500",
+    },
+    {
+      label: "Contatos",
+      value: contacts,
+      href: "/contatos",
+      icon: Users,
+      iconBg: "bg-emerald-500/10",
+      iconColor: "text-emerald-600",
+    },
+    {
+      label: "Etiquetas",
+      value: labels,
+      href: "/etiquetas",
+      icon: Tag,
+      iconBg: "bg-amber-500/10",
+      iconColor: "text-amber-600",
+    },
+    {
+      label: "Colunas no pipeline",
+      value: columns,
+      href: "/pipeline",
+      icon: Columns3,
+      iconBg: "bg-blue-500/10",
+      iconColor: "text-blue-600",
+    },
   ];
 
   return (
-    <div className="p-8 max-w-6xl">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">Olá, {session!.user.name}</h1>
-        <p className="mt-1 text-sm text-zinc-500">Visão geral do seu workspace.</p>
-      </header>
+    <div className="p-6 lg:p-8 max-w-6xl">
+      <PageHeader
+        title={`Olá, ${session!.user.name?.split(" ")[0]}`}
+        description="Visão geral do seu workspace."
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map(({ label, value, total, href, icon: Icon }) => (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        {cards.map(({ label, value, total, href, icon: Icon, iconBg, iconColor }) => (
           <Link
             key={label}
             href={href}
-            className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition"
+            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 hover:border-brand-orange-500/40 transition group"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-zinc-500">{label}</span>
-              <Icon className="h-4 w-4 text-zinc-400" />
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                {label}
+              </span>
+              <span
+                className={`h-9 w-9 rounded-xl ${iconBg} ${iconColor} flex items-center justify-center`}
+              >
+                <Icon className="h-4 w-4" />
+              </span>
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold">{value}</span>
+              <span className="text-3xl font-bold tracking-tight">{value}</span>
               {total !== undefined && total !== value && (
-                <span className="text-sm text-zinc-500">/ {total}</span>
+                <span className="text-sm text-slate-500">/ {total}</span>
               )}
             </div>
           </Link>
         ))}
       </div>
 
-      <section className="mt-10 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-        <h2 className="text-base font-semibold mb-3">Próximos passos</h2>
-        <ol className="text-sm space-y-2 text-zinc-600 dark:text-zinc-400 list-decimal list-inside">
+      <SectionCard
+        title="Próximos passos"
+        description="Configure o workspace pra começar a atender."
+      >
+        <ol className="text-sm space-y-2 text-slate-600 dark:text-slate-400 list-decimal list-inside">
           <li>
-            Configure o Evolution API em{" "}
-            <Link className="text-indigo-600 hover:underline" href="/configuracoes">
+            Confira a configuração do Evolution API em{" "}
+            <Link className="text-brand-orange-600 hover:underline font-medium" href="/configuracoes">
               Configurações
             </Link>
           </li>
-          <li>Conecte uma instância WhatsApp e teste o webhook</li>
-          <li>Crie etiquetas e colunas do pipeline conforme seu fluxo</li>
+          <li>
+            Crie etiquetas em{" "}
+            <Link className="text-brand-orange-600 hover:underline font-medium" href="/etiquetas">
+              /etiquetas
+            </Link>{" "}
+            pra organizar conversas
+          </li>
+          <li>
+            Configure automações em{" "}
+            <Link className="text-brand-orange-600 hover:underline font-medium" href="/automacoes">
+              /automacoes
+            </Link>{" "}
+            pra responder primeira mensagem automaticamente
+          </li>
+          <li>Convide sua equipe em /equipe pra dividir os atendimentos</li>
         </ol>
-      </section>
+      </SectionCard>
     </div>
   );
 }

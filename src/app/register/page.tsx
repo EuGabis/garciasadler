@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { registerAction, type RegisterState } from "./actions";
+import { Button, Input, Label } from "@/components/ui";
 
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState<RegisterState, FormData>(
@@ -11,92 +12,64 @@ export default function RegisterPage() {
   );
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-black p-6">
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Criar workspace
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Você será o owner do workspace
-          </p>
+          <div className="mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-brand-orange-500/30 mb-4">
+            G
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Criar workspace</h1>
+          <p className="mt-1 text-sm text-slate-500">Você será o owner do workspace</p>
         </div>
 
         <form action={formAction} className="space-y-4">
           <div>
-            <label htmlFor="workspaceName" className="block text-sm font-medium mb-1.5">
-              Nome do workspace
-            </label>
-            <input
+            <Label htmlFor="workspaceName">Nome do workspace</Label>
+            <Input
               id="workspaceName"
               name="workspaceName"
-              type="text"
               required
               minLength={2}
               maxLength={80}
               placeholder="Garcia Sadler"
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1.5">
-              Seu nome
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              minLength={2}
-              autoComplete="name"
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <Label htmlFor="name">Seu nome</Label>
+            <Input id="name" name="name" required minLength={2} autoComplete="name" />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1.5">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" name="email" type="email" required autoComplete="email" />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1.5">
-              Senha
-            </label>
-            <input
+            <Label htmlFor="password">Senha</Label>
+            <Input
               id="password"
               name="password"
               type="password"
               required
               minLength={8}
               autoComplete="new-password"
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-            <p className="mt-1 text-xs text-zinc-500">Mínimo 8 caracteres</p>
+            <p className="mt-1 text-[11px] text-slate-500">Mínimo 8 caracteres</p>
           </div>
 
           {state?.error && (
             <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
           )}
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium py-2.5 text-sm transition"
-          >
+          <Button type="submit" disabled={pending} size="lg" className="w-full">
             {pending ? "Criando..." : "Criar workspace"}
-          </button>
+          </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-slate-500">
           Já tem conta?{" "}
-          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-700">
+          <Link
+            href="/login"
+            className="font-semibold text-brand-orange-600 hover:text-brand-orange-700"
+          >
             Entrar
           </Link>
         </p>

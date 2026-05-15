@@ -31,7 +31,7 @@ export function LabelRow({ label }: { label: Label }) {
     return (
       <form
         action={formAction}
-        className="flex items-center gap-2 px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800"
+        className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-800"
       >
         <input type="hidden" name="id" value={label.id} />
         <input
@@ -46,7 +46,7 @@ export function LabelRow({ label }: { label: Label }) {
           required
           maxLength={40}
           autoFocus
-          className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
         />
         <button
           type="submit"
@@ -59,7 +59,7 @@ export function LabelRow({ label }: { label: Label }) {
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="p-1.5 rounded text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          className="p-1.5 rounded text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"
           title="Cancelar"
         >
           <X className="h-4 w-4" />
@@ -77,14 +77,14 @@ export function LabelRow({ label }: { label: Label }) {
       />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{label.name}</p>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-slate-500">
           {label.conversationCount} {label.conversationCount === 1 ? "conversa" : "conversas"}
         </p>
       </div>
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="p-1.5 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+        className="p-1.5 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
         title="Editar"
       >
         <Pencil className="h-3.5 w-3.5" />
@@ -116,7 +116,7 @@ export function CreateLabelForm() {
   return (
     <form
       action={formAction}
-      className="flex items-center gap-2 p-4 border-b border-zinc-200 dark:border-zinc-800"
+      className="flex items-center gap-2 p-4 border-b border-slate-200 dark:border-slate-800"
     >
       <input
         type="color"
@@ -130,12 +130,12 @@ export function CreateLabelForm() {
         required
         maxLength={40}
         placeholder="Nova etiqueta..."
-        className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange-500"
       />
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium transition"
+        className="px-4 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 disabled:opacity-60 text-white text-sm font-medium transition"
       >
         {pending ? "..." : "Criar"}
       </button>

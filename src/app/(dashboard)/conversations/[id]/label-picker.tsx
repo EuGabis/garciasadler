@@ -34,7 +34,7 @@ export function LabelPicker({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
         title="Etiquetas"
       >
         <Tag className="h-3.5 w-3.5" />
@@ -44,9 +44,9 @@ export function LabelPicker({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 w-60 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg py-1 max-h-72 overflow-y-auto">
+          <div className="absolute right-0 top-full mt-1 z-20 w-60 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg py-1 max-h-72 overflow-y-auto">
             {available.length === 0 ? (
-              <p className="px-3 py-3 text-xs text-zinc-500">
+              <p className="px-3 py-3 text-xs text-slate-500">
                 Sem etiquetas. Crie em <span className="font-medium">/etiquetas</span>.
               </p>
             ) : (
@@ -57,7 +57,7 @@ export function LabelPicker({
                     key={l.id}
                     type="button"
                     onClick={() => toggle(l.id)}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                   >
                     <span
                       className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
@@ -65,7 +65,7 @@ export function LabelPicker({
                     />
                     <span className="flex-1 text-left truncate">{l.name}</span>
                     {isAttached && (
-                      <span className="text-[10px] text-indigo-600 font-medium">✓</span>
+                      <span className="text-[10px] text-brand-orange-600 font-medium">✓</span>
                     )}
                   </button>
                 );

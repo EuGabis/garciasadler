@@ -57,7 +57,7 @@ export function FollowUpList({
         <button
           type="button"
           onClick={() => setCreating(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-orange-500 hover:bg-brand-orange-600 text-white text-sm font-medium transition"
         >
           <Plus className="h-3.5 w-3.5" />
           Novo follow-up
@@ -76,34 +76,34 @@ export function FollowUpList({
         />
       )}
 
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
         {followUps.length === 0 ? (
-          <div className="p-12 text-center text-sm text-zinc-500">
+          <div className="p-12 text-center text-sm text-slate-500">
             Sem follow-ups ainda.
             <br />
             Crie um pra reengajar conversas paradas.
           </div>
         ) : (
-          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {followUps.map((f) => (
               <li key={f.id} className="px-5 py-3">
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className={`text-sm font-medium ${!f.enabled && "opacity-50"}`}>{f.name}</p>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                         {f.triggerType === "inactivity"
                           ? `${f.inactivityHours ?? "?"}h sem resposta`
                           : `Em "${columns.find((c) => c.id === f.columnId)?.name ?? "coluna"}"`}
                       </span>
                       {!f.enabled && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-500">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200 dark:bg-slate-700 text-slate-500">
                           desativado
                         </span>
                       )}
                     </div>
-                    <p className="mt-1 text-xs text-zinc-500 line-clamp-2">{f.message}</p>
-                    <p className="mt-0.5 text-[10px] text-zinc-500">
+                    <p className="mt-1 text-xs text-slate-500 line-clamp-2">{f.message}</p>
+                    <p className="mt-0.5 text-[10px] text-slate-500">
                       Máx {f.maxTimes}× por conversa · {f.totalExecutions} execução(ões) total
                       {f.transferToUserId &&
                         ` · transfere pra ${team.find((u) => u.id === f.transferToUserId)?.name ?? "agente"}`}
@@ -115,7 +115,7 @@ export function FollowUpList({
                     className={`p-1.5 rounded transition ${
                       f.enabled
                         ? "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                        : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        : "text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
                     title={f.enabled ? "Desativar" : "Ativar"}
                   >
@@ -124,7 +124,7 @@ export function FollowUpList({
                   <button
                     type="button"
                     onClick={() => setEditing(f)}
-                    className="p-1.5 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    className="p-1.5 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />
