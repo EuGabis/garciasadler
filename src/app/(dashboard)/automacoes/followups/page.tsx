@@ -2,7 +2,6 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { FollowUpList } from "./followup-list";
-import { PageHeader } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -29,22 +28,20 @@ export default async function FollowUpsPage() {
   ]);
 
   return (
-    <div className="p-6 lg:p-10 max-w-3xl mx-auto text-stone-100">
-      <nav className="text-[10px] text-stone-500 mb-3 flex gap-2 uppercase tracking-wider">
-        <Link
-          href="/configuracoes?tab=automacoes"
-          className="hover:text-brand-300 transition"
-        >
-          Automações
-        </Link>
-        <span>·</span>
-        <span className="text-brand-300 font-medium">Follow-ups</span>
-      </nav>
-      <PageHeader
-        eyebrow="Reengajamento"
-        title="Follow-ups"
-        description="Mensagens automáticas pra reengajar conversas. Executam a cada 10 minutos via cron."
-      />
+    <div className="p-8 max-w-3xl">
+      <header className="mb-6">
+        <nav className="text-xs text-stone-500 mb-2 flex gap-3">
+          <Link href="/automacoes" className="hover:text-stone-900 dark:hover:text-stone-100">
+            Automações
+          </Link>
+          <span>·</span>
+          <span className="text-stone-900 dark:text-stone-100 font-medium">Follow-ups</span>
+        </nav>
+        <h1 className="text-2xl font-bold tracking-tight">Follow-ups</h1>
+        <p className="mt-1 text-sm text-stone-500">
+          Mensagens automáticas pra reengajar conversas. Executam a cada 10 minutos via cron.
+        </p>
+      </header>
 
       <FollowUpList
         followUps={followUps.map((f) => ({

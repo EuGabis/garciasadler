@@ -166,14 +166,13 @@ export default async function ConfiguracoesPage({
   }
 
   return (
-    <div className="p-6 lg:p-10 max-w-5xl mx-auto text-stone-100">
+    <div className="p-6 lg:p-8 max-w-5xl">
       <PageHeader
-        eyebrow="Sistema"
         title="Configurações"
         description="Workspace, integrações, equipe, automações e diagnósticos."
       />
 
-      <nav className="mb-6 flex flex-wrap gap-1 p-1 glass rounded-xl">
+      <nav className="mb-6 flex flex-wrap gap-1 p-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-sm">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.value;
           const showBadge = tab.value === "logs" && unackCount > 0;
@@ -182,10 +181,10 @@ export default async function ConfiguracoesPage({
               key={tab.value}
               href={`/configuracoes?tab=${tab.value}`}
               className={cn(
-                "relative flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg transition-all",
+                "relative flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all",
                 isActive
-                  ? "bg-brand-500 text-white shadow-brand-glow"
-                  : "text-stone-300 hover:bg-white/[0.06] hover:text-white"
+                  ? "bg-brand-500 text-white shadow-md shadow-brand-500/30"
+                  : "text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/60"
               )}
             >
               <tab.icon className="h-3.5 w-3.5" />

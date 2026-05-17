@@ -22,19 +22,19 @@ export function SectionCard({
   return (
     <div
       className={cn(
-        "glass rounded-2xl overflow-hidden",
+        "bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 overflow-hidden",
         className
       )}
       {...props}
     >
       {(title || description || actions) && (
-        <header className="px-5 py-4 border-b border-white/5 flex items-start gap-4">
+        <header className="px-5 py-4 border-b border-stone-100 dark:border-stone-800 flex items-start gap-4">
           <div className="flex-1 min-w-0">
             {title && (
-              <h2 className="font-semibold text-white text-sm tracking-tight">{title}</h2>
+              <h2 className="font-semibold text-stone-900 dark:text-white text-sm">{title}</h2>
             )}
             {description && (
-              <p className="text-xs text-stone-400 mt-0.5">{description}</p>
+              <p className="text-xs text-stone-500 mt-0.5">{description}</p>
             )}
           </div>
           {actions && <div className="shrink-0">{actions}</div>}

@@ -31,14 +31,14 @@ export function LabelRow({ label }: { label: Label }) {
     return (
       <form
         action={formAction}
-        className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.04]"
+        className="flex items-center gap-2 px-4 py-2.5 bg-stone-50 dark:bg-stone-800"
       >
         <input type="hidden" name="id" value={label.id} />
         <input
           type="color"
           name="color"
           defaultValue={label.color}
-          className="h-8 w-10 rounded cursor-pointer bg-transparent"
+          className="h-8 w-10 rounded cursor-pointer"
         />
         <input
           name="name"
@@ -46,12 +46,12 @@ export function LabelRow({ label }: { label: Label }) {
           required
           maxLength={40}
           autoFocus
-          className="flex-1 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
+          className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
         <button
           type="submit"
           disabled={pending}
-          className="p-1.5 rounded text-emerald-300 hover:bg-emerald-500/15"
+          className="p-1.5 rounded text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
           title="Salvar"
         >
           <Check className="h-4 w-4" />
@@ -59,12 +59,12 @@ export function LabelRow({ label }: { label: Label }) {
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="p-1.5 rounded text-stone-400 hover:bg-white/[0.06]"
+          className="p-1.5 rounded text-stone-500 hover:bg-stone-200 dark:hover:bg-stone-700"
           title="Cancelar"
         >
           <X className="h-4 w-4" />
         </button>
-        {state?.error && <span className="text-xs text-red-400">{state.error}</span>}
+        {state?.error && <span className="text-xs text-red-600">{state.error}</span>}
       </form>
     );
   }
@@ -72,19 +72,19 @@ export function LabelRow({ label }: { label: Label }) {
   return (
     <div className="flex items-center gap-3 px-4 py-2.5">
       <span
-        className="inline-block h-3 w-3 rounded-full shrink-0 ring-1 ring-white/10"
+        className="inline-block h-3 w-3 rounded-full shrink-0"
         style={{ backgroundColor: label.color }}
       />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-white">{label.name}</p>
-        <p className="text-xs text-stone-400">
+        <p className="text-sm font-medium">{label.name}</p>
+        <p className="text-xs text-stone-500">
           {label.conversationCount} {label.conversationCount === 1 ? "conversa" : "conversas"}
         </p>
       </div>
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="p-1.5 rounded text-stone-400 hover:bg-white/[0.06] hover:text-stone-100"
+        className="p-1.5 rounded text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
         title="Editar"
       >
         <Pencil className="h-3.5 w-3.5" />
@@ -96,7 +96,7 @@ export function LabelRow({ label }: { label: Label }) {
       >
         <button
           type="submit"
-          className="p-1.5 rounded text-red-400 hover:bg-red-500/15"
+          className="p-1.5 rounded text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
           title="Excluir"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -116,30 +116,30 @@ export function CreateLabelForm() {
   return (
     <form
       action={formAction}
-      className="flex items-center gap-2 p-4 border-b border-white/5"
+      className="flex items-center gap-2 p-4 border-b border-stone-200 dark:border-stone-800"
     >
       <input
         type="color"
         name="color"
         value={color}
         onChange={(e) => setColor(e.target.value)}
-        className="h-9 w-12 rounded cursor-pointer bg-transparent"
+        className="h-9 w-12 rounded cursor-pointer"
       />
       <input
         name="name"
         required
         maxLength={40}
         placeholder="Nova etiqueta..."
-        className="flex-1 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
+        className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
       />
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition shadow-brand-glow"
+        className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition"
       >
         {pending ? "..." : "Criar"}
       </button>
-      {state?.error && <span className="text-xs text-red-400 ml-2">{state.error}</span>}
+      {state?.error && <span className="text-xs text-red-600 ml-2">{state.error}</span>}
     </form>
   );
 }

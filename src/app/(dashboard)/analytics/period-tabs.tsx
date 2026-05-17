@@ -10,15 +10,15 @@ const OPTIONS: Array<{ value: AnalyticsPeriod; label: string }> = [
 
 export function PeriodTabs({ active }: { active: AnalyticsPeriod }) {
   return (
-    <div className="inline-flex gap-1 p-1 rounded-lg bg-white/[0.04] border border-white/10">
+    <div className="inline-flex gap-1 p-1 rounded-lg bg-stone-100 dark:bg-stone-800">
       {OPTIONS.map((opt) => (
         <Link
           key={opt.value}
           href={`/analytics?period=${opt.value}`}
-          className={`px-3 py-1.5 rounded-md text-[10px] font-semibold uppercase tracking-wider transition ${
+          className={`px-3 py-1 rounded-md text-xs font-medium transition ${
             active === opt.value
-              ? "bg-brand-500 text-white shadow-brand-glow"
-              : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
+              ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-sm"
+              : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
           }`}
         >
           {opt.label}

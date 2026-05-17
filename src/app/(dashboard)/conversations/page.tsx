@@ -3,17 +3,12 @@ import { MessageSquare } from "lucide-react";
 export default function ConversationsEmptyState() {
   return (
     <div className="h-full flex items-center justify-center">
-      <div className="text-center max-w-sm px-6 animate-fade-in">
-        <div className="mx-auto h-14 w-14 rounded-2xl bg-brand-500/10 ring-1 ring-brand-500/20 flex items-center justify-center mb-6">
-          <MessageSquare className="h-6 w-6 text-brand-300" />
+      <div className="text-center max-w-sm px-6">
+        <div className="mx-auto h-12 w-12 rounded-full bg-stone-200 dark:bg-stone-800 flex items-center justify-center mb-4">
+          <MessageSquare className="h-5 w-5 text-stone-500" />
         </div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-300 mb-3">
-          Inbox
-        </p>
-        <h2 className="font-display text-3xl text-white tracking-tighter mb-3">
-          Selecione uma conversa
-        </h2>
-        <p className="text-sm text-stone-400">
+        <h2 className="text-base font-semibold mb-1">Selecione uma conversa</h2>
+        <p className="text-sm text-stone-500">
           Escolha um contato à esquerda pra ver as mensagens e responder.
         </p>
       </div>

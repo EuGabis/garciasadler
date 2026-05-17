@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { listContacts } from "@/lib/contacts";
 import { formatPhone, formatRelativeTime } from "@/lib/format";
 import type { ContactStatus } from "@/generated/prisma/client";
-import { PageHeader, SectionCard } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -32,36 +31,37 @@ export default async function ContactsPage({
   const activeStatus = params.status ?? "all";
 
   return (
-    <div className="p-6 lg:p-10 max-w-6xl mx-auto text-stone-100">
-      <PageHeader
-        eyebrow="CRM"
-        title="Contatos"
-        description={`${contacts.length} ${contacts.length === 1 ? "contato cadastrado" : "contatos cadastrados"}`}
-        actions={
-          <Link
-            href="/contatos/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition shadow-brand-glow"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Novo contato
-          </Link>
-        }
-      />
+    <div className="p-8 max-w-6xl">
+      <header className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Contatos</h1>
+          <p className="mt-1 text-sm text-stone-500">
+            {contacts.length} {contacts.length === 1 ? "contato" : "contatos"}
+          </p>
+        </div>
+        <Link
+          href="/contatos/new"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Novo contato
+        </Link>
+      </header>
 
       <form className="mb-4 flex gap-2" method="get">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
           <input
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Buscar por nome, telefone, e-mail ou interesse..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-white/10 bg-white/[0.03] text-stone-100 placeholder:text-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/60"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
         {params.status && <input type="hidden" name="status" value={params.status} />}
       </form>
 
-      <div className="mb-4 flex gap-1.5 flex-wrap">
+      <div className="mb-4 flex gap-1 flex-wrap">
         {STATUS_OPTIONS.map((opt) => {
           const isActive = activeStatus === opt.value;
           const href =
@@ -74,10 +74,10 @@ export default async function ContactsPage({
             <Link
               key={opt.value}
               href={href}
-              className={`px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider transition ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition ${
                 isActive
-                  ? "bg-brand-500 text-white shadow-brand-glow"
-                  : "bg-white/[0.04] text-stone-400 hover:bg-white/[0.08] hover:text-stone-200"
+                  ? "bg-brand-500 text-white"
+                  : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
               }`}
             >
               {opt.label}
@@ -86,35 +86,35 @@ export default async function ContactsPage({
         })}
       </div>
 
-      <SectionCard noPadding>
+      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 overflow-hidden">
         {contacts.length === 0 ? (
-          <div className="p-12 text-center text-sm text-stone-400">
+          <div className="p-12 text-center text-sm text-stone-500">
             Nenhum contato encontrado.
           </div>
         ) : (
-          <ul className="divide-y divide-white/5">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {contacts.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/contatos/${c.id}`}
-                  className="flex items-center gap-3 px-5 py-3 hover:bg-white/[0.04] transition"
+                  className="flex items-center gap-3 px-5 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 transition"
                 >
-                  <div className="h-10 w-10 shrink-0 rounded-full bg-brand-500/20 text-brand-300 text-sm font-semibold flex items-center justify-center ring-1 ring-brand-500/30">
+                  <div className="h-10 w-10 shrink-0 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-sm font-semibold flex items-center justify-center">
                     {c.name[0]?.toUpperCase() ?? "?"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate text-white">{c.name}</p>
+                      <p className="text-sm font-medium truncate">{c.name}</p>
                       {c.hasOpenConversation && (
                         <span
                           title="Conversa aberta"
-                          className="inline-flex items-center gap-0.5 text-[10px] text-emerald-300"
+                          className="inline-flex items-center gap-0.5 text-[10px] text-emerald-600 dark:text-emerald-400"
                         >
                           <MessageSquare className="h-3 w-3" />
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-stone-400 truncate">
+                    <p className="text-xs text-stone-500 truncate">
                       {formatPhone(c.phone)}
                       {c.email ? ` · ${c.email}` : ""}
                     </p>
@@ -125,11 +125,11 @@ export default async function ContactsPage({
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[10px] text-stone-500 uppercase tracking-wider">
+                    <p className="text-xs text-stone-500">
                       {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "—"}
                     </p>
                     {c.status !== "active" && (
-                      <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] bg-white/[0.06] text-stone-300 capitalize ring-1 ring-white/10">
+                      <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 capitalize">
                         {c.status}
                       </span>
                     )}
@@ -139,7 +139,7 @@ export default async function ContactsPage({
             ))}
           </ul>
         )}
-      </SectionCard>
+      </div>
     </div>
   );
 }

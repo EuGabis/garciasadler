@@ -58,7 +58,7 @@ export function MessageForm({
       <form
         ref={mediaFormRef}
         action={mediaAction}
-        className="border-t border-white/5 bg-stone-950/70 p-3"
+        className="border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-3"
         encType="multipart/form-data"
       >
         <input type="hidden" name="conversationId" value={conversationId} />
@@ -70,16 +70,16 @@ export function MessageForm({
           onChange={(e) => setPickedFile(e.target.files?.[0] ?? null)}
         />
 
-        <div className="flex items-center gap-3 mb-2 px-2 py-1.5 rounded-lg bg-white/[0.04] border border-white/5">
+        <div className="flex items-center gap-3 mb-2 px-2 py-1.5 rounded-lg bg-stone-50 dark:bg-stone-800">
           {isImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={previewUrl} alt="" className="h-10 w-10 rounded object-cover" />
           ) : (
-            <Paperclip className="h-5 w-5 text-stone-400" />
+            <Paperclip className="h-5 w-5 text-stone-500" />
           )}
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium truncate text-stone-100">{pickedFile.name}</p>
-            <p className="text-[10px] text-stone-400">
+            <p className="text-xs font-medium truncate">{pickedFile.name}</p>
+            <p className="text-[10px] text-stone-500">
               {(pickedFile.size / 1024).toFixed(0)} KB
             </p>
           </div>
@@ -89,7 +89,7 @@ export function MessageForm({
               setPickedFile(null);
               if (fileInputRef.current) fileInputRef.current.value = "";
             }}
-            className="text-stone-500 hover:text-stone-200 transition"
+            className="text-stone-400 hover:text-stone-600 transition"
           >
             <X className="h-4 w-4" />
           </button>
@@ -99,18 +99,18 @@ export function MessageForm({
           <input
             name="caption"
             placeholder="Legenda (opcional)"
-            className="flex-1 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
+            className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           <button
             type="submit"
             disabled={pending}
-            className="shrink-0 h-9 px-3 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium flex items-center gap-1.5 shadow-brand-glow"
+            className="shrink-0 h-9 px-3 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium flex items-center gap-1.5"
           >
             <Send className="h-3.5 w-3.5" />
             {pending ? "..." : "Enviar"}
           </button>
         </div>
-        {error && <p className="mt-1.5 text-xs text-red-400">{error}</p>}
+        {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
       </form>
     );
   }
@@ -119,7 +119,7 @@ export function MessageForm({
     <form
       ref={textFormRef}
       action={textAction}
-      className="relative border-t border-white/5 bg-stone-950/70 p-3"
+      className="relative border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-3"
     >
       <input type="hidden" name="conversationId" value={conversationId} />
       <input
@@ -133,16 +133,16 @@ export function MessageForm({
       {quickOpen && quickReplies.length > 0 && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setQuickOpen(false)} />
-          <div className="absolute bottom-full left-3 mb-1 z-20 w-80 max-h-64 overflow-y-auto rounded-xl glass shadow-2xl py-1">
+          <div className="absolute bottom-full left-3 mb-1 z-20 w-80 max-h-64 overflow-y-auto rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-lg py-1">
             {quickReplies.map((r) => (
               <button
                 key={r.id}
                 type="button"
                 onClick={() => applyQuickReply(r.content)}
-                className="w-full text-left px-3 py-2 hover:bg-white/[0.06] transition"
+                className="w-full text-left px-3 py-2 hover:bg-stone-50 dark:hover:bg-stone-800 transition"
               >
-                <p className="text-xs font-medium text-stone-100">{r.title}</p>
-                <p className="text-[11px] text-stone-400 line-clamp-2 mt-0.5">{r.content}</p>
+                <p className="text-xs font-medium">{r.title}</p>
+                <p className="text-[11px] text-stone-500 line-clamp-2 mt-0.5">{r.content}</p>
               </button>
             ))}
           </div>
@@ -153,7 +153,7 @@ export function MessageForm({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="shrink-0 h-9 w-9 rounded-lg text-stone-400 hover:bg-white/[0.06] hover:text-stone-100 flex items-center justify-center transition"
+          className="shrink-0 h-9 w-9 rounded-lg text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center justify-center transition"
           title="Anexar arquivo"
         >
           <Paperclip className="h-4 w-4" />
@@ -162,7 +162,7 @@ export function MessageForm({
           type="button"
           onClick={() => setQuickOpen((s) => !s)}
           disabled={quickReplies.length === 0}
-          className="shrink-0 h-9 px-2 rounded-lg text-stone-400 hover:bg-white/[0.06] hover:text-stone-100 flex items-center gap-1 transition disabled:opacity-40 disabled:hover:bg-transparent"
+          className="shrink-0 h-9 px-2 rounded-lg text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center gap-1 transition disabled:opacity-40 disabled:hover:bg-transparent"
           title={
             quickReplies.length === 0
               ? "Sem respostas rápidas (crie em /respostas-rapidas)"
@@ -180,7 +180,7 @@ export function MessageForm({
           rows={1}
           maxLength={4000}
           placeholder="Digite sua mensagem..."
-          className="flex-1 resize-none rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
+          className="flex-1 resize-none rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -191,13 +191,13 @@ export function MessageForm({
         <button
           type="submit"
           disabled={pending}
-          className="shrink-0 h-9 px-3 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium flex items-center gap-1.5 transition shadow-brand-glow"
+          className="shrink-0 h-9 px-3 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium flex items-center gap-1.5 transition"
         >
           <Send className="h-3.5 w-3.5" />
           {pending ? "..." : "Enviar"}
         </button>
       </div>
-      {error && <p className="mt-1.5 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{error}</p>}
     </form>
   );
 }

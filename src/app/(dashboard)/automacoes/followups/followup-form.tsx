@@ -24,11 +24,6 @@ type FormValues = {
   maxTimes: number;
 };
 
-const INPUT_CLS =
-  "w-full rounded-lg border border-white/10 bg-white/[0.03] text-stone-100 placeholder:text-stone-500 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/60";
-const LABEL_CLS =
-  "block text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400 mb-2";
-
 export function FollowUpFormModal({
   initial,
   team,
@@ -60,23 +55,14 @@ export function FollowUpFormModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
       <div
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto glass rounded-2xl shadow-2xl"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-stone-900 rounded-xl shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex items-center justify-between px-5 py-4 border-b border-white/5 sticky top-0 bg-stone-950/95">
-          <h2 className="text-base font-semibold text-white">
-            {isEdit ? "Editar" : "Novo"} follow-up
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-stone-400 hover:text-white transition"
-          >
+        <header className="flex items-center justify-between px-5 py-4 border-b border-stone-200 dark:border-stone-800 sticky top-0 bg-white dark:bg-stone-900">
+          <h2 className="text-base font-semibold">{isEdit ? "Editar" : "Novo"} follow-up</h2>
+          <button type="button" onClick={onClose} className="text-stone-500 hover:text-stone-900 dark:hover:text-stone-100">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -85,14 +71,16 @@ export function FollowUpFormModal({
           {isEdit && <input type="hidden" name="id" value={initial.id} />}
 
           <div>
-            <label className={LABEL_CLS}>Nome</label>
+            <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+              Nome
+            </label>
             <input
               name="name"
               required
               maxLength={80}
               defaultValue={initial?.name ?? ""}
               placeholder="ex: Reengajamento 24h"
-              className={INPUT_CLS}
+              className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
 
@@ -102,13 +90,15 @@ export function FollowUpFormModal({
               name="enabled"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
-              className="h-4 w-4 rounded accent-brand-500"
+              className="h-4 w-4 rounded text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-stone-200">Ativo</span>
+            <span className="text-sm">Ativo</span>
           </label>
 
           <div>
-            <label className={LABEL_CLS}>Quando disparar</label>
+            <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+              Quando disparar
+            </label>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { value: "inactivity", label: "Inatividade" },
@@ -116,10 +106,10 @@ export function FollowUpFormModal({
               ].map((t) => (
                 <label
                   key={t.value}
-                  className={`px-3 py-2 rounded-lg border cursor-pointer text-sm text-center transition ${
+                  className={`px-3 py-2 rounded-lg border cursor-pointer text-sm text-center ${
                     triggerType === t.value
-                      ? "border-brand-500/60 bg-brand-500/15 text-brand-200"
-                      : "border-white/10 bg-white/[0.03] text-stone-300 hover:bg-white/[0.06]"
+                      ? "border-brand-500 bg-brand-50 dark:bg-brand-500/10"
+                      : "border-stone-300 dark:border-stone-700"
                   }`}
                 >
                   <input
@@ -138,7 +128,9 @@ export function FollowUpFormModal({
 
           {triggerType === "inactivity" ? (
             <div>
-              <label className={LABEL_CLS}>Após quantas horas sem resposta?</label>
+              <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+                Após quantas horas sem resposta?
+              </label>
               <input
                 name="inactivityHours"
                 type="number"
@@ -146,26 +138,26 @@ export function FollowUpFormModal({
                 max={720}
                 required
                 defaultValue={initial?.inactivityHours ?? 24}
-                className={INPUT_CLS}
+                className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
-              <p className="mt-1 text-[10px] text-stone-400">
+              <p className="mt-1 text-[10px] text-stone-500">
                 Só dispara se a última mensagem foi do cliente.
               </p>
             </div>
           ) : (
             <div>
-              <label className={LABEL_CLS}>Coluna do pipeline</label>
+              <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+                Coluna do pipeline
+              </label>
               <select
                 name="columnId"
                 required
                 defaultValue={initial?.columnId ?? ""}
-                className={INPUT_CLS}
+                className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm"
               >
-                <option value="" className="bg-stone-900">
-                  — Selecione —
-                </option>
+                <option value="">— Selecione —</option>
                 {columns.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-stone-900">
+                  <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
                 ))}
@@ -174,7 +166,9 @@ export function FollowUpFormModal({
           )}
 
           <div>
-            <label className={LABEL_CLS}>Mensagem que será enviada</label>
+            <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+              Mensagem que será enviada
+            </label>
             <textarea
               name="message"
               required
@@ -182,34 +176,36 @@ export function FollowUpFormModal({
               rows={3}
               defaultValue={initial?.message ?? ""}
               placeholder="Olá! Notei que ainda não tive seu retorno..."
-              className={`${INPUT_CLS} resize-none`}
+              className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm resize-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={LABEL_CLS}>Repetir no máximo</label>
+              <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+                Repetir no máximo
+              </label>
               <input
                 name="maxTimes"
                 type="number"
                 min={1}
                 max={10}
                 defaultValue={initial?.maxTimes ?? 1}
-                className={INPUT_CLS}
+                className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className={LABEL_CLS}>Transferir pra agente (opcional)</label>
+              <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
+                Transferir pra agente (opcional)
+              </label>
               <select
                 name="transferToUserId"
                 defaultValue={initial?.transferToUserId ?? ""}
-                className={INPUT_CLS}
+                className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm"
               >
-                <option value="" className="bg-stone-900">
-                  — Ninguém —
-                </option>
+                <option value="">— Ninguém —</option>
                 {team.map((u) => (
-                  <option key={u.id} value={u.id} className="bg-stone-900">
+                  <option key={u.id} value={u.id}>
                     {u.name}
                   </option>
                 ))}
@@ -217,20 +213,20 @@ export function FollowUpFormModal({
             </div>
           </div>
 
-          {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
+          {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
 
           <div className="flex items-center gap-2 pt-2">
             <button
               type="submit"
               disabled={pending}
-              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition shadow-brand-glow"
+              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition"
             >
               {pending ? "Salvando..." : isEdit ? "Salvar" : "Criar"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-stone-200 text-sm font-medium transition"
+              className="px-4 py-2 rounded-lg bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-sm font-medium transition"
             >
               Cancelar
             </button>

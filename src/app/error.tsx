@@ -26,18 +26,18 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-stone-950 text-stone-100 p-6">
-      <div className="w-full max-w-md text-center glass rounded-2xl p-8">
-        <div className="mx-auto h-14 w-14 rounded-2xl bg-red-500/15 text-red-300 ring-1 ring-red-500/30 flex items-center justify-center mb-4 text-2xl">
+    <main className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-6">
+      <div className="w-full max-w-md text-center">
+        <div className="mx-auto h-14 w-14 rounded-2xl bg-red-500/10 text-red-600 flex items-center justify-center mb-4 text-2xl">
           ⚠
         </div>
-        <h1 className="font-display text-2xl text-white tracking-tighter">Algo deu errado</h1>
-        <p className="mt-2 text-sm text-stone-400">
+        <h1 className="text-xl font-bold tracking-tight">Algo deu errado</h1>
+        <p className="mt-2 text-sm text-stone-500">
           Tivemos um problema ao processar essa página. O erro foi registrado e a equipe vai
           revisar.
         </p>
         {error.digest && (
-          <p className="mt-2 text-[10px] font-mono text-stone-500">ref: {error.digest}</p>
+          <p className="mt-2 text-[10px] font-mono text-stone-400">ref: {error.digest}</p>
         )}
 
         <div className="mt-6 flex items-center justify-center gap-2">
@@ -46,7 +46,7 @@ export default function ErrorPage({
           </Button>
           <Link
             href="/dashboard"
-            className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-stone-200 text-sm font-medium transition"
+            className="px-4 py-2 rounded-lg bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-700 text-sm font-medium transition"
           >
             Ir pro dashboard
           </Link>
