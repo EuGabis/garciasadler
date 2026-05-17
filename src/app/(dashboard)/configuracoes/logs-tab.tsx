@@ -4,6 +4,7 @@ import { Button, SectionCard, cn } from "@/components/ui";
 import type { ErrorLogRow, ErrorLevel } from "@/lib/error-logs";
 import { LogRow } from "./logs-row";
 import { LogActions } from "./logs-actions-buttons";
+import { ScopeFilter } from "./scope-filter";
 
 type Props = {
   errors: ErrorLogRow[];
@@ -79,25 +80,7 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
           {filters.onlyUnack ? "✓ Só pendentes" : "Só pendentes"}
         </FilterPill>
 
-        {scopes.length > 0 && (
-          <select
-            defaultValue={filters.scope ?? ""}
-            onChange={(e) => {
-              const url = new URL(window.location.href);
-              if (e.target.value) url.searchParams.set("scope", e.target.value);
-              else url.searchParams.delete("scope");
-              window.location.href = url.toString();
-            }}
-            className="ml-auto px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs"
-          >
-            <option value="">Todos os escopos</option>
-            {scopes.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        )}
+        {scopes.length > 0 && <ScopeFilter scopes={scopes} active={filters.scope} />}
 
         {canManage && <LogActions hasErrors={errors.length > 0} unackCount={unackCount} />}
       </div>
