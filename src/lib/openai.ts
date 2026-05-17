@@ -1,29 +1,61 @@
-// Camada de IA — desativada na Fase 1.
-// Será religada na Fase 9 (AgentConfig por workspace + tool use).
-// Mantida no codebase como esqueleto pronto pra plugar quando chegar a hora.
-
+/**
+ * Agente IA — Sprint IA.
+ *
+ * Engine com tool use:
+ * - `buscar_produto`: consulta ERP Exato (real).
+ * - `calcular_obra`: fórmulas de construção.
+ *
+ * Chamado pelo webhook quando AgentConfig.enabled && Conversation.aiEnabled.
+ * Modo: AUTOMÁTICO (envia direto via Evolution).
+ */
 import OpenAI from "openai";
 import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
-import { env } from "@/lib/env";
 import { prisma } from "@/lib/db";
-import { buscarProduto, listarPorCategoria } from "@/lib/produtos";
+import { logger } from "@/lib/logger";
+import { buscarProdutos } from "@/lib/exato/produtos";
+import {
+  contrapiso,
+  alvenaria,
+  reboco,
+  telhado,
+  pintura,
+  concreto,
+  aco,
+} from "@/lib/calc-obra";
+import {
+  getAgentConfig,
+  resolveSystemPrompt,
+  incrementTokenUsage,
+} from "@/lib/agent-config";
 
-const DEFAULT_SYSTEM = `Você é o atendente virtual da Garcia Sadler Materiais de Construção.
-Atenda em português brasileiro, cordial e objetivo.
-Use as ferramentas pra consultar produtos antes de dar preço/estoque. Nunca invente valores.`;
+const log = logger("ai/openai");
+
+const MAX_HISTORY = 20;
+const MAX_TOOL_ROUNDS = 5;
+const MAX_TOKENS_PER_RESPONSE = 600;
 
 const TOOLS: ChatCompletionTool[] = [
   {
     type: "function",
     function: {
       name: "buscar_produto",
-      description: "Consulta um produto pelo SKU ou nome. Retorna preço, estoque, unidade.",
+      description:
+        "Busca produtos no estoque da Garcia Sadler pelo código (SKU) ou descrição. " +
+        "Use sempre que cliente perguntar sobre preço, disponibilidade ou características de um produto. " +
+        "Retorna até 10 produtos com código, descrição, preço e estoque atual. Nunca invente esses dados.",
       parameters: {
         type: "object",
-        properties: { termo: { type: "string", description: "SKU ou parte do nome" } },
+        properties: {
+          termo: {
+            type: "string",
+            description:
+              "Código (até 6 chars, ex: CIM50) ou descrição (ex: cimento, areia, tijolo). " +
+              "Use termo curto e específico.",
+          },
+        },
         required: ["termo"],
       },
     },
@@ -31,53 +63,141 @@ const TOOLS: ChatCompletionTool[] = [
   {
     type: "function",
     function: {
-      name: "listar_por_categoria",
-      description: "Lista produtos por categoria.",
+      name: "calcular_obra",
+      description:
+        "Calcula a quantidade de materiais necessária pra um tipo de obra. " +
+        "Use quando cliente perguntar 'quanto preciso de cimento pra Xm² de contrapiso' ou similar.",
       parameters: {
         type: "object",
-        properties: { categoria: { type: "string" } },
-        required: ["categoria"],
+        properties: {
+          tipo: {
+            type: "string",
+            enum: ["contrapiso", "alvenaria", "reboco", "telhado", "pintura", "concreto", "aco"],
+          },
+          areaM2: { type: "number", description: "Área em m². Pra contrapiso/reboco/telhado/pintura." },
+          comprimentoM: { type: "number", description: "Comprimento em metros. Pra alvenaria." },
+          alturaM: { type: "number", description: "Altura em metros. Pra alvenaria." },
+          espessuraCm: { type: "number", description: "Espessura em cm. Default 5 (contrapiso) ou 2 (reboco)." },
+          volumeM3: { type: "number", description: "Volume em m³. Pra concreto." },
+          quantidadeM: { type: "number", description: "Comprimento total em metros. Pra aço." },
+          tipoTelha: { type: "string", enum: ["ceramica", "fibrocimento"], description: "Tipo de telha." },
+          elemento: { type: "string", enum: ["viga", "pilar", "laje"], description: "Elemento estrutural (aço)." },
+          lados: { type: "number", description: "1 ou 2 lados de reboco. Default 1." },
+          demaos: { type: "number", description: "Demãos de pintura. Default 2." },
+          bitolaMm: { type: "number", description: "Bitola do aço em mm. Default 8." },
+        },
+        required: ["tipo"],
       },
     },
   },
 ];
 
-async function executeTool(name: string, args: Record<string, unknown>): Promise<unknown> {
-  switch (name) {
-    case "buscar_produto":
-      return await buscarProduto(String(args.termo ?? ""));
-    case "listar_por_categoria":
-      return await listarPorCategoria(String(args.categoria ?? ""));
-    default:
-      return { erro: `Ferramenta desconhecida: ${name}` };
+type ToolContext = { workspaceId: string };
+
+async function executeTool(
+  name: string,
+  args: Record<string, unknown>,
+  ctx: ToolContext
+): Promise<unknown> {
+  if (name === "buscar_produto") {
+    const termo = String(args.termo ?? "").trim();
+    if (!termo) return { erro: "informe um termo de busca" };
+    try {
+      const produtos = await buscarProdutos(ctx.workspaceId, termo, { tamanho: 10 });
+      if (produtos.length === 0) {
+        return { encontrados: 0, mensagem: `Nenhum produto com '${termo}'` };
+      }
+      return {
+        encontrados: produtos.length,
+        produtos: produtos.slice(0, 10).map((p) => ({
+          codigo: p.codigo,
+          descricao: p.descricao,
+          marca: p.marca,
+          grupo: p.grupo,
+          preco: p.precoVenda,
+          estoque: p.quantidadeDisponivelVenda,
+        })),
+      };
+    } catch (e) {
+      log.error("buscar_produto failed", e, { workspaceId: ctx.workspaceId, termo });
+      return { erro: "Não consegui consultar o estoque agora. Avise um atendente." };
+    }
   }
+
+  if (name === "calcular_obra") {
+    const tipo = String(args.tipo ?? "");
+    try {
+      switch (tipo) {
+        case "contrapiso":
+          return contrapiso(Number(args.areaM2), args.espessuraCm ? Number(args.espessuraCm) : undefined);
+        case "alvenaria":
+          return alvenaria(Number(args.comprimentoM), Number(args.alturaM));
+        case "reboco":
+          return reboco(
+            Number(args.areaM2),
+            args.espessuraCm ? Number(args.espessuraCm) : undefined,
+            args.lados ? Number(args.lados) : undefined
+          );
+        case "telhado":
+          return telhado(Number(args.areaM2), (args.tipoTelha as "ceramica" | "fibrocimento") ?? "ceramica");
+        case "pintura":
+          return pintura(Number(args.areaM2), args.demaos ? Number(args.demaos) : undefined);
+        case "concreto":
+          return concreto(Number(args.volumeM3));
+        case "aco":
+          return aco(
+            (args.elemento as "viga" | "pilar" | "laje") ?? "viga",
+            Number(args.quantidadeM),
+            args.bitolaMm ? Number(args.bitolaMm) : undefined
+          );
+        default:
+          return { erro: `tipo desconhecido: ${tipo}` };
+      }
+    } catch (e) {
+      log.error("calcular_obra failed", e, { tipo });
+      return { erro: "parâmetros inválidos pro cálculo" };
+    }
+  }
+
+  return { erro: `ferramenta desconhecida: ${name}` };
 }
 
-const MAX_HISTORY = 20;
-const MAX_TOOL_ROUNDS = 5;
+export type GenerateReplyInput = {
+  workspaceId: string;
+  conversationId: string;
+};
 
-export async function generateReply(conversationId: string, systemPrompt?: string): Promise<string> {
-  if (!env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY não configurada");
-  }
-  const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+export type GenerateReplyResult =
+  | { ok: true; reply: string; rounds: number }
+  | { ok: false; reason: "not-configured" | "disabled" | "no-content" | "error"; error?: string };
 
-  const history = await prisma.message.findMany({
-    where: { conversationId },
+/**
+ * Gera uma resposta da IA pra próxima mensagem da conversa.
+ * Persiste tool calls/results em Message; quem chamar é responsável por enviar
+ * a resposta final via Evolution.
+ */
+export async function generateReply(input: GenerateReplyInput): Promise<GenerateReplyResult> {
+  const cfg = await getAgentConfig(input.workspaceId);
+
+  if (!cfg.enabled) return { ok: false, reason: "disabled" };
+  if (!cfg.apiKey) return { ok: false, reason: "not-configured" };
+
+  const client = new OpenAI({ apiKey: cfg.apiKey });
+  const systemPrompt = resolveSystemPrompt(cfg);
+
+  const recent = await prisma.message.findMany({
+    where: { conversationId: input.conversationId },
     orderBy: { createdAt: "desc" },
     take: MAX_HISTORY,
+    select: { role: true, direction: true, content: true, toolCalls: true, toolCallId: true },
   });
-  history.reverse();
+  recent.reverse();
 
   const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: systemPrompt ?? DEFAULT_SYSTEM },
-    ...history.map((m): ChatCompletionMessageParam => {
+    { role: "system", content: systemPrompt },
+    ...recent.map((m): ChatCompletionMessageParam => {
       if (m.role === "tool") {
-        return {
-          role: "tool",
-          tool_call_id: m.toolCallId ?? "",
-          content: m.content,
-        };
+        return { role: "tool", tool_call_id: m.toolCallId ?? "", content: m.content };
       }
       if (m.role === "assistant" && m.toolCalls) {
         return {
@@ -94,24 +214,37 @@ export async function generateReply(conversationId: string, systemPrompt?: strin
     }),
   ];
 
+  let promptTokensTotal = 0;
+  let completionTokensTotal = 0;
+
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const response = await client.chat.completions.create({
-      model: env.OPENAI_MODEL,
-      max_tokens: 500,
-      messages,
-      tools: TOOLS,
-    });
+    let response;
+    try {
+      response = await client.chat.completions.create({
+        model: cfg.model,
+        max_tokens: MAX_TOKENS_PER_RESPONSE,
+        messages,
+        tools: TOOLS,
+      });
+    } catch (e) {
+      log.error("openai call failed", e, { workspaceId: input.workspaceId, round });
+      return { ok: false, reason: "error", error: "OpenAI indisponível" };
+    }
+
+    promptTokensTotal += response.usage?.prompt_tokens ?? 0;
+    completionTokensTotal += response.usage?.completion_tokens ?? 0;
 
     const choice = response.choices[0]?.message;
-    if (!choice) throw new Error("OpenAI não retornou resposta");
+    if (!choice) return { ok: false, reason: "no-content" };
 
     if (choice.tool_calls && choice.tool_calls.length > 0) {
       await prisma.message.create({
         data: {
-          conversationId,
+          conversationId: input.conversationId,
           role: "assistant",
           direction: "outbound",
           type: "text",
+          status: "sent",
           content: choice.content ?? "",
           toolCalls: JSON.parse(JSON.stringify(choice.tool_calls)),
         },
@@ -125,12 +258,14 @@ export async function generateReply(conversationId: string, systemPrompt?: strin
       for (const call of choice.tool_calls) {
         if (call.type !== "function") continue;
         const args = safeParseJson(call.function.arguments);
-        const result = await executeTool(call.function.name, args);
+        const result = await executeTool(call.function.name, args, {
+          workspaceId: input.workspaceId,
+        });
         const resultStr = JSON.stringify(result);
 
         await prisma.message.create({
           data: {
-            conversationId,
+            conversationId: input.conversationId,
             role: "tool",
             direction: "outbound",
             type: "text",
@@ -144,19 +279,22 @@ export async function generateReply(conversationId: string, systemPrompt?: strin
     }
 
     const finalText = choice.content?.trim() ?? "";
-    await prisma.message.create({
-      data: {
-        conversationId,
-        role: "assistant",
-        direction: "outbound",
-        type: "text",
-        content: finalText,
-      },
+    if (!finalText) return { ok: false, reason: "no-content" };
+
+    await incrementTokenUsage(input.workspaceId, promptTokensTotal, completionTokensTotal);
+    log.info("reply generated", {
+      workspaceId: input.workspaceId,
+      conversationId: input.conversationId,
+      rounds: round + 1,
+      promptTokens: promptTokensTotal,
+      completionTokens: completionTokensTotal,
     });
-    return finalText;
+    return { ok: true, reply: finalText, rounds: round + 1 };
   }
 
-  return "";
+  log.warn("max tool rounds reached", { workspaceId: input.workspaceId });
+  await incrementTokenUsage(input.workspaceId, promptTokensTotal, completionTokensTotal);
+  return { ok: false, reason: "error", error: "loop de ferramentas estourou" };
 }
 
 function safeParseJson(s: string): Record<string, unknown> {

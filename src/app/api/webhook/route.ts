@@ -4,6 +4,8 @@ import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
 import { runAutomations } from "@/lib/automations";
+import { generateReply } from "@/lib/openai";
+import { sendWhatsAppText } from "@/lib/evolution";
 import { buildEvolutionConfig } from "@/lib/workspace";
 import { logger, newRequestId } from "@/lib/logger";
 import type { MessageStatus, MessageType } from "@/generated/prisma/client";
@@ -278,7 +280,73 @@ async function handleMessageUpsert(
     logger("webhook").error("automations failed", e, { workspaceId, conversationId: conversation.id })
   );
 
+  // IA: roda em background. Só dispara se conversation.aiEnabled (toggle por conv)
+  // e se temos Evolution pra responder. Não bloqueia o ack do webhook.
+  if (conversation.aiEnabled && evolutionConfig) {
+    invokeAiResponse({
+      workspaceId,
+      conversationId: conversation.id,
+      contactPhone: phone,
+      evolutionConfig,
+    }).catch((e) =>
+      logger("webhook").error("ai response failed", e, { workspaceId, conversationId: conversation.id })
+    );
+  }
+
   return Response.json({ ok: true, messageId: message.id });
+}
+
+async function invokeAiResponse(params: {
+  workspaceId: string;
+  conversationId: string;
+  contactPhone: string;
+  evolutionConfig: { url: string; key: string; instance: string };
+}) {
+  const aiLog = logger("webhook/ai", { workspaceId: params.workspaceId });
+  const result = await generateReply({
+    workspaceId: params.workspaceId,
+    conversationId: params.conversationId,
+  });
+
+  if (!result.ok) {
+    aiLog.warn("ai skipped", { reason: result.reason, error: result.error });
+    return;
+  }
+
+  try {
+    await sendWhatsAppText(params.contactPhone, result.reply, params.evolutionConfig);
+  } catch (e) {
+    aiLog.error("evolution send failed for ai reply", e, { conversationId: params.conversationId });
+    return;
+  }
+
+  // Persiste a mensagem final (já texto puro, sem tool_calls).
+  // O loop em generateReply só cria mensagens das ROUNDS com tool_calls + resultados;
+  // a resposta final (texto puro) é criada aqui após o envio confirmar.
+  await prisma.message.create({
+    data: {
+      conversationId: params.conversationId,
+      role: "assistant",
+      direction: "outbound",
+      type: "text",
+      status: "sent",
+      content: result.reply,
+    },
+  });
+
+  const truncated = result.reply.length > 80 ? result.reply.slice(0, 79) + "…" : result.reply;
+  await prisma.conversation.update({
+    where: { id: params.conversationId },
+    data: { lastMessage: truncated, lastMessageAt: new Date() },
+  });
+
+  await publishRealtime(params.workspaceId, {
+    type: "message:new",
+    conversationId: params.conversationId,
+    preview: truncated,
+  });
+
+  aiLog.info("ai reply sent", { conversationId: params.conversationId, rounds: result.rounds });
 }
 
 async function handleMessageUpdate(payload: EvolutionMessageUpdate, workspaceId: string) {

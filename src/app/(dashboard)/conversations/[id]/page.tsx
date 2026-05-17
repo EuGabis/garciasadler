@@ -9,6 +9,7 @@ import { MediaBubble } from "./media-bubble";
 import { LabelPicker, AttachedLabels } from "./label-picker";
 import { AssignPicker, AssignedBadges } from "./assign-picker";
 import { ContactPanel } from "./contact-panel";
+import { AiBadge } from "./ai-badge";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
@@ -85,6 +86,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
               attached={attachedLabels}
               available={availableLabels}
             />
+            <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
             <span className="text-xs text-stone-500 capitalize">{conversation.status}</span>
           </div>
           {(attachedLabels.length > 0 || assignedUsers.length > 0) && (

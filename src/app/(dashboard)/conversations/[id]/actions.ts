@@ -133,6 +133,8 @@ export async function sendMessageAction(
         lastMessage: text.length > 80 ? text.slice(0, 79) + "…" : text,
         lastMessageAt: new Date(),
         unreadCount: 0,
+        // Sprint IA: agente humano assumiu, pausa IA nessa conversa
+        aiEnabled: false,
       },
     }),
   ]);
@@ -246,6 +248,7 @@ export async function sendMediaAction(
         lastMessage: previewContent.length > 80 ? previewContent.slice(0, 79) + "…" : previewContent,
         lastMessageAt: new Date(),
         unreadCount: 0,
+        aiEnabled: false, // agente humano assumiu
       },
     }),
   ]);

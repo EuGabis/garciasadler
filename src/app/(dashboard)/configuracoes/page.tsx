@@ -54,7 +54,7 @@ export default async function ConfiguracoesPage({
   const activeTab = validTab(params.tab);
 
   const session = await auth();
-  const [workspaceRaw, user, integExato] = await Promise.all([
+  const [workspaceRaw, user, integExato, aiConfig] = await Promise.all([
     prisma.workspace.findUnique({
       where: { id: session!.user.workspaceId },
       select: {
@@ -78,6 +78,18 @@ export default async function ConfiguracoesPage({
         lojaCodigoAcesso: true,
         ultimoLoginEm: true,
         ultimoErro: true,
+      },
+    }),
+    prisma.agentConfig.findUnique({
+      where: { workspaceId: session!.user.workspaceId },
+      select: {
+        enabled: true,
+        systemPrompt: true,
+        model: true,
+        apiKey: true,
+        tokensUsedMonth: true,
+        tokensUsedTotal: true,
+        tokensResetAt: true,
       },
     }),
   ]);
@@ -106,6 +118,16 @@ export default async function ConfiguracoesPage({
   // porque a UI usa pra identificar a loja escolhida (não são secrets).
   const maskUsuario = (u: string | null) =>
     u ? (u.length <= 4 ? "***" : `${u.slice(0, 2)}***${u.slice(-1)}`) : null;
+  const aiConfigView = {
+    enabled: aiConfig?.enabled ?? false,
+    systemPrompt: aiConfig?.systemPrompt ?? null,
+    model: aiConfig?.model ?? "gpt-4o-mini",
+    hasApiKey: !!aiConfig?.apiKey,
+    tokensUsedMonth: aiConfig?.tokensUsedMonth ?? 0,
+    tokensUsedTotal: aiConfig?.tokensUsedTotal ?? 0,
+    tokensResetAt: aiConfig?.tokensResetAt ?? null,
+  };
+
   const integExatoView = {
     hasCredentials: !!integExato,
     usuario: maskUsuario(integExato?.usuario ?? null),
@@ -160,7 +182,7 @@ export default async function ConfiguracoesPage({
         )}
         {activeTab === "equipe" && <EquipeTab />}
         {activeTab === "conta" && <AccountTab user={user} />}
-        {activeTab === "ia" && <AiTab />}
+        {activeTab === "ia" && <AiTab config={aiConfigView} canEdit={canManage} />}
       </div>
     </div>
   );

@@ -62,6 +62,7 @@ export async function getConversationWithMessages(workspaceId: string, conversat
       status: true,
       channel: true,
       unreadCount: true,
+      aiEnabled: true,
       createdAt: true,
       contact: {
         select: {
