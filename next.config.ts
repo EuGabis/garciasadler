@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
 
+/**
+ * Headers de segurança *fixos* — aplicados em todas as respostas.
+ *
+ * O Content-Security-Policy é montado dinamicamente em `src/proxy.ts` porque
+ * gera nonce por request (mitiga XSS via inline scripts). Aqui ficam só os
+ * headers estáticos que não dependem de request.
+ */
 const SECURITY_HEADERS = [
   {
     key: "Strict-Transport-Security",
@@ -11,22 +18,6 @@ const SECURITY_HEADERS = [
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-  },
-  // CSP em report-only enquanto refinamos (libera Pusher WSS/HTTPS e blobs de mídia).
-  {
-    key: "Content-Security-Policy-Report-Only",
-    value: [
-      "default-src 'self'",
-      "img-src 'self' data: blob: https:",
-      "media-src 'self' data: blob:",
-      "font-src 'self' data:",
-      "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next dev usa eval; refinar com nonce em prod depois
-      "connect-src 'self' wss://*.pusher.com https://*.pusher.com https://*.pusherapp.com",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join("; "),
   },
 ];
 

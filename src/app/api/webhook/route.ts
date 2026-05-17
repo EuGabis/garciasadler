@@ -8,6 +8,7 @@ import { generateReply } from "@/lib/openai";
 import { sendWhatsAppText } from "@/lib/evolution";
 import { buildEvolutionConfig } from "@/lib/workspace";
 import { logger, newRequestId } from "@/lib/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
 import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -425,6 +426,18 @@ export async function POST(req: NextRequest) {
   const event = payload.event ?? "";
   const instance = payload.instance;
   if (!instance) return Response.json({ ok: true, ignored: "no instance" });
+
+  // Rate limit por instância: 600 req / 60s (10 req/s sustentado).
+  // Defesa em profundidade — webhook já autentica com WEBHOOK_SECRET, mas
+  // protege contra Evolution buggy em retry-loop ou secret vazado sendo abusado.
+  const rl = await checkRateLimit(`webhook:${instance}`, 600, 60);
+  if (!rl.ok) {
+    log.warn("webhook rate-limited", { instance, retryAfterSec: rl.retryAfterSec });
+    return Response.json(
+      { ok: false, error: "rate limited", retryAfterSec: rl.retryAfterSec },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
 
   const workspace = await prisma.workspace.findFirst({
     where: { evolutionInstance: instance, active: true },
