@@ -58,7 +58,7 @@ export function MessageForm({
       <form
         ref={mediaFormRef}
         action={mediaAction}
-        className="border-t border-white/5 bg-stone-950/40 backdrop-blur-xl p-3"
+        className="border-t border-white/5 bg-stone-950/70 p-3"
         encType="multipart/form-data"
       >
         <input type="hidden" name="conversationId" value={conversationId} />
@@ -119,7 +119,7 @@ export function MessageForm({
     <form
       ref={textFormRef}
       action={textAction}
-      className="relative border-t border-white/5 bg-stone-950/40 backdrop-blur-xl p-3"
+      className="relative border-t border-white/5 bg-stone-950/70 p-3"
     >
       <input type="hidden" name="conversationId" value={conversationId} />
       <input

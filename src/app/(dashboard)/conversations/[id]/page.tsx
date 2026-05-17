@@ -67,7 +67,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   return (
     <div className="h-full flex relative text-stone-100">
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="border-b border-white/5 bg-stone-950/40 backdrop-blur-xl px-5 py-3">
+        <header className="border-b border-white/5 bg-stone-950/70 px-5 py-3">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-brand-500/20 text-brand-300 text-sm font-semibold flex items-center justify-center ring-1 ring-brand-500/30">
               {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}

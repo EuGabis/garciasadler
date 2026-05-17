@@ -21,7 +21,7 @@ export default async function ConversationsLayout({ children }: { children: Reac
   return (
     <div className="flex h-screen text-stone-100">
       <ConversationsRealtime workspaceId={workspaceId} />
-      <aside className="w-80 shrink-0 border-r border-white/5 bg-stone-950/60 backdrop-blur-xl flex flex-col">
+      <aside className="w-80 shrink-0 border-r border-white/5 bg-stone-950/85 flex flex-col">
         <header className="px-4 py-4 border-b border-white/5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300 mb-1">
             Inbox

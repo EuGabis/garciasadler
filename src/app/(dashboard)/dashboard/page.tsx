@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { AuroraBackground, NumberTicker, SpotlightCard, cn } from "@/components/ui";
+import { NumberTicker, SpotlightCard, cn } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +36,7 @@ export default async function DashboardPage() {
   const firstName = session!.user.name?.split(" ")[0] ?? "agente";
 
   return (
-    <div className="relative min-h-full text-stone-100 overflow-hidden">
-      <AuroraBackground variant="absolute" />
-
+    <div className="relative min-h-full text-stone-100">
       <div className="relative z-10 p-6 lg:p-10 max-w-7xl mx-auto">
         {/* Hero headline */}
         <header className="mb-12 animate-fade-in">

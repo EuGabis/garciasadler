@@ -68,7 +68,7 @@ export function AutomationFormModal({
         className="w-full max-w-lg max-h-[90vh] overflow-y-auto glass rounded-2xl shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex items-center justify-between px-5 py-4 border-b border-white/5 sticky top-0 bg-stone-950/60 backdrop-blur-xl">
+        <header className="flex items-center justify-between px-5 py-4 border-b border-white/5 sticky top-0 bg-stone-950/95">
           <h2 className="text-base font-semibold text-white">
             {isEdit ? "Editar" : "Nova"} automação
           </h2>

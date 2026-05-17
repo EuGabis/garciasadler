@@ -108,7 +108,7 @@ export function ContactPanel({
   }
 
   return (
-    <aside className="hidden lg:flex w-80 shrink-0 border-l border-white/5 bg-stone-950/40 backdrop-blur-xl flex-col animate-slide-in-right">
+    <aside className="hidden lg:flex w-80 shrink-0 border-l border-white/5 bg-stone-950/85 flex-col animate-slide-in-right">
       <header className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
         <h3 className="text-[10px] uppercase tracking-[0.2em] font-semibold text-brand-300">
           Perfil do contato

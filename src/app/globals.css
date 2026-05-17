@@ -102,7 +102,7 @@ body {
 
 /* ============================================================
    AURORA: fundo cinematográfico animado.
-   3 manchas de cor deslizando suavemente em loop infinito.
+   2 manchas deslizando em loop. Otimizado pra GPU integrada.
    ============================================================ */
 
 .aurora-bg {
@@ -120,85 +120,76 @@ body {
 }
 
 .aurora-bg::before,
-.aurora-bg::after,
-.aurora-bg > .aurora-blob {
+.aurora-bg::after {
   content: "";
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.55;
+  filter: blur(70px);
+  opacity: 0.5;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .aurora-bg::before {
-  width: 60vw;
-  height: 60vw;
+  width: 45vw;
+  height: 45vw;
   background: radial-gradient(closest-side, #b5491a 0%, transparent 70%);
-  top: -10vw;
-  left: -10vw;
-  animation: aurora-float-1 38s ease-in-out infinite;
+  top: -8vw;
+  left: -8vw;
+  animation: aurora-float-1 40s ease-in-out infinite;
 }
 
 .aurora-bg::after {
-  width: 55vw;
-  height: 55vw;
+  width: 42vw;
+  height: 42vw;
   background: radial-gradient(closest-side, #5b21b6 0%, transparent 70%);
-  bottom: -15vw;
-  right: -10vw;
-  animation: aurora-float-2 52s ease-in-out infinite;
+  bottom: -10vw;
+  right: -8vw;
+  animation: aurora-float-2 55s ease-in-out infinite;
 }
 
+/* O 3o blob foi removido por performance — visualmente quase imperceptível,
+   mas mexer 3 surfaces de 50vw com blur de 120px afoga GPU integrada. */
 .aurora-bg > .aurora-blob {
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(closest-side, #0e7490 0%, transparent 70%);
-  top: 40%;
-  left: 30%;
-  animation: aurora-float-3 46s ease-in-out infinite;
-  opacity: 0.4;
+  display: none;
 }
 
 @keyframes aurora-float-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%      { transform: translate(15vw, 20vh) scale(1.15); }
-  66%      { transform: translate(-10vw, 15vh) scale(0.95); }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(10vw, 12vh, 0) scale(1.1); }
 }
 
 @keyframes aurora-float-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%      { transform: translate(-20vw, -25vh) scale(1.2); }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-12vw, -15vh, 0) scale(1.15); }
 }
 
-@keyframes aurora-float-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40%      { transform: translate(20vw, -15vh) scale(1.1); }
-  80%      { transform: translate(-15vw, 10vh) scale(0.9); }
+/* Respeita preferência do sistema: usuários com motion reduzido
+   veem aurora estática, sem custo de animação. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-bg::before,
+  .aurora-bg::after {
+    animation: none;
+  }
 }
 
-/* Layer de "ruído" pra dar textura cinematográfica (sutil) */
-.aurora-noise {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-}
-
+/* Noise layer removida — overlay full-screen com mix-blend-mode era caro
+   e visualmente ~invisível (opacity 0.04). Mantém o seletor por compat. */
+.aurora-noise,
 .aurora-noise.is-fixed {
-  position: fixed;
-  z-index: -1;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  display: none;
 }
 
 /* ============================================================
-   GLASS: backdrop blur + saturate + borda gradient sutil.
+   GLASS: backdrop blur otimizado.
+   Cortamos blur de 40px → 16px (suficiente pro efeito, ~5x mais barato)
+   e aumentamos opacidade do fundo pra compensar.
    ============================================================ */
 
 .glass {
-  background: rgba(20, 18, 16, 0.45);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  background: rgba(20, 18, 16, 0.7);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -207,8 +198,8 @@ body {
 
 .glass-light {
   background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
