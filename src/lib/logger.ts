@@ -89,20 +89,47 @@ function emit(level: LogLevel, scope: string, msg: string, data?: Context) {
   };
 
   if (isProd) {
-    // Vercel logs parseiam JSON
     const out = JSON.stringify(entry);
     if (level === "error" || level === "fatal") console.error(out);
     else if (level === "warn") console.warn(out);
     else console.log(out);
-    return;
+  } else {
+    const tag = `[${level.toUpperCase()}] [${scope}]`;
+    const tail = safeData && Object.keys(safeData).length ? safeData : "";
+    if (level === "error" || level === "fatal") console.error(tag, msg, tail);
+    else if (level === "warn") console.warn(tag, msg, tail);
+    else console.log(tag, msg, tail);
   }
 
-  // Dev: linha legível
-  const tag = `[${level.toUpperCase()}] [${scope}]`;
-  const tail = safeData && Object.keys(safeData).length ? safeData : "";
-  if (level === "error" || level === "fatal") console.error(tag, msg, tail);
-  else if (level === "warn") console.warn(tag, msg, tail);
-  else console.log(tag, msg, tail);
+  // Persiste error/fatal no DB (fire-and-forget). Só server-side.
+  if ((level === "error" || level === "fatal") && typeof window === "undefined") {
+    const err = safeData?.error;
+    const errorObj =
+      err && typeof err === "object" && !Array.isArray(err)
+        ? (err as { name?: string; message?: string; stack?: string })
+        : null;
+
+    import("./error-store")
+      .then(({ persistError }) =>
+        persistError({
+          level,
+          scope,
+          message: msg,
+          errorName: errorObj?.name ?? null,
+          stack: errorObj?.stack ?? null,
+          context: safeData,
+          requestId: typeof safeData?.reqId === "string" ? safeData.reqId : null,
+          workspaceId:
+            typeof safeData?.workspaceId === "string" ? safeData.workspaceId : null,
+          userId: typeof safeData?.userId === "string" ? safeData.userId : null,
+          url: typeof safeData?.url === "string" ? safeData.url : null,
+          ip: typeof safeData?.ip === "string" ? safeData.ip : null,
+        })
+      )
+      .catch(() => {
+        // fallback já em persistError
+      });
+  }
 }
 
 export type Logger = {

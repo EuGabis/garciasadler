@@ -40,6 +40,7 @@ model Workspace {
   followUps       FollowUp[]
   userInvites     UserInvite[]
   auditLogs       AuditLog[]
+  errorLogs       ErrorLog[]
   integracaoExato IntegracaoExato?
 }
 
@@ -489,6 +490,36 @@ model AuditLog {
 
   @@index([workspaceId, createdAt])
   @@index([userId])
+}
+
+// ============================================================
+// ERROR LOG — captura de exceções persistente
+// ============================================================
+model ErrorLog {
+  id          String   @id @default(cuid())
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  level       String   // "error" | "fatal" | "warn"
+  scope       String   // "webhook", "ai/openai", etc
+  message     String
+  errorName   String?
+  stack       String?  // truncado em ~5KB
+  context     Json?    // safeData do logger
+
+  requestId   String?
+  userId      String?
+  url         String?
+  ip          String?
+
+  acknowledged Boolean @default(false) // marcado como visto
+
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([level, createdAt])
+  @@index([scope])
+  @@index([acknowledged])
 }
 
 // ============================================================
