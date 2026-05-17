@@ -9,15 +9,11 @@ type Workspace = {
   name: string;
   slug: string;
   evolutionUrl: string | null;
-  evolutionKey: string | null;
+  hasEvolutionKey: boolean;
   evolutionInstance: string | null;
 };
 
-function maskKey(k: string): string {
-  if (!k) return "";
-  if (k.length <= 8) return k;
-  return `${k.slice(0, 4)}${"•".repeat(Math.max(0, k.length - 8))}${k.slice(-4)}`;
-}
+const KEY_UNCHANGED_SENTINEL = "__UNCHANGED__";
 
 export function WorkspaceTab({
   workspace,
@@ -33,7 +29,7 @@ export function WorkspaceTab({
 
   const isConnected = !!(
     workspace.evolutionUrl &&
-    workspace.evolutionKey &&
+    workspace.hasEvolutionKey &&
     workspace.evolutionInstance
   );
 
@@ -115,12 +111,19 @@ export function WorkspaceTab({
                 <Input
                   id="evolutionKey"
                   name="evolutionKey"
-                  placeholder={workspace.evolutionKey ? maskKey(workspace.evolutionKey) : "Cole sua API key"}
-                  defaultValue={workspace.evolutionKey ?? ""}
+                  type="password"
+                  autoComplete="off"
+                  placeholder={
+                    workspace.hasEvolutionKey
+                      ? "•••••••••••••• (deixe assim pra manter)"
+                      : "Cole sua API key"
+                  }
+                  defaultValue={workspace.hasEvolutionKey ? KEY_UNCHANGED_SENTINEL : ""}
                   disabled={!canEdit}
                 />
                 <p className="mt-1 text-[11px] text-stone-500">
-                  Salva criptografada. Só admins/owners veem o valor completo.
+                  Criptografada com AES-256-GCM. O valor nunca volta pro navegador depois
+                  de salvo — pra trocar, digite a chave nova; pra manter, não mexa.
                 </p>
               </div>
             </div>

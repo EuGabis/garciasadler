@@ -30,7 +30,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   if (!conversation) notFound();
 
   if (conversation.unreadCount > 0) {
-    await markConversationRead(conversation.id);
+    await markConversationRead(session!.user.workspaceId, conversation.id);
   }
 
   const [availableLabels, quickReplies, team, otherConversations] = await Promise.all([

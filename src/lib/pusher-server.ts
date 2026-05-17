@@ -28,7 +28,7 @@ export type RealtimeEvent =
   | { type: "conversation:updated"; conversationId: string };
 
 export function workspaceChannel(workspaceId: string): string {
-  return `workspace-${workspaceId}`;
+  return `private-workspace-${workspaceId}`;
 }
 
 export async function publishRealtime(workspaceId: string, event: RealtimeEvent): Promise<void> {

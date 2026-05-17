@@ -4,9 +4,12 @@ import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
 import { runAutomations } from "@/lib/automations";
+import { buildEvolutionConfig } from "@/lib/workspace";
 import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
+
+const MAX_WEBHOOK_BODY_BYTES = 6 * 1024 * 1024; // 6 MB — cabe mídia inline, bloqueia flood
 
 type EvolutionMediaMessage = {
   url?: string;
@@ -328,6 +331,12 @@ export async function POST(req: NextRequest) {
     return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
+  // M1: bloqueia payload gigante (DoS por upload)
+  const contentLength = Number(req.headers.get("content-length") ?? 0);
+  if (contentLength > MAX_WEBHOOK_BODY_BYTES) {
+    return Response.json({ ok: false, error: "payload too large" }, { status: 413 });
+  }
+
   let payload: EvolutionMessageUpsert | EvolutionMessageUpdate;
   try {
     payload = (await req.json()) as EvolutionMessageUpsert | EvolutionMessageUpdate;
@@ -350,14 +359,11 @@ export async function POST(req: NextRequest) {
   });
   if (!workspace) return Response.json({ ok: true, ignored: "workspace not found" });
 
-  const evolutionConfig =
-    workspace.evolutionUrl && workspace.evolutionKey && workspace.evolutionInstance
-      ? {
-          url: workspace.evolutionUrl,
-          key: workspace.evolutionKey,
-          instance: workspace.evolutionInstance,
-        }
-      : null;
+  const evolutionConfig = buildEvolutionConfig(
+    workspace.evolutionUrl,
+    workspace.evolutionKey,
+    workspace.evolutionInstance
+  );
 
   if (event === "messages.upsert" || event === "" || event === "MESSAGES_UPSERT") {
     return await handleMessageUpsert(payload as EvolutionMessageUpsert, workspace.id, evolutionConfig);

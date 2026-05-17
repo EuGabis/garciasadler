@@ -101,9 +101,13 @@ export async function getConversationWithMessages(workspaceId: string, conversat
   return conv;
 }
 
-export async function markConversationRead(conversationId: string): Promise<void> {
-  await prisma.conversation.update({
-    where: { id: conversationId },
+export async function markConversationRead(
+  workspaceId: string,
+  conversationId: string
+): Promise<void> {
+  // updateMany pra que falhe silenciosamente em IDOR (não vaza existência)
+  await prisma.conversation.updateMany({
+    where: { id: conversationId, workspaceId },
     data: { unreadCount: 0 },
   });
 }

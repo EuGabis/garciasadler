@@ -8,10 +8,13 @@ export function getPusherClient(): Pusher | null {
   const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
   if (!key || !cluster) return null;
   if (_pusher) return _pusher;
-  _pusher = new Pusher(key, { cluster });
+  _pusher = new Pusher(key, {
+    cluster,
+    authEndpoint: "/api/pusher/auth",
+  });
   return _pusher;
 }
 
 export function workspaceChannel(workspaceId: string): string {
-  return `workspace-${workspaceId}`;
+  return `private-workspace-${workspaceId}`;
 }

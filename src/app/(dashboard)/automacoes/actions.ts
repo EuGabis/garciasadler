@@ -47,6 +47,28 @@ function parseInput(formData: FormData): { ok: true; data: Input } | { ok: false
   return { ok: true, data: parsed.data };
 }
 
+/** H5: garante que IDs referenciados pertencem ao workspace do usuário. */
+async function validateCrossWorkspaceIds(
+  workspaceId: string,
+  data: Input
+): Promise<string | null> {
+  if (data.assignUserId) {
+    const u = await prisma.user.findFirst({
+      where: { id: data.assignUserId, workspaceId },
+      select: { id: true },
+    });
+    if (!u) return "Agente atribuído não pertence ao workspace.";
+  }
+  if (data.pipelineColumnId) {
+    const c = await prisma.kanbanColumn.findFirst({
+      where: { id: data.pipelineColumnId, workspaceId },
+      select: { id: true },
+    });
+    if (!c) return "Coluna do pipeline não pertence ao workspace.";
+  }
+  return null;
+}
+
 export async function createAutomationAction(
   _prev: AutomationState,
   formData: FormData
@@ -56,6 +78,9 @@ export async function createAutomationAction(
 
   const r = parseInput(formData);
   if (!r.ok) return { error: r.error };
+
+  const xsErr = await validateCrossWorkspaceIds(session.user.workspaceId, r.data);
+  if (xsErr) return { error: xsErr };
 
   await prisma.automation.create({
     data: {
@@ -86,6 +111,9 @@ export async function updateAutomationAction(
 
   const validated = updateSchema.safeParse({ ...r.data, id });
   if (!validated.success) return { error: "Dados inválidos." };
+
+  const xsErr = await validateCrossWorkspaceIds(session.user.workspaceId, r.data);
+  if (xsErr) return { error: xsErr };
 
   await prisma.automation.update({
     where: { id },

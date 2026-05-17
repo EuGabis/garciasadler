@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/auth/password";
 import { canManageTeam } from "@/lib/team";
+import { audit } from "@/lib/audit";
 
 const createSchema = z.object({
   name: z.string().min(2).max(80),
@@ -37,9 +38,12 @@ export async function createUserAction(
   });
   if (!parsed.success) return { error: "Dados inválidos." };
 
-  // Só owner pode criar owner
-  if (parsed.data.role === "owner" && session.user.role !== "owner") {
-    return { error: "Só owner pode criar outro owner." };
+  // RBAC: só owner pode criar admin/owner. Admin só cria agent.
+  if (
+    (parsed.data.role === "owner" || parsed.data.role === "admin") &&
+    session.user.role !== "owner"
+  ) {
+    return { error: "Só owner pode criar admin ou outro owner." };
   }
 
   const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } });
@@ -47,7 +51,7 @@ export async function createUserAction(
 
   const passwordHash = await hashPassword(parsed.data.password);
 
-  await prisma.user.create({
+  const created = await prisma.user.create({
     data: {
       workspaceId: session.user.workspaceId,
       name: parsed.data.name,
@@ -55,6 +59,14 @@ export async function createUserAction(
       password: passwordHash,
       role: parsed.data.role,
     },
+  });
+
+  await audit({
+    workspaceId: session.user.workspaceId,
+    userId: session.user.id,
+    action: "user.create",
+    target: created.id,
+    meta: { email: parsed.data.email, role: parsed.data.role },
   });
 
   revalidatePath("/equipe");
@@ -80,9 +92,14 @@ export async function updateRoleAction(
   });
   if (!target) return { error: "Usuário não encontrado." };
 
-  // Só owner pode promover/rebaixar pra/de owner
-  if ((parsed.data.role === "owner" || target.role === "owner") && session.user.role !== "owner") {
-    return { error: "Só owner pode mexer em owner." };
+  // RBAC: só owner pode mexer em owner OU promover pra admin/owner.
+  if (
+    (parsed.data.role === "owner" ||
+      parsed.data.role === "admin" ||
+      target.role === "owner") &&
+    session.user.role !== "owner"
+  ) {
+    return { error: "Só owner pode promover pra admin/owner ou mexer em owner." };
   }
 
   // Não pode rebaixar o último owner
@@ -96,6 +113,14 @@ export async function updateRoleAction(
   await prisma.user.update({
     where: { id: target.id },
     data: { role: parsed.data.role },
+  });
+
+  await audit({
+    workspaceId: session.user.workspaceId,
+    userId: session.user.id,
+    action: "user.update_role",
+    target: target.id,
+    meta: { from: target.role, to: parsed.data.role, email: target.email },
   });
 
   revalidatePath("/equipe");
@@ -124,6 +149,15 @@ export async function deleteUserAction(userId: string): Promise<TeamState> {
   }
 
   await prisma.user.delete({ where: { id: userId } });
+
+  await audit({
+    workspaceId: session.user.workspaceId,
+    userId: session.user.id,
+    action: "user.delete",
+    target: target.id,
+    meta: { email: target.email, role: target.role },
+  });
+
   revalidatePath("/equipe");
   return { ok: true };
 }

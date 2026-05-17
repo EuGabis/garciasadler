@@ -44,6 +44,28 @@ function parseInput(formData: FormData) {
   return { ok: true as const, data: parsed.data };
 }
 
+/** H5: garante IDs referenciados pertencem ao workspace. */
+async function validateCrossWorkspaceIds(
+  workspaceId: string,
+  data: z.infer<typeof schema>
+): Promise<string | null> {
+  if (data.columnId) {
+    const c = await prisma.kanbanColumn.findFirst({
+      where: { id: data.columnId, workspaceId },
+      select: { id: true },
+    });
+    if (!c) return "Coluna não pertence ao workspace.";
+  }
+  if (data.transferToUserId) {
+    const u = await prisma.user.findFirst({
+      where: { id: data.transferToUserId, workspaceId },
+      select: { id: true },
+    });
+    if (!u) return "Agente de transferência não pertence ao workspace.";
+  }
+  return null;
+}
+
 export async function createFollowUpAction(
   _prev: FollowUpState,
   formData: FormData
@@ -53,6 +75,9 @@ export async function createFollowUpAction(
 
   const r = parseInput(formData);
   if (!r.ok) return { error: r.error };
+
+  const xsErr = await validateCrossWorkspaceIds(session.user.workspaceId, r.data);
+  if (xsErr) return { error: xsErr };
 
   await prisma.followUp.create({
     data: { workspaceId: session.user.workspaceId, ...r.data },
@@ -75,6 +100,9 @@ export async function updateFollowUpAction(
 
   const validated = updateSchema.safeParse({ ...r.data, id });
   if (!validated.success) return { error: "Dados inválidos." };
+
+  const xsErr = await validateCrossWorkspaceIds(session.user.workspaceId, r.data);
+  if (xsErr) return { error: xsErr };
 
   const exists = await prisma.followUp.findFirst({
     where: { id, workspaceId: session.user.workspaceId },

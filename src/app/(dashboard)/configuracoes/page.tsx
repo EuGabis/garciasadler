@@ -54,7 +54,7 @@ export default async function ConfiguracoesPage({
   const activeTab = validTab(params.tab);
 
   const session = await auth();
-  const [workspace, user, integExato] = await Promise.all([
+  const [workspaceRaw, user, integExato] = await Promise.all([
     prisma.workspace.findUnique({
       where: { id: session!.user.workspaceId },
       select: {
@@ -82,16 +82,25 @@ export default async function ConfiguracoesPage({
     }),
   ]);
 
-  if (!workspace || !user) {
+  if (!workspaceRaw || !user) {
     return <div className="p-8">Workspace ou usuário não encontrado.</div>;
   }
 
   const canManage = canManageTeam(session!.user.role);
   const workspaceConfigured = !!(
-    workspace.evolutionUrl &&
-    workspace.evolutionKey &&
-    workspace.evolutionInstance
+    workspaceRaw.evolutionUrl &&
+    workspaceRaw.evolutionKey &&
+    workspaceRaw.evolutionInstance
   );
+
+  // NUNCA enviar a key (criptografada ou não) pro cliente.
+  const workspace = {
+    name: workspaceRaw.name,
+    slug: workspaceRaw.slug,
+    evolutionUrl: workspaceRaw.evolutionUrl,
+    evolutionInstance: workspaceRaw.evolutionInstance,
+    hasEvolutionKey: !!workspaceRaw.evolutionKey,
+  };
 
   const integExatoView = {
     hasCredentials: !!integExato,
