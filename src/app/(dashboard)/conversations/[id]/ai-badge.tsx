@@ -21,10 +21,10 @@ export function AiBadge({ conversationId, enabled }: { conversationId: string; e
       type="button"
       onClick={toggle}
       disabled={pending}
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition ${
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium ring-1 transition ${
         enabled
-          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20"
-          : "bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700"
+          ? "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30 hover:bg-emerald-500/25"
+          : "bg-white/[0.04] text-stone-400 ring-white/10 hover:bg-white/[0.08]"
       }`}
       title={enabled ? "IA ativa nesta conversa — clique pra pausar" : "IA pausada — clique pra reativar"}
     >

@@ -51,27 +51,30 @@ export function WorkspaceTab({
               defaultValue={workspace.name}
               disabled={!canEdit}
             />
-            <p className="mt-1 text-[11px] text-stone-500">
-              Slug: <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded">{workspace.slug}</code>{" "}
+            <p className="mt-1.5 text-[10px] uppercase tracking-wider text-stone-500">
+              Slug:{" "}
+              <code className="bg-white/[0.06] text-stone-300 px-1.5 py-0.5 rounded font-mono normal-case">
+                {workspace.slug}
+              </code>{" "}
               (não editável)
             </p>
           </div>
 
-          <div className="pt-4 border-t border-stone-100 dark:border-stone-800">
+          <div className="pt-4 border-t border-white/5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300">
                 Evolution API
               </span>
               <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ring-1 ${
                   isConnected
-                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                    : "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                    ? "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30"
+                    : "bg-amber-500/15 text-amber-300 ring-amber-500/30"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    isConnected ? "bg-emerald-500" : "bg-amber-500"
+                    isConnected ? "bg-emerald-400 animate-pulse" : "bg-amber-400"
                   }`}
                 />
                 {isConnected ? "Configurada" : "Pendente"}
@@ -121,7 +124,7 @@ export function WorkspaceTab({
                   defaultValue={workspace.hasEvolutionKey ? KEY_UNCHANGED_SENTINEL : ""}
                   disabled={!canEdit}
                 />
-                <p className="mt-1 text-[11px] text-stone-500">
+                <p className="mt-1.5 text-[11px] text-stone-400">
                   Criptografada com AES-256-GCM. O valor nunca volta pro navegador depois
                   de salvo — pra trocar, digite a chave nova; pra manter, não mexa.
                 </p>
@@ -129,8 +132,8 @@ export function WorkspaceTab({
             </div>
           </div>
 
-          {state?.ok && <p className="text-sm text-emerald-600">Salvo.</p>}
-          {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+          {state?.ok && <p className="text-sm text-emerald-300">Salvo.</p>}
+          {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
 
           {canEdit && (
             <Button type="submit" disabled={pending}>

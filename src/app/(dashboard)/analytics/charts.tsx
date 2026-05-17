@@ -12,15 +12,15 @@ export function KpiCard({
   trend?: { direction: "up" | "down"; label: string } | null;
 }) {
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
-      <p className="text-xs text-stone-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold tracking-tight">{value}</p>
+    <div className="rounded-2xl glass p-5">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400">{label}</p>
+      <p className="mt-2 font-display text-3xl text-white leading-none">{value}</p>
       {(hint || trend) && (
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-stone-500">
+        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-stone-400">
           {trend && (
             <span
               className={`inline-flex items-center gap-0.5 font-medium ${
-                trend.direction === "up" ? "text-emerald-600" : "text-red-600"
+                trend.direction === "up" ? "text-emerald-300" : "text-red-400"
               }`}
             >
               {trend.direction === "up" ? (
@@ -49,10 +49,12 @@ export function BarList({
 }) {
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-sm font-semibold mb-4">{title}</h2>
+    <div className="rounded-2xl glass p-5">
+      <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300 mb-4">
+        {title}
+      </h2>
       {items.length === 0 ? (
-        <p className="text-xs text-stone-500 py-2">{emptyText}</p>
+        <p className="text-xs text-stone-400 py-2">{emptyText}</p>
       ) : (
         <ul className="space-y-2.5">
           {items.map((item, i) => {
@@ -60,15 +62,15 @@ export function BarList({
             return (
               <li key={i}>
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="truncate text-stone-700 dark:text-stone-300">{item.label}</span>
-                  <span className="text-stone-500 font-medium tabular-nums">{item.value}</span>
+                  <span className="truncate text-stone-200">{item.label}</span>
+                  <span className="text-stone-400 font-medium tabular-nums">{item.value}</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
+                <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{
                       width: `${pct}%`,
-                      backgroundColor: item.color ?? "#6366f1",
+                      backgroundColor: item.color ?? "#b5491a",
                     }}
                   />
                 </div>
@@ -109,19 +111,23 @@ export function MessagesChart({
     .map((d, i) => `${i === 0 ? "M" : "L"}${px(i)},${py(d.outbound)}`)
     .join(" ");
 
-  // Labels do eixo X: primeiro, meio, último
-  const tickIdxs = data.length <= 2 ? data.map((_, i) => i) : [0, Math.floor((data.length - 1) / 2), data.length - 1];
+  const tickIdxs =
+    data.length <= 2
+      ? data.map((_, i) => i)
+      : [0, Math.floor((data.length - 1) / 2), data.length - 1];
 
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
+    <div className="rounded-2xl glass p-5 text-stone-100">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold">Mensagens por dia</h2>
-        <div className="flex items-center gap-3 text-[11px] text-stone-500">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300">
+          Mensagens por dia
+        </h2>
+        <div className="flex items-center gap-3 text-[11px] text-stone-400">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1.5 w-3 rounded-sm bg-brand-500" /> Recebidas
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-3 rounded-sm bg-emerald-500" /> Enviadas
+            <span className="h-1.5 w-3 rounded-sm bg-emerald-400" /> Enviadas
           </span>
         </div>
       </div>
@@ -136,18 +142,18 @@ export function MessagesChart({
               x2={width - padding.right}
               y2={y}
               stroke="currentColor"
-              strokeOpacity={0.08}
+              strokeOpacity={0.1}
               strokeWidth={1}
             />
           );
         })}
-        <path d={inboundPath} fill="none" stroke="#6366f1" strokeWidth={2} />
-        <path d={outboundPath} fill="none" stroke="#10b981" strokeWidth={2} />
+        <path d={inboundPath} fill="none" stroke="#d26443" strokeWidth={2} />
+        <path d={outboundPath} fill="none" stroke="#34d399" strokeWidth={2} />
 
         {data.map((d, i) => (
           <g key={i}>
-            <circle cx={px(i)} cy={py(d.inbound)} r={2.5} fill="#6366f1" />
-            <circle cx={px(i)} cy={py(d.outbound)} r={2.5} fill="#10b981" />
+            <circle cx={px(i)} cy={py(d.inbound)} r={2.5} fill="#d26443" />
+            <circle cx={px(i)} cy={py(d.outbound)} r={2.5} fill="#34d399" />
           </g>
         ))}
 
@@ -184,18 +190,23 @@ export function MessagesChart({
 export function HourHeatmap({ data }: { data: Array<{ hour: number; count: number }> }) {
   const max = Math.max(1, ...data.map((d) => d.count));
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-sm font-semibold mb-3">Distribuição por hora do dia</h2>
-      <div className="grid grid-cols-24 gap-0.5" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
+    <div className="rounded-2xl glass p-5">
+      <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300 mb-3">
+        Distribuição por hora do dia
+      </h2>
+      <div
+        className="grid grid-cols-24 gap-0.5"
+        style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
+      >
         {data.map((d) => {
           const intensity = d.count / max;
           return (
             <div
               key={d.hour}
               title={`${String(d.hour).padStart(2, "0")}:00 — ${d.count} msgs`}
-              className="aspect-square rounded-sm"
+              className="aspect-square rounded-sm ring-1 ring-white/5"
               style={{
-                backgroundColor: `rgba(99, 102, 241, ${0.06 + intensity * 0.85})`,
+                backgroundColor: `rgba(210, 100, 67, ${0.06 + intensity * 0.85})`,
               }}
             />
           );

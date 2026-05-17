@@ -12,7 +12,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Notifications } from "./notifications";
-import { ThemeToggle } from "@/components/ui";
+import { AuroraBackground } from "@/components/ui";
 
 const nav = [
   { href: "/dashboard", label: "Visão geral", icon: LayoutDashboard },
@@ -31,12 +31,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const initial = session.user.name?.[0]?.toUpperCase() ?? "?";
 
   return (
-    <div className="h-screen flex bg-stone-100 dark:bg-stone-950 overflow-hidden">
+    <div className="relative h-screen flex bg-stone-950 text-stone-100 overflow-hidden">
+      <AuroraBackground variant="fixed" />
       <Notifications workspaceId={session.user.workspaceId} />
 
-      <aside className="hidden md:flex w-64 shrink-0 gradient-carbon text-stone-100 flex-col">
+      <aside className="hidden md:flex w-64 shrink-0 gradient-carbon text-stone-100 flex-col border-r border-white/5 relative z-10">
         <div className="px-5 py-5 flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-extrabold">
+          <div className="h-9 w-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-extrabold shadow-brand-glow">
             G
           </div>
           <div className="min-w-0">
@@ -71,7 +72,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 {session.user.role}
               </p>
             </div>
-            <ThemeToggle />
           </div>
           <form
             action={async () => {
@@ -91,7 +91,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </aside>
 
-      <main className="relative flex-1 min-w-0 overflow-y-auto bg-stone-50 dark:bg-stone-950">
+      <main className="relative z-10 flex-1 min-w-0 overflow-y-auto bg-transparent">
         {children}
       </main>
     </div>

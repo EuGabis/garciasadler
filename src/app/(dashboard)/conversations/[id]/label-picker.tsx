@@ -34,7 +34,7 @@ export function LabelPicker({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition"
+        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-stone-300 hover:bg-white/[0.06] hover:text-white transition"
         title="Etiquetas"
       >
         <Tag className="h-3.5 w-3.5" />
@@ -44,10 +44,10 @@ export function LabelPicker({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 w-60 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-lg py-1 max-h-72 overflow-y-auto">
+          <div className="absolute right-0 top-full mt-1 z-20 w-60 rounded-xl glass shadow-2xl py-1 max-h-72 overflow-y-auto">
             {available.length === 0 ? (
-              <p className="px-3 py-3 text-xs text-stone-500">
-                Sem etiquetas. Crie em <span className="font-medium">/etiquetas</span>.
+              <p className="px-3 py-3 text-xs text-stone-400">
+                Sem etiquetas. Crie em <span className="font-medium text-stone-200">/etiquetas</span>.
               </p>
             ) : (
               available.map((l) => {
@@ -57,7 +57,7 @@ export function LabelPicker({
                     key={l.id}
                     type="button"
                     onClick={() => toggle(l.id)}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-stone-50 dark:hover:bg-stone-800 transition"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-stone-200 hover:bg-white/[0.06] transition"
                   >
                     <span
                       className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
@@ -65,7 +65,7 @@ export function LabelPicker({
                     />
                     <span className="flex-1 text-left truncate">{l.name}</span>
                     {isAttached && (
-                      <span className="text-[10px] text-brand-600 font-medium">✓</span>
+                      <span className="text-[10px] text-brand-300 font-medium">✓</span>
                     )}
                   </button>
                 );

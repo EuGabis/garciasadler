@@ -19,18 +19,23 @@ export default async function ConversationsLayout({ children }: { children: Reac
   });
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen text-stone-100">
       <ConversationsRealtime workspaceId={workspaceId} />
-      <aside className="w-80 shrink-0 border-r border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 flex flex-col">
-        <header className="px-4 py-3 border-b border-stone-200 dark:border-stone-800">
-          <h1 className="text-base font-semibold">Conversas</h1>
-          <p className="text-xs text-stone-500 mt-0.5">
+      <aside className="w-80 shrink-0 border-r border-white/5 bg-stone-950/60 backdrop-blur-xl flex flex-col">
+        <header className="px-4 py-4 border-b border-white/5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-300 mb-1">
+            Inbox
+          </p>
+          <h1 className="font-display text-2xl text-white tracking-tighter leading-none">
+            Conversas
+          </h1>
+          <p className="text-[11px] text-stone-500 mt-1.5">
             {conversations.length} {mineOnly ? "atribuída(s) a você" : "no total"}
           </p>
         </header>
         <FilterTabs mineOnly={mineOnly} />
 
-        <ul className="flex-1 overflow-y-auto divide-y divide-stone-100 dark:divide-stone-800">
+        <ul className="flex-1 overflow-y-auto divide-y divide-white/5">
           {conversations.length === 0 ? (
             <li className="p-8 text-center text-sm text-stone-500">
               Nenhuma conversa ainda.
@@ -42,36 +47,34 @@ export default async function ConversationsLayout({ children }: { children: Reac
               <li key={c.id}>
                 <Link
                   href={`/conversations/${c.id}`}
-                  className="block px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 transition"
+                  className="block px-4 py-3 hover:bg-white/[0.04] transition"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 shrink-0 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-sm font-semibold flex items-center justify-center">
+                    <div className="h-10 w-10 shrink-0 rounded-full bg-brand-500/20 text-brand-300 text-sm font-semibold flex items-center justify-center ring-1 ring-brand-500/30">
                       {c.contactName?.[0]?.toUpperCase() ?? "?"}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-medium truncate">{c.contactName}</p>
-                        <span className="text-xs text-stone-500 shrink-0">
+                        <p className="text-sm font-medium truncate text-white">{c.contactName}</p>
+                        <span className="text-[10px] text-stone-500 shrink-0 uppercase tracking-wider">
                           {formatRelativeTime(c.lastMessageAt)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-2 mt-0.5">
-                        <p className="text-xs text-stone-500 truncate">
-                          {c.lastMessage ?? "—"}
-                        </p>
+                        <p className="text-xs text-stone-400 truncate">{c.lastMessage ?? "—"}</p>
                         {c.unreadCount > 0 && (
-                          <span className="shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-brand-500 text-white text-[10px] font-semibold">
+                          <span className="shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-brand-500 text-white text-[10px] font-semibold shadow-brand-glow">
                             {c.unreadCount}
                           </span>
                         )}
                       </div>
                       {(c.labels.length > 0 || c.assignedTo.length > 0) && (
-                        <div className="mt-1 flex flex-wrap items-center gap-1">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1">
                           {c.assignedTo.slice(0, 3).map((u) => (
                             <span
                               key={u.id}
                               title={u.name}
-                              className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-[8px] font-bold ring-1 ring-white dark:ring-stone-900"
+                              className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-brand-500/20 text-brand-300 text-[8px] font-bold ring-1 ring-stone-950"
                             >
                               {u.name[0]?.toUpperCase() ?? "?"}
                             </span>
@@ -98,14 +101,14 @@ export default async function ConversationsLayout({ children }: { children: Reac
           )}
         </ul>
 
-        <footer className="px-4 py-2 border-t border-stone-200 dark:border-stone-800 flex items-center gap-1.5 text-xs text-stone-500">
+        <footer className="px-4 py-2.5 border-t border-white/5 flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stone-500">
           <MessageSquare className="h-3 w-3" />
-          <span>Mensagens em tempo real</span>
-          <span className="ml-auto inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span>Tempo real</span>
+          <span className="ml-auto inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
         </footer>
       </aside>
 
-      <section className="flex-1 min-w-0 bg-stone-50 dark:bg-stone-950">{children}</section>
+      <section className="flex-1 min-w-0 bg-transparent">{children}</section>
     </div>
   );
 }

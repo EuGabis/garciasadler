@@ -48,24 +48,26 @@ export function AiTab({ config, canEdit }: Props) {
         description="Responde automaticamente conversas usando OpenAI + tool use no seu estoque."
       >
         <form action={formAction} className="space-y-5">
-          <label className="flex items-start gap-3 cursor-pointer p-3 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
+          <label className="flex items-start gap-3 cursor-pointer p-4 rounded-xl bg-white/[0.04] border border-white/10 hover:border-brand-500/30 transition">
             <input
               type="checkbox"
               name="enabled"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
               disabled={!canEdit}
-              className="h-4 w-4 mt-0.5 rounded text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 mt-0.5 rounded accent-brand-500"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold flex items-center gap-1.5">
-                <Bot className="h-3.5 w-3.5 text-brand-500" />
+              <p className="text-sm font-semibold flex items-center gap-1.5 text-white">
+                <Bot className="h-3.5 w-3.5 text-brand-300" />
                 IA ativa globalmente
               </p>
-              <p className="text-xs text-stone-500 mt-0.5">
+              <p className="text-xs text-stone-400 mt-1">
                 Quando ligada, responde automaticamente conversas com{" "}
-                <code className="text-[10px] bg-stone-200 dark:bg-stone-700 px-1 rounded">aiEnabled=true</code>.
-                Quando um agente humano envia mensagem, a IA pausa automaticamente naquela conversa.
+                <code className="text-[10px] bg-white/[0.06] text-stone-200 px-1 rounded">
+                  aiEnabled=true
+                </code>
+                . Quando um agente humano envia mensagem, a IA pausa automaticamente naquela conversa.
               </p>
             </div>
           </label>
@@ -97,10 +99,10 @@ export function AiTab({ config, canEdit }: Props) {
               name="model"
               defaultValue={config.model}
               disabled={!canEdit}
-              className="w-full rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
             >
               {MODELS.map((m) => (
-                <option key={m.value} value={m.value}>
+                <option key={m.value} value={m.value} className="bg-stone-900">
                   {m.label}
                 </option>
               ))}
@@ -120,17 +122,21 @@ export function AiTab({ config, canEdit }: Props) {
               placeholder="Deixe vazio pra usar o prompt padrão da Garcia Sadler. Sobreescreva pra customizar o tom de voz, regras de negócio, política de preços, etc."
               disabled={!canEdit}
             />
-            <p className="mt-1 text-[11px] text-stone-500">
+            <p className="mt-1.5 text-[11px] text-stone-400">
               Ferramentas disponíveis pra IA:{" "}
-              <code className="text-[10px] bg-stone-200 dark:bg-stone-700 px-1 rounded">buscar_produto</code>{" "}
+              <code className="text-[10px] bg-white/[0.06] text-stone-200 px-1 rounded">
+                buscar_produto
+              </code>{" "}
               (consulta Exato) e{" "}
-              <code className="text-[10px] bg-stone-200 dark:bg-stone-700 px-1 rounded">calcular_obra</code>{" "}
+              <code className="text-[10px] bg-white/[0.06] text-stone-200 px-1 rounded">
+                calcular_obra
+              </code>{" "}
               (contrapiso, alvenaria, reboco, telhado, pintura, concreto, aço).
             </p>
           </div>
 
-          {state?.ok && <p className="text-sm text-emerald-600">Salvo.</p>}
-          {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+          {state?.ok && <p className="text-sm text-emerald-300">Salvo.</p>}
+          {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
 
           {canEdit && (
             <div className="flex items-center gap-2 pt-2">
@@ -146,27 +152,27 @@ export function AiTab({ config, canEdit }: Props) {
 
       <SectionCard title="Uso de tokens" description="Consumo na OpenAI desde o último reset.">
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-stone-200 dark:border-stone-800 p-4">
-            <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-brand-300 font-semibold">
               Mês atual
             </p>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums">
+            <p className="mt-2 font-display text-3xl text-white tabular-nums leading-none">
               {config.tokensUsedMonth.toLocaleString("pt-BR")}
             </p>
-            <p className="text-[11px] text-stone-500">
+            <p className="text-[11px] text-stone-400 mt-1">
               {config.tokensResetAt
                 ? `Reset em ${new Date(config.tokensResetAt).toLocaleDateString("pt-BR")}`
                 : "—"}
             </p>
           </div>
-          <div className="rounded-xl border border-stone-200 dark:border-stone-800 p-4">
-            <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-brand-300 font-semibold">
               Total acumulado
             </p>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums">
+            <p className="mt-2 font-display text-3xl text-white tabular-nums leading-none">
               {config.tokensUsedTotal.toLocaleString("pt-BR")}
             </p>
-            <p className="text-[11px] text-stone-500">desde sempre</p>
+            <p className="text-[11px] text-stone-400 mt-1">desde sempre</p>
           </div>
         </div>
         {canEdit && (
@@ -189,11 +195,11 @@ export function AiTab({ config, canEdit }: Props) {
             { icon: Bot, txt: "Se agente humano enviar mensagem, IA pausa automaticamente naquela conversa" },
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="shrink-0 h-7 w-7 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold text-xs">
+              <span className="shrink-0 h-7 w-7 rounded-lg bg-brand-500/15 text-brand-300 ring-1 ring-brand-500/30 flex items-center justify-center font-bold text-xs">
                 {i + 1}
               </span>
-              <span className="flex-1 text-stone-700 dark:text-stone-300 flex items-center gap-2">
-                <step.icon className="h-3.5 w-3.5 text-stone-400 shrink-0" />
+              <span className="flex-1 text-stone-300 flex items-center gap-2">
+                <step.icon className="h-3.5 w-3.5 text-stone-500 shrink-0" />
                 {step.txt}
               </span>
             </li>

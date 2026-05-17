@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateContactAction, type UpdateState } from "./actions";
+import { Button, Input, Label, Textarea } from "@/components/ui";
 
 type Contact = {
   id: string;
@@ -21,107 +22,86 @@ export function EditForm({ contact }: { contact: Contact }) {
   );
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="space-y-5">
       <input type="hidden" name="contactId" value={contact.id} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            Nome
-          </label>
-          <input
+          <Label htmlFor="name">Nome</Label>
+          <Input
+            id="name"
             name="name"
             defaultValue={contact.name}
             required
             minLength={1}
             maxLength={120}
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            Telefone
-          </label>
-          <input
-            name="phone"
-            defaultValue={contact.phone}
-            required
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
+          <Label htmlFor="phone">Telefone</Label>
+          <Input id="phone" name="phone" defaultValue={contact.phone} required />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            E-mail
-          </label>
-          <input
-            name="email"
-            type="email"
-            defaultValue={contact.email ?? ""}
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-          />
+          <Label htmlFor="email">E-mail</Label>
+          <Input id="email" name="email" type="email" defaultValue={contact.email ?? ""} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            Status
-          </label>
+          <Label htmlFor="status">Status</Label>
           <select
+            id="status"
             name="status"
             defaultValue={contact.status}
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500/60"
           >
-            <option value="active">Ativo</option>
-            <option value="archived">Arquivado</option>
-            <option value="blocked">Bloqueado</option>
+            <option value="active" className="bg-stone-900">
+              Ativo
+            </option>
+            <option value="archived" className="bg-stone-900">
+              Arquivado
+            </option>
+            <option value="blocked" className="bg-stone-900">
+              Bloqueado
+            </option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            Produto/serviço de interesse
-          </label>
-          <input
+          <Label htmlFor="productInterest">Produto/serviço de interesse</Label>
+          <Input
+            id="productInterest"
             name="productInterest"
             defaultValue={contact.productInterest ?? ""}
             placeholder="ex: cimento, tijolos, areia..."
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-            Origem
-          </label>
-          <input
+          <Label htmlFor="source">Origem</Label>
+          <Input
+            id="source"
             name="source"
             defaultValue={contact.source ?? ""}
             placeholder="ex: whatsapp, indicação, anúncio"
-            className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-stone-600 dark:text-stone-400 mb-1">
-          Anotações internas
-        </label>
-        <textarea
+        <Label htmlFor="notes">Anotações internas</Label>
+        <Textarea
+          id="notes"
           name="notes"
           defaultValue={contact.notes ?? ""}
           rows={4}
           maxLength={2000}
           placeholder="Visíveis só pra equipe..."
-          className="w-full rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
         />
       </div>
 
       <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition"
-        >
+        <Button type="submit" disabled={pending}>
           {pending ? "Salvando..." : "Salvar"}
-        </button>
-        {state?.ok && <p className="text-xs text-emerald-600">Salvo.</p>}
-        {state?.error && <p className="text-xs text-red-600">{state.error}</p>}
+        </Button>
+        {state?.ok && <p className="text-xs text-emerald-300">Salvo.</p>}
+        {state?.error && <p className="text-xs text-red-400">{state.error}</p>}
       </div>
     </form>
   );

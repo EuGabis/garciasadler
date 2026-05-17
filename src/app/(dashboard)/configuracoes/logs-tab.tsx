@@ -28,25 +28,25 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
           icon={AlertOctagon}
           label="Fatal"
           value={counts.fatal}
-          color="bg-red-500/10 text-red-600"
+          color="bg-red-500/15 text-red-300 ring-1 ring-red-500/30"
         />
         <KpiCard
           icon={AlertTriangle}
           label="Erros"
           value={counts.error}
-          color="bg-amber-500/10 text-amber-600"
+          color="bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30"
         />
         <KpiCard
           icon={AlertCircle}
           label="Warnings"
           value={counts.warn}
-          color="bg-stone-500/10 text-stone-600"
+          color="bg-white/[0.06] text-stone-300 ring-1 ring-white/10"
         />
         <KpiCard
           icon={CheckCircle2}
           label="Pendentes"
           value={unackCount}
-          color="bg-brand-500/10 text-brand-600"
+          color="bg-brand-500/15 text-brand-300 ring-1 ring-brand-500/30"
           hint="não revisados"
         />
       </div>
@@ -66,7 +66,7 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
           Warn
         </FilterPill>
 
-        <span className="mx-1 h-5 w-px bg-stone-200 dark:bg-stone-700" />
+        <span className="mx-1 h-5 w-px bg-white/10" />
 
         <FilterPill
           active={filters.onlyUnack}
@@ -88,11 +88,13 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
               else url.searchParams.delete("scope");
               window.location.href = url.toString();
             }}
-            className="ml-auto px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs"
+            className="ml-auto px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] text-stone-100 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/60"
           >
-            <option value="">Todos os escopos</option>
+            <option value="" className="bg-stone-900">
+              Todos os escopos
+            </option>
             {scopes.map((s) => (
-              <option key={s} value={s}>
+              <option key={s} value={s} className="bg-stone-900">
                 {s}
               </option>
             ))}
@@ -110,16 +112,16 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
       >
         {errors.length === 0 ? (
           <div className="p-12 text-center">
-            <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-500 mb-2" />
-            <p className="text-sm font-medium">Nenhum erro registrado</p>
-            <p className="text-xs text-stone-500 mt-1">
+            <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-400 mb-2" />
+            <p className="text-sm font-medium text-white">Nenhum erro registrado</p>
+            <p className="text-xs text-stone-400 mt-1">
               {filters.level || filters.scope || filters.onlyUnack
                 ? "Sem resultados pros filtros atuais."
                 : "Sistema rodando sem erros."}
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
+          <ul className="divide-y divide-white/5">
             {errors.map((err) => (
               <li key={err.id}>
                 <LogRow err={err} canManage={canManage} />
@@ -146,17 +148,17 @@ function KpiCard({
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
+    <div className="rounded-2xl glass p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400">
           {label}
         </span>
         <span className={cn("h-7 w-7 rounded-lg flex items-center justify-center", color)}>
           <Icon className="h-3.5 w-3.5" />
         </span>
       </div>
-      <p className="text-2xl font-bold tracking-tight tabular-nums">{value}</p>
-      {hint && <p className="text-[10px] text-stone-500 mt-0.5">{hint}</p>}
+      <p className="font-display text-3xl text-white tabular-nums leading-none">{value}</p>
+      {hint && <p className="text-[10px] text-stone-400 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -174,10 +176,10 @@ function FilterPill({
     <Link
       href={href}
       className={cn(
-        "px-3 py-1.5 rounded-lg text-xs font-medium transition",
+        "px-3 py-1.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider transition",
         active
-          ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30"
-          : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+          ? "bg-brand-500 text-white shadow-brand-glow"
+          : "bg-white/[0.04] text-stone-300 hover:bg-white/[0.08] hover:text-white"
       )}
     >
       {children}
