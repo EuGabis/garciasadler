@@ -5,4 +5,7 @@ export { Label } from "./label";
 export { SectionCard } from "./section-card";
 export { PageHeader } from "./page-header";
 export { ThemeToggle } from "./theme-toggle";
+export { AuroraBackground } from "./aurora-background";
+export { SpotlightCard } from "./spotlight-card";
+export { NumberTicker } from "./number-ticker";
 export { cn } from "./cn";
