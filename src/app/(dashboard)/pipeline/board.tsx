@@ -88,22 +88,22 @@ export function Board({
         return (
           <div
             key={col.id}
-            className={`w-72 shrink-0 rounded-xl border bg-white dark:bg-stone-900 flex flex-col ${
+            className={`w-72 shrink-0 rounded-2xl glass flex flex-col transition ${
               overColumn === col.id
-                ? "border-brand-400 dark:border-brand-500 ring-2 ring-brand-100 dark:ring-brand-900"
-                : "border-stone-200 dark:border-stone-800"
+                ? "ring-2 ring-brand-500/40 shadow-brand-glow"
+                : ""
             }`}
             onDragOver={(e) => onDragOver(e, col.id)}
             onDragLeave={() => onDragLeave(col.id)}
             onDrop={(e) => onDrop(e, col.id)}
           >
-            <header className="px-3 py-2.5 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2">
+            <header className="px-3 py-2.5 border-b border-white/5 flex items-center gap-2">
               <span
-                className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
+                className="inline-block h-2.5 w-2.5 rounded-full shrink-0 ring-1 ring-white/10"
                 style={{ backgroundColor: col.color }}
               />
-              <h3 className="text-sm font-semibold truncate flex-1">{col.name}</h3>
-              <span className="text-xs text-stone-500">
+              <h3 className="text-sm font-semibold truncate flex-1 text-white">{col.name}</h3>
+              <span className="text-[10px] uppercase tracking-wider text-stone-400">
                 {col.cards.length}
                 {col.wipLimit ? `/${col.wipLimit}` : ""}
               </span>
@@ -127,22 +127,22 @@ export function Board({
                       e.stopPropagation();
                       onDrop(e, col.id, idx);
                     }}
-                    className={`group rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-2.5 hover:border-brand-300 dark:hover:border-brand-700 transition cursor-grab active:cursor-grabbing ${
+                    className={`group rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-2.5 hover:border-brand-500/40 hover:bg-white/[0.06] transition cursor-grab active:cursor-grabbing ${
                       dragCardId === card.id ? "opacity-40" : ""
                     }`}
                   >
                     <div className="flex items-start gap-2">
-                      <div className="h-7 w-7 shrink-0 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-[11px] font-semibold flex items-center justify-center">
+                      <div className="h-7 w-7 shrink-0 rounded-full bg-brand-500/20 text-brand-300 text-[11px] font-semibold flex items-center justify-center ring-1 ring-brand-500/30">
                         {card.contactName[0]?.toUpperCase() ?? "?"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">{card.contactName}</p>
-                        <p className="text-[11px] text-stone-500 truncate">{card.lastMessage ?? "—"}</p>
+                        <p className="text-xs font-medium truncate text-white">{card.contactName}</p>
+                        <p className="text-[11px] text-stone-400 truncate">{card.lastMessage ?? "—"}</p>
                       </div>
                       <button
                         type="button"
                         onClick={() => removeCard(card.id)}
-                        className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-500 transition"
+                        className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-400 transition"
                         title="Remover do pipeline"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -163,7 +163,7 @@ export function Board({
                     )}
                     <Link
                       href={`/conversations/${card.conversationId}`}
-                      className="block mt-1.5 text-[10px] text-brand-600 hover:underline"
+                      className="block mt-1.5 text-[10px] text-brand-300 hover:text-brand-200 transition"
                     >
                       abrir conversa →
                     </Link>
@@ -172,14 +172,14 @@ export function Board({
               )}
             </ul>
 
-            <footer className="p-2 border-t border-stone-200 dark:border-stone-800 relative">
+            <footer className="p-2 border-t border-white/5 relative">
               <button
                 type="button"
                 onClick={() =>
                   setPickerOpenFor((cur) => (cur === col.id ? null : col.id))
                 }
                 disabled={!!overLimit || unassigned.length === 0}
-                className="w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-40 disabled:hover:bg-transparent transition"
+                className="w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs text-stone-300 hover:bg-white/[0.06] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent transition"
                 title={
                   overLimit
                     ? "Limite WIP atingido"
@@ -195,9 +195,9 @@ export function Board({
               {pickerOpenFor === col.id && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setPickerOpenFor(null)} />
-                  <div className="absolute bottom-full left-2 right-2 mb-1 z-20 max-h-60 overflow-y-auto rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-lg py-1">
+                  <div className="absolute bottom-full left-2 right-2 mb-1 z-20 max-h-60 overflow-y-auto rounded-xl glass shadow-2xl py-1">
                     {unassigned.length === 0 ? (
-                      <p className="px-3 py-3 text-xs text-stone-500">
+                      <p className="px-3 py-3 text-xs text-stone-400">
                         Sem conversas disponíveis.
                       </p>
                     ) : (
@@ -206,10 +206,10 @@ export function Board({
                           key={c.id}
                           type="button"
                           onClick={() => addCard(col.id, c.id)}
-                          className="w-full text-left px-3 py-2 hover:bg-stone-50 dark:hover:bg-stone-800 transition"
+                          className="w-full text-left px-3 py-2 hover:bg-white/[0.06] transition"
                         >
-                          <p className="text-xs font-medium truncate">{c.contact.name}</p>
-                          <p className="text-[10px] text-stone-500 truncate">
+                          <p className="text-xs font-medium truncate text-stone-100">{c.contact.name}</p>
+                          <p className="text-[10px] text-stone-400 truncate">
                             {c.lastMessage ?? c.contact.phone}
                           </p>
                         </button>

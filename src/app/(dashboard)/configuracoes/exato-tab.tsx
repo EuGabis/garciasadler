@@ -77,13 +77,13 @@ function CredentialsSection({ integ, canEdit }: { integ: Integ; canEdit: boolean
             placeholder={integ.hasCredentials ? "•••••••• (já salva)" : "Cole a senha"}
             autoComplete="new-password"
           />
-          <p className="mt-1 text-[11px] text-stone-500">
+          <p className="mt-1.5 text-[11px] text-stone-400">
             Salvamos só o hash criptografado. Pra trocar a senha, preencha de novo.
           </p>
         </div>
 
-        {state?.ok && <p className="text-sm text-emerald-600">Salvo e testado com sucesso.</p>}
-        {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.ok && <p className="text-sm text-emerald-300">Salvo e testado com sucesso.</p>}
+        {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
 
         {canEdit && (
           <Button type="submit" disabled={pending}>
@@ -108,17 +108,19 @@ function ConnectionSection({ integ }: { integ: Integ }) {
       description="Testa login com as credenciais salvas."
     >
       <div className="space-y-3">
-        <div className="text-xs text-stone-500">
+        <div className="text-xs text-stone-400">
           {integ.ultimoLoginEm ? (
             <>
               Último login bem-sucedido em{" "}
-              <strong>{new Date(integ.ultimoLoginEm).toLocaleString("pt-BR")}</strong>
+              <strong className="text-stone-200">
+                {new Date(integ.ultimoLoginEm).toLocaleString("pt-BR")}
+              </strong>
             </>
           ) : (
             "Ainda não houve login bem-sucedido."
           )}
           {integ.ultimoErro && (
-            <span className="block text-red-600 mt-1">Último erro: {integ.ultimoErro}</span>
+            <span className="block text-red-400 mt-1">Último erro: {integ.ultimoErro}</span>
           )}
         </div>
 
@@ -138,12 +140,12 @@ function ConnectionSection({ integ }: { integ: Integ }) {
         </Button>
 
         {state?.ok && (
-          <p className="text-sm text-emerald-600 flex items-center gap-1.5">
+          <p className="text-sm text-emerald-300 flex items-center gap-1.5">
             <Check className="h-3.5 w-3.5" />
-            Conectado como <strong>{state.nomeUsuarioLogado}</strong>
+            Conectado como <strong className="text-white">{state.nomeUsuarioLogado}</strong>
           </p>
         )}
-        {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
       </div>
     </SectionCard>
   );
@@ -169,12 +171,12 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
       <div className="space-y-4">
         {integ.lojaNome ? (
           <div className="text-sm">
-            <span className="text-stone-500">Loja atual: </span>
-            <strong>{integ.lojaNome}</strong>
+            <span className="text-stone-400">Loja atual: </span>
+            <strong className="text-white">{integ.lojaNome}</strong>
             <span className="text-stone-500"> (id {integ.lojaId})</span>
           </div>
         ) : (
-          <div className="text-sm text-amber-700 dark:text-amber-400">
+          <div className="text-sm text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
             Nenhuma loja selecionada. Sincronize e escolha uma abaixo.
           </div>
         )}
@@ -200,14 +202,14 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
           {syncing ? "Sincronizando..." : "Sincronizar lojas"}
         </Button>
 
-        {syncErr && <p className="text-sm text-red-600">{syncErr}</p>}
+        {syncErr && <p className="text-sm text-red-400">{syncErr}</p>}
 
         {lojas && lojas.length === 0 && (
-          <p className="text-sm text-stone-500">Nenhuma loja acessível por este usuário.</p>
+          <p className="text-sm text-stone-400">Nenhuma loja acessível por este usuário.</p>
         )}
 
         {lojas && lojas.length > 0 && (
-          <div className="border border-stone-200 dark:border-stone-800 rounded-lg divide-y divide-stone-100 dark:divide-stone-800">
+          <div className="border border-white/10 rounded-xl divide-y divide-white/5 bg-white/[0.02]">
             {lojas.map((l) => {
               const isActive = integ.lojaCodigoAcesso === l.codigoAcesso;
               return (
@@ -220,8 +222,8 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
                   <input type="hidden" name="lojaId" value={l.id} />
                   <input type="hidden" name="lojaNome" value={l.nome} />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold truncate">
-                      {l.nome} {l.nomeFantasia ? <span className="text-stone-500">({l.nomeFantasia})</span> : null}
+                    <p className="text-sm font-semibold truncate text-white">
+                      {l.nome} {l.nomeFantasia ? <span className="text-stone-400">({l.nomeFantasia})</span> : null}
                     </p>
                     <p className="text-[11px] text-stone-500">
                       id {l.id} · {l.cidade ?? "—"}/{l.uf ?? "—"}
@@ -229,7 +231,7 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
                   </div>
                   {canEdit &&
                     (isActive ? (
-                      <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                      <span className="text-xs font-semibold text-emerald-300 flex items-center gap-1">
                         <Check className="h-3 w-3" /> Selecionada
                       </span>
                     ) : (
@@ -244,9 +246,9 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
         )}
 
         {selectState?.ok && (
-          <p className="text-sm text-emerald-600">Loja salva. Recarregue se não atualizar sozinho.</p>
+          <p className="text-sm text-emerald-300">Loja salva. Recarregue se não atualizar sozinho.</p>
         )}
-        {selectState?.error && <p className="text-sm text-red-600">{selectState.error}</p>}
+        {selectState?.error && <p className="text-sm text-red-400">{selectState.error}</p>}
       </div>
     </SectionCard>
   );
@@ -278,16 +280,16 @@ function ProdutoSearchSection() {
           </Button>
         </div>
 
-        {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
 
         {state?.produtos && state.produtos.length === 0 && (
-          <p className="text-sm text-stone-500">Nenhum produto encontrado pra esse termo.</p>
+          <p className="text-sm text-stone-400">Nenhum produto encontrado pra esse termo.</p>
         )}
 
         {state?.produtos && state.produtos.length > 0 && (
-          <div className="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+          <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
             <table className="w-full text-sm">
-              <thead className="bg-stone-50 dark:bg-stone-900/50 text-xs uppercase tracking-wider text-stone-500">
+              <thead className="bg-white/[0.04] text-[10px] uppercase tracking-[0.2em] text-brand-300">
                 <tr>
                   <th className="text-left px-3 py-2">Código</th>
                   <th className="text-left px-3 py-2">Descrição</th>
@@ -296,12 +298,12 @@ function ProdutoSearchSection() {
                   <th className="text-right px-3 py-2">Estoque</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+              <tbody className="divide-y divide-white/5 text-stone-200">
                 {state.produtos.map((p) => (
                   <tr key={p.id}>
-                    <td className="px-3 py-2 font-mono text-xs">{p.codigo}</td>
+                    <td className="px-3 py-2 font-mono text-xs text-brand-300">{p.codigo}</td>
                     <td className="px-3 py-2">{p.descricao}</td>
-                    <td className="px-3 py-2 text-stone-500">{p.marca ?? "—"}</td>
+                    <td className="px-3 py-2 text-stone-400">{p.marca ?? "—"}</td>
                     <td className="px-3 py-2 text-right tabular-nums">
                       R$ {p.precoVenda.toFixed(2)}
                     </td>

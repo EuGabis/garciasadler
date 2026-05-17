@@ -61,7 +61,7 @@ export function AutomationList({
         <button
           type="button"
           onClick={() => setCreating(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition shadow-brand-glow"
         >
           <Plus className="h-3.5 w-3.5" />
           Nova automação
@@ -80,29 +80,31 @@ export function AutomationList({
         />
       )}
 
-      <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 overflow-hidden">
+      <div className="rounded-2xl glass overflow-hidden">
         {automations.length === 0 ? (
-          <div className="p-12 text-center text-sm text-stone-500">
+          <div className="p-12 text-center text-sm text-stone-400">
             Sem automações ainda. Crie a primeira no botão acima.
           </div>
         ) : (
-          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
+          <ul className="divide-y divide-white/5">
             {automations.map((a) => (
               <li key={a.id} className="px-5 py-3">
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className={`text-sm font-medium ${!a.enabled && "opacity-50"}`}>{a.name}</p>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
+                      <p className={`text-sm font-medium text-white ${!a.enabled && "opacity-50"}`}>
+                        {a.name}
+                      </p>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/[0.06] text-stone-300 ring-1 ring-white/10">
                         {triggerLabel[a.triggerType]}
                       </span>
                       {!a.enabled && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-200 dark:bg-stone-700 text-stone-500">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/[0.04] text-stone-500 ring-1 ring-white/10">
                           desativada
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-xs text-stone-500 space-y-0.5">
+                    <div className="mt-1 text-xs text-stone-400 space-y-0.5">
                       {a.triggerType === "keyword" && a.keywords.length > 0 && (
                         <p>Keywords: {a.keywords.join(", ")}</p>
                       )}
@@ -129,8 +131,8 @@ export function AutomationList({
                     onClick={() => toggle(a.id)}
                     className={`p-1.5 rounded transition ${
                       a.enabled
-                        ? "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                        : "text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
+                        ? "text-emerald-300 hover:bg-emerald-500/15"
+                        : "text-stone-400 hover:bg-white/[0.06]"
                     }`}
                     title={a.enabled ? "Desativar" : "Ativar"}
                   >
@@ -139,7 +141,7 @@ export function AutomationList({
                   <button
                     type="button"
                     onClick={() => setEditing(a)}
-                    className="p-1.5 rounded text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+                    className="p-1.5 rounded text-stone-400 hover:bg-white/[0.06] hover:text-stone-100"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -147,7 +149,7 @@ export function AutomationList({
                   <button
                     type="button"
                     onClick={() => remove(a.id)}
-                    className="p-1.5 rounded text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="p-1.5 rounded text-red-400 hover:bg-red-500/15"
                     title="Excluir"
                   >
                     <Trash2 className="h-3.5 w-3.5" />

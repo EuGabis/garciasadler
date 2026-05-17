@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { getMetrics, formatDuration, type AnalyticsPeriod } from "@/lib/analytics";
 import { KpiCard, BarList, MessagesChart, HourHeatmap } from "./charts";
 import { PeriodTabs } from "./period-tabs";
+import { PageHeader } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -28,18 +29,13 @@ export default async function AnalyticsPage({
       : 0;
 
   return (
-    <div className="p-8 max-w-6xl">
-      <header className="flex items-start justify-between mb-6 gap-4 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-          <p className="mt-1 text-sm text-stone-500">
-            {metrics.period.label} ·{" "}
-            {metrics.period.from.toLocaleDateString("pt-BR")} →{" "}
-            {metrics.period.to.toLocaleDateString("pt-BR")}
-          </p>
-        </div>
-        <PeriodTabs active={period} />
-      </header>
+    <div className="p-6 lg:p-10 max-w-6xl mx-auto text-stone-100">
+      <PageHeader
+        eyebrow={metrics.period.label}
+        title="Analytics"
+        description={`${metrics.period.from.toLocaleDateString("pt-BR")} → ${metrics.period.to.toLocaleDateString("pt-BR")}`}
+        actions={<PeriodTabs active={period} />}
+      />
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <KpiCard
@@ -65,19 +61,9 @@ export default async function AnalyticsPage({
       </section>
 
       <section className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-        <KpiCard
-          label="Mensagens recebidas"
-          value={metrics.totals.inboundMessages}
-        />
-        <KpiCard
-          label="Mensagens enviadas"
-          value={metrics.totals.outboundMessages}
-        />
-        <KpiCard
-          label="Taxa de resposta"
-          value={`${respRate}%`}
-          hint="enviadas / recebidas"
-        />
+        <KpiCard label="Mensagens recebidas" value={metrics.totals.inboundMessages} />
+        <KpiCard label="Mensagens enviadas" value={metrics.totals.outboundMessages} />
+        <KpiCard label="Taxa de resposta" value={`${respRate}%`} hint="enviadas / recebidas" />
       </section>
 
       <section className="mb-6">

@@ -65,16 +65,16 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   const assignedUsers = conversation.assignments.map((a) => a.user);
 
   return (
-    <div className="h-full flex relative">
+    <div className="h-full flex relative text-stone-100">
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 px-5 py-3">
+        <header className="border-b border-white/5 bg-stone-950/40 backdrop-blur-xl px-5 py-3">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-sm font-semibold flex items-center justify-center">
+            <div className="h-9 w-9 rounded-full bg-brand-500/20 text-brand-300 text-sm font-semibold flex items-center justify-center ring-1 ring-brand-500/30">
               {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
-              <p className="text-xs text-stone-500">{formatPhone(conversation.contact.phone)}</p>
+              <p className="text-sm font-medium truncate text-white">{conversation.contact.name}</p>
+              <p className="text-xs text-stone-400">{formatPhone(conversation.contact.phone)}</p>
             </div>
             <AssignPicker
               conversationId={conversation.id}
@@ -87,7 +87,9 @@ export default async function ConversationPage({ params }: { params: Promise<Par
               available={availableLabels}
             />
             <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
-            <span className="text-xs text-stone-500 capitalize">{conversation.status}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+              {conversation.status}
+            </span>
           </div>
           {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -120,8 +122,8 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                   <div
                     className={`max-w-[70%] rounded-2xl px-3.5 py-2 text-sm ${
                       isInbound
-                        ? "bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
-                        : "bg-brand-500 text-white"
+                        ? "glass-light text-stone-100"
+                        : "bg-brand-500 text-white shadow-brand-glow"
                     }`}
                   >
                     <MediaBubble
@@ -134,7 +136,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                     />
                     <div
                       className={`mt-1 flex items-center gap-1 text-[10px] ${
-                        isInbound ? "text-stone-500" : "text-brand-100"
+                        isInbound ? "text-stone-400" : "text-brand-100"
                       }`}
                     >
                       {!isInbound && m.sender?.name && <span>{m.sender.name}</span>}
