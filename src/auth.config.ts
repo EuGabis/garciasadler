@@ -42,6 +42,9 @@ export const authConfig = {
         token.id = user.id;
         token.workspaceId = user.workspaceId;
         token.role = user.role;
+        // S2-05: timestamp da senha no momento do login; usado pra invalidar
+        // tokens emitidos antes de uma mudança de senha.
+        token.passwordChangedAt = user.passwordChangedAt ?? null;
       }
       return token;
     },

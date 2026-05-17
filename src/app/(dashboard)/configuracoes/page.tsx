@@ -102,9 +102,13 @@ export default async function ConfiguracoesPage({
     hasEvolutionKey: !!workspaceRaw.evolutionKey,
   };
 
+  // S2-12: mascara o login do usuário Exato (PII/credencial). Mantém lojaId/Nome/CodigoAcesso
+  // porque a UI usa pra identificar a loja escolhida (não são secrets).
+  const maskUsuario = (u: string | null) =>
+    u ? (u.length <= 4 ? "***" : `${u.slice(0, 2)}***${u.slice(-1)}`) : null;
   const integExatoView = {
     hasCredentials: !!integExato,
-    usuario: integExato?.usuario ?? null,
+    usuario: maskUsuario(integExato?.usuario ?? null),
     lojaId: integExato?.lojaId ?? null,
     lojaNome: integExato?.lojaNome ?? null,
     lojaCodigoAcesso: integExato?.lojaCodigoAcesso ?? null,

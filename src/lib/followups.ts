@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/db";
 import { sendWhatsAppText } from "@/lib/evolution";
 import { publishRealtime } from "@/lib/pusher-server";
+import { buildEvolutionConfig } from "@/lib/workspace";
+import { logger } from "@/lib/logger";
 import type { FollowUp, FollowUpTriggerType } from "@/generated/prisma/client";
+
+const log = logger("followups");
 
 /**
  * Motor de follow-ups (executado por cron).
@@ -23,6 +27,7 @@ const MIN_INTERVAL_BETWEEN_FOLLOWUPS_MS = 1000 * 60 * 60; // 1h entre execuçõe
 
 type WorkspaceConfig = {
   id: string;
+  /** já descriptografada, pronta pra usar. */
   evolutionUrl: string;
   evolutionKey: string;
   evolutionInstance: string;
@@ -123,10 +128,10 @@ async function executeOne(
   const now = Date.now();
 
   for (const candidate of candidates) {
-    const log = byConv.get(candidate.conversationId);
-    if (log) {
-      if (log.sentCount >= followUp.maxTimes) continue;
-      if (now - log.lastSentAt.getTime() < MIN_INTERVAL_BETWEEN_FOLLOWUPS_MS) continue;
+    const prevLog = byConv.get(candidate.conversationId);
+    if (prevLog) {
+      if (prevLog.sentCount >= followUp.maxTimes) continue;
+      if (now - prevLog.lastSentAt.getTime() < MIN_INTERVAL_BETWEEN_FOLLOWUPS_MS) continue;
     }
 
     result.attemptedSends++;
@@ -176,9 +181,9 @@ async function executeOne(
       }
 
       // Atualiza log
-      if (log) {
+      if (prevLog) {
         await prisma.followUpLog.update({
-          where: { id: log.id },
+          where: { id: prevLog.id },
           data: { sentCount: { increment: 1 }, lastSentAt: new Date() },
         });
       } else {
@@ -201,7 +206,10 @@ async function executeOne(
     } catch (e) {
       const msg = (e as Error).message;
       result.errors.push(`followUp ${followUp.id} / conv ${candidate.conversationId}: ${msg}`);
-      console.error("[followups] send failed:", msg);
+      log.error("send failed", e, {
+        followUpId: followUp.id,
+        conversationId: candidate.conversationId,
+      });
     }
   }
 }
@@ -231,11 +239,18 @@ export async function runFollowUps(): Promise<Result> {
 
   for (const followUp of followUps) {
     if (!followUp.workspace.active) continue;
-    if (
-      !followUp.workspace.evolutionUrl ||
-      !followUp.workspace.evolutionKey ||
-      !followUp.workspace.evolutionInstance
-    ) {
+
+    // Descriptografa evolutionKey antes de usar
+    const cfg = buildEvolutionConfig(
+      followUp.workspace.evolutionUrl,
+      followUp.workspace.evolutionKey,
+      followUp.workspace.evolutionInstance
+    );
+    if (!cfg) {
+      log.warn("skipping followUp: workspace sem Evolution válido", {
+        followUpId: followUp.id,
+        workspaceId: followUp.workspaceId,
+      });
       continue;
     }
 
@@ -243,14 +258,14 @@ export async function runFollowUps(): Promise<Result> {
     try {
       await executeOne(followUp, {
         id: followUp.workspace.id,
-        evolutionUrl: followUp.workspace.evolutionUrl,
-        evolutionKey: followUp.workspace.evolutionKey,
-        evolutionInstance: followUp.workspace.evolutionInstance,
+        evolutionUrl: cfg.url,
+        evolutionKey: cfg.key,
+        evolutionInstance: cfg.instance,
       }, result);
     } catch (e) {
       const msg = (e as Error).message;
       result.errors.push(`followUp ${followUp.id} workspace ${followUp.workspaceId}: ${msg}`);
-      console.error("[followups] workspace exec failed:", msg);
+      log.error("workspace exec failed", e, { followUpId: followUp.id, workspaceId: followUp.workspaceId });
     }
   }
 

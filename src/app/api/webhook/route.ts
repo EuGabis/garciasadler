@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
 import { runAutomations } from "@/lib/automations";
 import { buildEvolutionConfig } from "@/lib/workspace";
+import { logger, newRequestId } from "@/lib/logger";
 import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -273,7 +274,9 @@ async function handleMessageUpsert(
     messageText: extracted.content,
     contactPhone: phone,
     evolutionConfig,
-  }).catch((e) => console.error("[webhook] automations failed:", e));
+  }).catch((e) =>
+    logger("webhook").error("automations failed", e, { workspaceId, conversationId: conversation.id })
+  );
 
   return Response.json({ ok: true, messageId: message.id });
 }
@@ -321,13 +324,20 @@ async function handleMessageUpdate(payload: EvolutionMessageUpdate, workspaceId:
 }
 
 export async function POST(req: NextRequest) {
-  // Fail-closed: webhook precisa de secret. Sem env setada, recusa todas as requests.
+  const reqId = newRequestId();
+  const log = logger("webhook", { reqId });
+
+  // Fail-closed
   if (!env.WEBHOOK_SECRET) {
-    console.error("[webhook] WEBHOOK_SECRET não configurada — recusando request");
+    log.error("WEBHOOK_SECRET não configurada — recusando request");
     return Response.json({ ok: false, error: "webhook secret not configured" }, { status: 503 });
   }
   const provided = req.headers.get("x-webhook-secret");
   if (provided !== env.WEBHOOK_SECRET) {
+    log.warn("unauthorized webhook attempt", {
+      ip: req.headers.get("x-forwarded-for") ?? null,
+      hasHeader: !!provided,
+    });
     return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 

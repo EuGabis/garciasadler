@@ -50,8 +50,20 @@ export async function resetRateLimit(key: string): Promise<void> {
   await prisma.rateLimit.deleteMany({ where: { key } });
 }
 
+/**
+ * IP do cliente resistente a spoofing (S2-02).
+ *
+ * - Vercel/Edge popula `x-real-ip` server-side: confiável.
+ * - `x-forwarded-for` é controlado pelo cliente na posição LEFTMOST.
+ *   Por isso, no fallback, pegamos o ÚLTIMO valor (mais próximo do edge).
+ */
 export function clientIpFrom(headers: Headers): string {
+  const real = headers.get("x-real-ip");
+  if (real) return real.trim();
   const xff = headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0].trim();
-  return headers.get("x-real-ip") ?? "unknown";
+  if (xff) {
+    const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
+    return parts[parts.length - 1] ?? "unknown";
+  }
+  return "unknown";
 }

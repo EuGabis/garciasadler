@@ -1,6 +1,9 @@
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
+import { logger } from "@/lib/logger";
 import type { Prisma } from "@/generated/prisma/client";
+
+const log = logger("audit");
 
 export type AuditAction =
   | "user.create"
@@ -34,7 +37,16 @@ type AuditInput = {
 export async function audit(input: AuditInput): Promise<void> {
   try {
     const h = await headers();
-    const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? null;
+    // S2-02: x-real-ip (Vercel infra) > último de x-forwarded-for.
+    // Leftmost de XFF é controlado pelo cliente.
+    const real = h.get("x-real-ip");
+    const xff = h.get("x-forwarded-for");
+    let ip: string | null = null;
+    if (real) ip = real.trim();
+    else if (xff) {
+      const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
+      ip = parts[parts.length - 1] ?? null;
+    }
     const ua = h.get("user-agent")?.slice(0, 400) ?? null;
 
     await prisma.auditLog.create({
@@ -49,6 +61,6 @@ export async function audit(input: AuditInput): Promise<void> {
       },
     });
   } catch (e) {
-    console.error("[audit] failed:", input.action, e);
+    log.error("write failed", e, { action: input.action, target: input.target });
   }
 }

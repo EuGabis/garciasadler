@@ -13,6 +13,8 @@ declare module "next-auth" {
   interface User {
     workspaceId: string;
     role: UserRole;
+    /** S2-05: ms epoch da última troca de senha (null se nunca trocada). */
+    passwordChangedAt?: number | null;
   }
 }
 
@@ -21,5 +23,6 @@ declare module "next-auth/jwt" {
     id: string;
     workspaceId: string;
     role: UserRole;
+    passwordChangedAt?: number | null;
   }
 }

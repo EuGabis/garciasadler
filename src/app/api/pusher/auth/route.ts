@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
     return new Response("Parâmetros faltando", { status: 400 });
   }
 
+  // S2-09: workspaceId vem da sessão (server-side), mas validamos formato
+  // como defesa em profundidade (cuid: a-z0-9, 20-32 chars).
+  if (!/^[a-z0-9]{20,40}$/i.test(session.user.workspaceId)) {
+    return new Response("workspaceId inválido", { status: 400 });
+  }
+
   const expected = workspaceChannel(session.user.workspaceId);
   if (channelName !== expected) {
     return new Response("Canal proibido pra este usuário", { status: 403 });

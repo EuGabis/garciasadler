@@ -12,11 +12,14 @@ import {
 } from "@/lib/evolution";
 import { publishRealtime } from "@/lib/pusher-server";
 import { buildEvolutionConfig } from "@/lib/workspace";
+import { logger } from "@/lib/logger";
 import type { MessageType } from "@/generated/prisma/client";
+
+const log = logger("conversations/actions");
 
 /** Evita vazar body/headers do Evolution pro cliente (pode conter detalhes internos). */
 function genericEvolutionError(e: unknown): string {
-  console.error("[evolution] send failed:", e);
+  log.error("evolution send failed", e);
   return "Falha ao enviar via Evolution. Tente novamente em instantes.";
 }
 

@@ -80,7 +80,10 @@ export async function getConversationWithMessages(workspaceId: string, conversat
       labels: { select: { label: { select: { id: true, name: true, color: true } } } },
       assignments: { select: { user: { select: { id: true, name: true } } } },
       messages: {
-        orderBy: { createdAt: "asc" },
+        // S2-07: NÃO selecionamos mediaBase64 (pode ser MB por mensagem).
+        // Mídia é servida sob demanda por /api/messages/[id]/media.
+        // 'desc' + reverse() na UI: pega as 50 mais recentes.
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           role: true,
@@ -88,17 +91,18 @@ export async function getConversationWithMessages(workspaceId: string, conversat
           type: true,
           status: true,
           content: true,
-          mediaBase64: true,
           mediaUrl: true,
           fileName: true,
           createdAt: true,
           sender: { select: { name: true } },
         },
-        take: 200,
+        take: 50,
       },
     },
   });
-  return conv;
+  if (!conv) return null;
+  // Reverte pra ordem cronológica (asc) pra UI exibir corretamente.
+  return { ...conv, messages: [...conv.messages].reverse() };
 }
 
 export async function markConversationRead(

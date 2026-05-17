@@ -1,27 +1,27 @@
 import { FileText, Download } from "lucide-react";
 
 type Props = {
+  messageId: string;
   type: "image" | "audio" | "video" | "document" | "text" | "location";
   content: string;
-  mediaBase64: string | null;
+  hasMedia: boolean;
   mediaUrl: string | null;
   fileName: string | null;
 };
 
-function dataUrl(base64: string, mime: string): string {
-  // base64 do Evolution costuma vir sem prefixo; assume formato cru
-  return base64.startsWith("data:") ? base64 : `data:${mime};base64,${base64}`;
-}
-
-export function MediaBubble({ type, content, mediaBase64, mediaUrl, fileName }: Props) {
+/**
+ * Renderiza mídia de uma mensagem. Em vez de carregar base64 inline
+ * (custoso em payload RSC), aponta pra `/api/messages/[id]/media` que serve
+ * o blob sob demanda com auth + workspace check.
+ */
+export function MediaBubble({ messageId, type, content, hasMedia, mediaUrl, fileName }: Props) {
   if (type === "text") {
     return <p className="whitespace-pre-wrap break-words">{content}</p>;
   }
 
+  const src = hasMedia ? `/api/messages/${messageId}/media` : mediaUrl;
+
   if (type === "image") {
-    const src = mediaBase64
-      ? dataUrl(mediaBase64, "image/jpeg")
-      : mediaUrl ?? null;
     return (
       <div className="space-y-1.5">
         {src ? (
@@ -29,6 +29,7 @@ export function MediaBubble({ type, content, mediaBase64, mediaUrl, fileName }: 
           <img
             src={src}
             alt={content || "imagem"}
+            loading="lazy"
             className="max-w-[280px] max-h-[280px] rounded-lg object-cover"
           />
         ) : (
@@ -42,24 +43,18 @@ export function MediaBubble({ type, content, mediaBase64, mediaUrl, fileName }: 
   }
 
   if (type === "audio") {
-    const src = mediaBase64
-      ? dataUrl(mediaBase64, "audio/ogg")
-      : mediaUrl ?? null;
     return src ? (
-      <audio src={src} controls className="max-w-[280px]" preload="metadata" />
+      <audio src={src} controls className="max-w-[280px]" preload="none" />
     ) : (
       <div className="text-xs italic opacity-70">[áudio indisponível]</div>
     );
   }
 
   if (type === "video") {
-    const src = mediaBase64
-      ? dataUrl(mediaBase64, "video/mp4")
-      : mediaUrl ?? null;
     return (
       <div className="space-y-1.5">
         {src ? (
-          <video src={src} controls className="max-w-[320px] rounded-lg" preload="metadata" />
+          <video src={src} controls className="max-w-[320px] rounded-lg" preload="none" />
         ) : (
           <div className="text-xs italic opacity-70">[vídeo indisponível]</div>
         )}
@@ -71,9 +66,6 @@ export function MediaBubble({ type, content, mediaBase64, mediaUrl, fileName }: 
   }
 
   if (type === "document") {
-    const src = mediaBase64
-      ? dataUrl(mediaBase64, "application/octet-stream")
-      : mediaUrl ?? null;
     return (
       <a
         href={src ?? "#"}

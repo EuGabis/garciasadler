@@ -123,9 +123,10 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                     }`}
                   >
                     <MediaBubble
+                      messageId={m.id}
                       type={m.type}
                       content={m.content}
-                      mediaBase64={m.mediaBase64}
+                      hasMedia={m.type !== "text" && m.type !== "location"}
                       mediaUrl={m.mediaUrl}
                       fileName={m.fileName}
                     />

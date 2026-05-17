@@ -194,7 +194,7 @@ export async function updatePasswordAction(
   const newHash = await hashPassword(parsed.data.newPassword);
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { password: newHash },
+    data: { password: newHash, passwordChangedAt: new Date() },
   });
 
   await audit({

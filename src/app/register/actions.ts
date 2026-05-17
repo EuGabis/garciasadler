@@ -50,7 +50,8 @@ export async function registerAction(
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return { error: "Já existe um usuário com esse email." };
+    // S2-04: não revelar que o email existe (enumeração).
+    return { error: "Não foi possível concluir o registro. Tente outro email." };
   }
 
   const baseSlug = slugify(workspaceName) || "workspace";

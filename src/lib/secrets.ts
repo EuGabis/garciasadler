@@ -4,7 +4,9 @@
  * cifrados de plain text (legado, antes da migração).
  */
 import { encrypt as rawEncrypt, decrypt as rawDecrypt } from "@/lib/crypto";
+import { logger } from "@/lib/logger";
 
+const log = logger("secrets");
 const PREFIX = "enc:v1:";
 
 export function encryptSecret(plain: string): string {
@@ -18,7 +20,7 @@ export function decryptSecret(stored: string | null | undefined): string | null 
     try {
       return rawDecrypt(stored.slice(PREFIX.length));
     } catch (e) {
-      console.error("[secrets] decrypt failed:", e);
+      log.error("decrypt failed", e);
       return null;
     }
   }

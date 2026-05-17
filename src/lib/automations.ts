@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
 import { sendWhatsAppText } from "@/lib/evolution";
 import { publishRealtime } from "@/lib/pusher-server";
+import { logger } from "@/lib/logger";
 import type { Automation, AutomationTriggerType } from "@/generated/prisma/client";
+
+const log = logger("automations");
 
 /**
  * Engine de automações.
@@ -133,7 +136,7 @@ async function applyReply(automation: Automation, ctx: Context): Promise<void> {
   try {
     await sendWhatsAppText(ctx.contactPhone, automation.replyMessage, ctx.evolutionConfig);
   } catch (e) {
-    console.error("[automations] reply send failed:", e);
+    log.error("reply send failed", e, { automationId: automation.id, workspaceId: ctx.workspaceId });
     return;
   }
 
@@ -174,16 +177,16 @@ export async function runAutomations(ctx: Context): Promise<{ matched: number; a
     // Aplicar cada ação isoladamente — falha de uma não bloqueia as outras
     const tasks: Array<Promise<void>> = [
       applyAddLabel(automation, ctx).catch((e) =>
-        console.error("[automations] addLabel failed:", e)
+        log.error("addLabel failed", e, { automationId: automation.id })
       ),
       applyAssign(automation, ctx).catch((e) =>
-        console.error("[automations] assign failed:", e)
+        log.error("assign failed", e, { automationId: automation.id })
       ),
       applyKanban(automation, ctx).catch((e) =>
-        console.error("[automations] kanban failed:", e)
+        log.error("kanban failed", e, { automationId: automation.id })
       ),
       applyReply(automation, ctx).catch((e) =>
-        console.error("[automations] reply failed:", e)
+        log.error("reply failed", e, { automationId: automation.id })
       ),
     ];
     await Promise.all(tasks);

@@ -1,5 +1,8 @@
 import Pusher from "pusher";
 import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
+
+const log = logger("pusher");
 
 let _pusher: Pusher | null = null;
 
@@ -37,6 +40,6 @@ export async function publishRealtime(workspaceId: string, event: RealtimeEvent)
   try {
     await pusher.trigger(workspaceChannel(workspaceId), event.type, event);
   } catch (e) {
-    console.error("[pusher] trigger failed:", e);
+    log.error("trigger failed", e, { workspaceId, eventType: event.type });
   }
 }
