@@ -115,7 +115,7 @@ export function AiTab({ config, canEdit }: Props) {
               id="systemPrompt"
               name="systemPrompt"
               rows={8}
-              maxLength={8000}
+              maxLength={50000}
               defaultValue={config.systemPrompt ?? ""}
               placeholder="Deixe vazio pra usar o prompt padrão da Garcia Sadler. Sobreescreva pra customizar o tom de voz, regras de negócio, política de preços, etc."
               disabled={!canEdit}

@@ -17,7 +17,7 @@ const KEY_UNCHANGED_SENTINEL = "__UNCHANGED__";
 
 const schema = z.object({
   enabled: z.boolean(),
-  systemPrompt: z.string().max(8000).nullable(),
+  systemPrompt: z.string().max(50000).nullable(),
   model: z.enum(["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini", "gpt-4.1"]),
   apiKey: z.string().max(500),
 });
