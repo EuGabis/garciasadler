@@ -401,11 +401,16 @@ export async function POST(req: NextRequest) {
     log.error("WEBHOOK_SECRET não configurada — recusando request");
     return Response.json({ ok: false, error: "webhook secret not configured" }, { status: 503 });
   }
-  const provided = req.headers.get("x-webhook-secret");
+  // Aceita tanto `x-webhook-secret` (header customizado) quanto `apikey`
+  // (default da Evolution v2.x — manda a global API key da instância).
+  // Operador configura WEBHOOK_SECRET = global apikey da Evolution.
+  const provided =
+    req.headers.get("x-webhook-secret") ?? req.headers.get("apikey");
   if (provided !== env.WEBHOOK_SECRET) {
     log.warn("unauthorized webhook attempt", {
       ip: req.headers.get("x-forwarded-for") ?? null,
-      hasHeader: !!provided,
+      hasXWebhookSecret: !!req.headers.get("x-webhook-secret"),
+      hasApikey: !!req.headers.get("apikey"),
     });
     return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
