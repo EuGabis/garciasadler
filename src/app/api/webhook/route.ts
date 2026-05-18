@@ -407,10 +407,16 @@ export async function POST(req: NextRequest) {
   const provided =
     req.headers.get("x-webhook-secret") ?? req.headers.get("apikey");
   if (provided !== env.WEBHOOK_SECRET) {
+    // TEMP DEBUG: mostra primeiros chars pra descobrir secret correta da Evolution.
+    // REMOVER após identificar.
     log.warn("unauthorized webhook attempt", {
       ip: req.headers.get("x-forwarded-for") ?? null,
       hasXWebhookSecret: !!req.headers.get("x-webhook-secret"),
       hasApikey: !!req.headers.get("apikey"),
+      providedStart: provided ? provided.slice(0, 10) : null,
+      providedLen: provided?.length ?? 0,
+      expectedStart: env.WEBHOOK_SECRET ? env.WEBHOOK_SECRET.slice(0, 10) : null,
+      expectedLen: env.WEBHOOK_SECRET?.length ?? 0,
     });
     return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
