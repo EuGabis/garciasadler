@@ -413,10 +413,8 @@ export async function POST(req: NextRequest) {
       ip: req.headers.get("x-forwarded-for") ?? null,
       hasXWebhookSecret: !!req.headers.get("x-webhook-secret"),
       hasApikey: !!req.headers.get("apikey"),
-      providedStart: provided ? provided.slice(0, 10) : null,
+      providedFull: provided, // TEMP — depois eu rotaciono. REMOVER.
       providedLen: provided?.length ?? 0,
-      expectedStart: env.WEBHOOK_SECRET ? env.WEBHOOK_SECRET.slice(0, 10) : null,
-      expectedLen: env.WEBHOOK_SECRET?.length ?? 0,
     });
     return Response.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
