@@ -19,10 +19,10 @@ export function SeedButton() {
         })
       }
       disabled={pending}
-      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-60 text-white text-sm font-medium transition"
+      className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-[13px] font-medium shadow-sm transition-colors"
     >
       <Sparkles className="h-3.5 w-3.5" />
-      {pending ? "Criando..." : "Criar colunas padrão (5 etapas)"}
+      {pending ? "Criando…" : "Criar colunas padrão (5 etapas)"}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { Columns3 } from "lucide-react";
 import { getBoard, listConversationsForPipeline } from "@/lib/kanban";
 import { Board } from "./board";
 import { ColumnManager } from "./column-manager";
@@ -16,25 +17,49 @@ export default async function PipelinePage() {
 
   if (columns.length === 0) {
     return (
-      <div className="p-8 max-w-3xl">
-        <h1 className="text-2xl font-bold tracking-tight mb-2">Pipeline</h1>
-        <p className="text-sm text-stone-500 mb-8">Visualize o funil de atendimento em colunas.</p>
-        <div className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 p-12 text-center">
-          <p className="text-sm text-stone-500 mb-4">Você ainda não tem colunas no pipeline.</p>
+      <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+        <header className="mb-7">
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+            Pipeline
+          </h1>
+          <p className="mt-1.5 text-[13px] text-stone-500">
+            Visualize o funil de atendimento em colunas.
+          </p>
+        </header>
+
+        <div className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 p-12 text-center">
+          <div className="mx-auto h-11 w-11 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-4">
+            <Columns3 className="h-5 w-5 text-stone-400" />
+          </div>
+          <p className="text-[13.5px] font-medium text-stone-700 dark:text-stone-300 mb-1">
+            Pipeline vazio
+          </p>
+          <p className="text-[12px] text-stone-500 mb-5">
+            Você ainda não tem colunas configuradas.
+          </p>
           <SeedButton />
-          <p className="text-xs text-stone-400 mt-3">Você pode editar as colunas depois.</p>
+          <p className="text-[11px] text-stone-400 mt-3">
+            Você pode editar as colunas depois.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 h-full flex flex-col">
-      <header className="flex items-center justify-between mb-4 shrink-0">
+    <div className="p-6 lg:p-8 h-full flex flex-col max-w-[1400px] mx-auto">
+      <header className="flex items-end justify-between gap-4 mb-5 shrink-0 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Pipeline</h1>
-          <p className="mt-0.5 text-xs text-stone-500">
-            Arraste cards entre colunas. {unassigned.length} conversa(s) sem card.
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+            Pipeline
+          </h1>
+          <p className="mt-1 text-[13px] text-stone-500">
+            Arraste cards entre colunas.{" "}
+            {unassigned.length > 0 && (
+              <span className="text-stone-700 dark:text-stone-300 font-medium">
+                {unassigned.length} conversa{unassigned.length === 1 ? "" : "s"} sem card
+              </span>
+            )}
           </p>
         </div>
         <ColumnManager
