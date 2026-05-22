@@ -2,20 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  MessagesSquare,
+  Users,
+  Tag,
+  Columns3,
+  BarChart3,
+  Settings,
+} from "lucide-react";
 
-type NavItem = {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
+const NAV = [
+  { href: "/dashboard", label: "Visão geral", icon: LayoutDashboard },
+  { href: "/conversations", label: "Conversas", icon: MessagesSquare },
+  { href: "/contatos", label: "Contatos", icon: Users },
+  { href: "/pipeline", label: "Pipeline", icon: Columns3 },
+  { href: "/etiquetas", label: "Etiquetas", icon: Tag },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/configuracoes", label: "Configurações", icon: Settings },
+];
 
-export function SidebarNav({ items }: { items: NavItem[] }) {
+export function SidebarNav() {
   const pathname = usePathname() ?? "";
 
   return (
     <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto">
-      {items.map(({ href, label, icon: Icon }) => {
-        // Match exato pra /dashboard, prefixo pras outras
+      {NAV.map(({ href, label, icon: Icon }) => {
         const isActive =
           href === "/dashboard"
             ? pathname === "/dashboard"

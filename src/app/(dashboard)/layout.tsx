@@ -1,28 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
-import {
-  LayoutDashboard,
-  MessagesSquare,
-  Users,
-  Tag,
-  Columns3,
-  BarChart3,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Notifications } from "./notifications";
 import { ThemeToggle } from "@/components/ui";
 import { SidebarNav } from "./sidebar-nav";
-
-const nav = [
-  { href: "/dashboard", label: "Visão geral", icon: LayoutDashboard },
-  { href: "/conversations", label: "Conversas", icon: MessagesSquare },
-  { href: "/contatos", label: "Contatos", icon: Users },
-  { href: "/pipeline", label: "Pipeline", icon: Columns3 },
-  { href: "/etiquetas", label: "Etiquetas", icon: Tag },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/configuracoes", label: "Configurações", icon: Settings },
-];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -50,7 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
 
-        <SidebarNav items={nav} />
+        <SidebarNav />
 
         {/* User card */}
         <div className="px-3 py-3 border-t border-stone-200/80 dark:border-stone-800/80">
