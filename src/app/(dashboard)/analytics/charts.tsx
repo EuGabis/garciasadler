@@ -12,15 +12,21 @@ export function KpiCard({
   trend?: { direction: "up" | "down"; label: string } | null;
 }) {
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
-      <p className="text-xs text-stone-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold tracking-tight">{value}</p>
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
+      <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500">
+        {label}
+      </p>
+      <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums text-stone-900 dark:text-stone-50">
+        {value}
+      </p>
       {(hint || trend) && (
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-stone-500">
+        <div className="mt-1.5 flex items-center gap-1.5 text-[11.5px] text-stone-500">
           {trend && (
             <span
               className={`inline-flex items-center gap-0.5 font-medium ${
-                trend.direction === "up" ? "text-emerald-600" : "text-red-600"
+                trend.direction === "up"
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-red-600 dark:text-red-400"
               }`}
             >
               {trend.direction === "up" ? (
@@ -49,26 +55,33 @@ export function BarList({
 }) {
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-sm font-semibold mb-4">{title}</h2>
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
+      <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500 mb-4">
+        {title}
+      </h2>
       {items.length === 0 ? (
-        <p className="text-xs text-stone-500 py-2">{emptyText}</p>
+        <p className="text-[12.5px] text-stone-400 py-2">{emptyText}</p>
       ) : (
-        <ul className="space-y-2.5">
+        <ul className="space-y-3">
           {items.map((item, i) => {
             const pct = Math.max(2, (item.value / max) * 100);
+            const barColor = item.color ?? "#b5491a";
             return (
               <li key={i}>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="truncate text-stone-700 dark:text-stone-300">{item.label}</span>
-                  <span className="text-stone-500 font-medium tabular-nums">{item.value}</span>
+                <div className="flex items-center justify-between text-[12px] mb-1.5">
+                  <span className="truncate font-medium text-stone-700 dark:text-stone-300">
+                    {item.label}
+                  </span>
+                  <span className="text-stone-500 font-medium tabular-nums shrink-0 ml-3">
+                    {item.value}
+                  </span>
                 </div>
                 <div className="h-1.5 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
                   <div
-                    className="h-full rounded-full"
+                    className="h-full rounded-full transition-all"
                     style={{
                       width: `${pct}%`,
-                      backgroundColor: item.color ?? "#6366f1",
+                      backgroundColor: barColor,
                     }}
                   />
                 </div>
@@ -88,7 +101,7 @@ export function MessagesChart({
 }) {
   const width = 800;
   const height = 200;
-  const padding = { top: 10, right: 10, bottom: 24, left: 30 };
+  const padding = { top: 12, right: 12, bottom: 28, left: 32 };
   const chartW = width - padding.left - padding.right;
   const chartH = height - padding.top - padding.bottom;
 
@@ -109,24 +122,44 @@ export function MessagesChart({
     .map((d, i) => `${i === 0 ? "M" : "L"}${px(i)},${py(d.outbound)}`)
     .join(" ");
 
-  // Labels do eixo X: primeiro, meio, último
-  const tickIdxs = data.length <= 2 ? data.map((_, i) => i) : [0, Math.floor((data.length - 1) / 2), data.length - 1];
+  const tickIdxs =
+    data.length <= 2
+      ? data.map((_, i) => i)
+      : [0, Math.floor((data.length - 1) / 2), data.length - 1];
+
+  // Stripe-ish blue & green palette
+  const COLOR_IN = "#b5491a"; // brand terracota
+  const COLOR_OUT = "#10b981"; // emerald
 
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold">Mensagens por dia</h2>
-        <div className="flex items-center gap-3 text-[11px] text-stone-500">
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500">
+          Mensagens por dia
+        </h2>
+        <div className="flex items-center gap-4 text-[11.5px] text-stone-500">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-3 rounded-sm bg-brand-500" /> Recebidas
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: COLOR_IN }}
+            />
+            Recebidas
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-3 rounded-sm bg-emerald-500" /> Enviadas
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: COLOR_OUT }}
+            />
+            Enviadas
           </span>
         </div>
       </div>
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" preserveAspectRatio="none">
-        {[0, 0.5, 1].map((p, i) => {
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="w-full h-auto"
+        preserveAspectRatio="none"
+      >
+        {[0, 0.25, 0.5, 0.75, 1].map((p, i) => {
           const y = padding.top + chartH * (1 - p);
           return (
             <line
@@ -136,18 +169,18 @@ export function MessagesChart({
               x2={width - padding.right}
               y2={y}
               stroke="currentColor"
-              strokeOpacity={0.08}
+              strokeOpacity={0.06}
               strokeWidth={1}
             />
           );
         })}
-        <path d={inboundPath} fill="none" stroke="#6366f1" strokeWidth={2} />
-        <path d={outboundPath} fill="none" stroke="#10b981" strokeWidth={2} />
+        <path d={inboundPath} fill="none" stroke={COLOR_IN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={outboundPath} fill="none" stroke={COLOR_OUT} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
 
         {data.map((d, i) => (
           <g key={i}>
-            <circle cx={px(i)} cy={py(d.inbound)} r={2.5} fill="#6366f1" />
-            <circle cx={px(i)} cy={py(d.outbound)} r={2.5} fill="#10b981" />
+            <circle cx={px(i)} cy={py(d.inbound)} r={3} fill="white" stroke={COLOR_IN} strokeWidth={1.5} />
+            <circle cx={px(i)} cy={py(d.outbound)} r={3} fill="white" stroke={COLOR_OUT} strokeWidth={1.5} />
           </g>
         ))}
 
@@ -159,21 +192,33 @@ export function MessagesChart({
             <text
               key={`x-${i}`}
               x={px(i)}
-              y={height - 6}
+              y={height - 8}
               fontSize={10}
               textAnchor="middle"
               fill="currentColor"
-              opacity={0.5}
+              opacity={0.45}
             >
               {label}
             </text>
           );
         })}
 
-        <text x={4} y={padding.top + 4} fontSize={9} fill="currentColor" opacity={0.5}>
+        <text
+          x={4}
+          y={padding.top + 4}
+          fontSize={9}
+          fill="currentColor"
+          opacity={0.45}
+        >
           {max}
         </text>
-        <text x={4} y={height - padding.bottom + 2} fontSize={9} fill="currentColor" opacity={0.5}>
+        <text
+          x={4}
+          y={height - padding.bottom + 2}
+          fontSize={9}
+          fill="currentColor"
+          opacity={0.45}
+        >
           0
         </text>
       </svg>
@@ -184,26 +229,34 @@ export function MessagesChart({
 export function HourHeatmap({ data }: { data: Array<{ hour: number; count: number }> }) {
   const max = Math.max(1, ...data.map((d) => d.count));
   return (
-    <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-sm font-semibold mb-3">Distribuição por hora do dia</h2>
-      <div className="grid grid-cols-24 gap-0.5" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
+      <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500 mb-4">
+        Distribuição por hora do dia
+      </h2>
+      <div
+        className="grid grid-cols-24 gap-1"
+        style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
+      >
         {data.map((d) => {
           const intensity = d.count / max;
           return (
             <div
               key={d.hour}
               title={`${String(d.hour).padStart(2, "0")}:00 — ${d.count} msgs`}
-              className="aspect-square rounded-sm"
+              className="aspect-square rounded-sm transition-transform hover:scale-110"
               style={{
-                backgroundColor: `rgba(99, 102, 241, ${0.06 + intensity * 0.85})`,
+                backgroundColor:
+                  d.count === 0
+                    ? "rgba(120, 113, 108, 0.08)"
+                    : `rgba(181, 73, 26, ${0.15 + intensity * 0.7})`,
               }}
             />
           );
         })}
       </div>
-      <div className="mt-2 flex justify-between text-[10px] text-stone-500">
-        <span>0h</span>
-        <span>6h</span>
+      <div className="mt-3 flex justify-between text-[10px] text-stone-400 tabular-nums">
+        <span>00h</span>
+        <span>06h</span>
         <span>12h</span>
         <span>18h</span>
         <span>23h</span>

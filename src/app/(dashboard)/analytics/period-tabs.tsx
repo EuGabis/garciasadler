@@ -10,20 +10,23 @@ const OPTIONS: Array<{ value: AnalyticsPeriod; label: string }> = [
 
 export function PeriodTabs({ active }: { active: AnalyticsPeriod }) {
   return (
-    <div className="inline-flex gap-1 p-1 rounded-lg bg-stone-100 dark:bg-stone-800">
-      {OPTIONS.map((opt) => (
-        <Link
-          key={opt.value}
-          href={`/analytics?period=${opt.value}`}
-          className={`px-3 py-1 rounded-md text-xs font-medium transition ${
-            active === opt.value
-              ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-sm"
-              : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
-          }`}
-        >
-          {opt.label}
-        </Link>
-      ))}
+    <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-stone-100 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-800/80">
+      {OPTIONS.map((opt) => {
+        const isActive = active === opt.value;
+        return (
+          <Link
+            key={opt.value}
+            href={`/analytics?period=${opt.value}`}
+            className={`px-3 h-8 inline-flex items-center rounded-md text-[12px] font-medium transition-colors ${
+              isActive
+                ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 shadow-sm ring-1 ring-stone-200/60 dark:ring-stone-700/60"
+                : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+            }`}
+          >
+            {opt.label}
+          </Link>
+        );
+      })}
     </div>
   );
 }

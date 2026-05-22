@@ -24,15 +24,19 @@ export default async function AnalyticsPage({
 
   const respRate =
     metrics.totals.inboundMessages > 0
-      ? Math.round((metrics.totals.outboundMessages / metrics.totals.inboundMessages) * 100)
+      ? Math.round(
+          (metrics.totals.outboundMessages / metrics.totals.inboundMessages) * 100
+        )
       : 0;
 
   return (
-    <div className="p-8 max-w-6xl">
-      <header className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+    <div className="p-6 lg:p-10 max-w-6xl mx-auto">
+      <header className="flex items-end justify-between gap-4 mb-8 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-          <p className="mt-1 text-sm text-stone-500">
+          <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+            Analytics
+          </h1>
+          <p className="mt-1 text-[13px] text-stone-500 tabular-nums">
             {metrics.period.label} ·{" "}
             {metrics.period.from.toLocaleDateString("pt-BR")} →{" "}
             {metrics.period.to.toLocaleDateString("pt-BR")}
@@ -41,7 +45,8 @@ export default async function AnalyticsPage({
         <PeriodTabs active={period} />
       </header>
 
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      {/* Primary KPIs */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
         <KpiCard
           label="Novas conversas"
           value={metrics.totals.newConversations}
@@ -58,12 +63,13 @@ export default async function AnalyticsPage({
           hint="status = resolved"
         />
         <KpiCard
-          label="Tempo médio de resposta"
+          label="Resposta média"
           value={formatDuration(metrics.totals.avgFirstResponseSeconds)}
           hint="1ª inbound → 1ª outbound"
         />
       </section>
 
+      {/* Secondary KPIs */}
       <section className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
         <KpiCard
           label="Mensagens recebidas"
@@ -80,11 +86,13 @@ export default async function AnalyticsPage({
         />
       </section>
 
-      <section className="mb-6">
+      {/* Time series */}
+      <section className="mb-3">
         <MessagesChart data={metrics.byDay} />
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+      {/* Bar charts */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
         <BarList
           title="Top agentes"
           items={metrics.byAgent.map((a) => ({
@@ -104,7 +112,7 @@ export default async function AnalyticsPage({
         />
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <BarList
           title="Distribuição no pipeline"
           items={metrics.byColumn.map((c) => ({
