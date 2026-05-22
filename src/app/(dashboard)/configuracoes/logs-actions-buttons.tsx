@@ -3,10 +3,15 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCheck, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui";
 import { acknowledgeAllAction, clearOldErrorsAction } from "./logs-actions";
 
-export function LogActions({ hasErrors, unackCount }: { hasErrors: boolean; unackCount: number }) {
+export function LogActions({
+  hasErrors,
+  unackCount,
+}: {
+  hasErrors: boolean;
+  unackCount: number;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
 
@@ -28,18 +33,28 @@ export function LogActions({ hasErrors, unackCount }: { hasErrors: boolean; unac
   }
 
   return (
-    <div className="ml-auto flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       {unackCount > 0 && (
-        <Button type="button" variant="outline" onClick={ackAll} disabled={pending} size="sm">
+        <button
+          type="button"
+          onClick={ackAll}
+          disabled={pending}
+          className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11.5px] font-medium border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 disabled:opacity-50 transition-colors"
+        >
           <CheckCheck className="h-3 w-3" />
           Revisar todos
-        </Button>
+        </button>
       )}
       {hasErrors && (
-        <Button type="button" variant="ghost" onClick={clearOld} disabled={pending} size="sm">
+        <button
+          type="button"
+          onClick={clearOld}
+          disabled={pending}
+          className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11.5px] font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-700 dark:hover:text-stone-300 disabled:opacity-50 transition-colors"
+        >
           <Trash2 className="h-3 w-3" />
           Limpar antigos
-        </Button>
+        </button>
       )}
     </div>
   );

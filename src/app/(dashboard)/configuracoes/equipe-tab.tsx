@@ -8,7 +8,9 @@ export async function EquipeTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-stone-500">Quem pode acessar o workspace e atender conversas.</p>
+      <p className="text-[13px] text-stone-500">
+        Quem pode acessar o workspace e atender conversas.
+      </p>
 
       <TeamList
         members={members}

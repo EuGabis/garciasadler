@@ -1,10 +1,16 @@
 import Link from "next/link";
-import { AlertTriangle, AlertOctagon, AlertCircle, CheckCircle2, Trash2 } from "lucide-react";
-import { Button, SectionCard, cn } from "@/components/ui";
+import {
+  AlertTriangle,
+  AlertOctagon,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import { cn } from "@/components/ui";
 import type { ErrorLogRow, ErrorLevel } from "@/lib/error-logs";
 import { LogRow } from "./logs-row";
 import { LogActions } from "./logs-actions-buttons";
 import { ScopeFilter } from "./scope-filter";
+import { Section } from "./_ui";
 
 type Props = {
   errors: ErrorLogRow[];
@@ -29,31 +35,31 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
           icon={AlertOctagon}
           label="Fatal"
           value={counts.fatal}
-          color="bg-red-500/10 text-red-600"
+          color="bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
         />
         <KpiCard
           icon={AlertTriangle}
           label="Erros"
           value={counts.error}
-          color="bg-amber-500/10 text-amber-600"
+          color="bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
         />
         <KpiCard
           icon={AlertCircle}
           label="Warnings"
           value={counts.warn}
-          color="bg-stone-500/10 text-stone-600"
+          color="bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
         />
         <KpiCard
           icon={CheckCircle2}
           label="Pendentes"
           value={unackCount}
-          color="bg-brand-500/10 text-brand-600"
+          color="bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400"
           hint="não revisados"
         />
       </div>
 
       {/* Filtros */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1.5">
         <FilterPill active={!filters.level} href="/configuracoes?tab=logs">
           Todos níveis
         </FilterPill>
@@ -82,27 +88,33 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
 
         {scopes.length > 0 && <ScopeFilter scopes={scopes} active={filters.scope} />}
 
-        {canManage && <LogActions hasErrors={errors.length > 0} unackCount={unackCount} />}
+        <div className="ml-auto">
+          {canManage && <LogActions hasErrors={errors.length > 0} unackCount={unackCount} />}
+        </div>
       </div>
 
       {/* Lista */}
-      <SectionCard
+      <Section
         title={`Últimos ${errors.length} eventos`}
         description="Erros e warnings registrados nesta workspace."
         noPadding
       >
         {errors.length === 0 ? (
           <div className="p-12 text-center">
-            <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-500 mb-2" />
-            <p className="text-sm font-medium">Nenhum erro registrado</p>
-            <p className="text-xs text-stone-500 mt-1">
+            <div className="mx-auto h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-3">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <p className="text-[13px] font-medium text-stone-700 dark:text-stone-300">
+              Nenhum erro registrado
+            </p>
+            <p className="text-[12px] text-stone-500 mt-1">
               {filters.level || filters.scope || filters.onlyUnack
-                ? "Sem resultados pros filtros atuais."
+                ? "Sem resultados para os filtros atuais."
                 : "Sistema rodando sem erros."}
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-stone-100 dark:divide-stone-800">
+          <ul className="divide-y divide-stone-100 dark:divide-stone-800/60">
             {errors.map((err) => (
               <li key={err.id}>
                 <LogRow err={err} canManage={canManage} />
@@ -110,7 +122,7 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
             ))}
           </ul>
         )}
-      </SectionCard>
+      </Section>
     </div>
   );
 }
@@ -129,17 +141,19 @@ function KpiCard({
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-4">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500">
           {label}
         </span>
-        <span className={cn("h-7 w-7 rounded-lg flex items-center justify-center", color)}>
+        <span className={cn("h-7 w-7 rounded-md flex items-center justify-center", color)}>
           <Icon className="h-3.5 w-3.5" />
         </span>
       </div>
-      <p className="text-2xl font-bold tracking-tight tabular-nums">{value}</p>
-      {hint && <p className="text-[10px] text-stone-500 mt-0.5">{hint}</p>}
+      <p className="text-2xl font-semibold tracking-tight tabular-nums text-stone-900 dark:text-stone-50">
+        {value}
+      </p>
+      {hint && <p className="text-[11.5px] text-stone-500 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -157,9 +171,9 @@ function FilterPill({
     <Link
       href={href}
       className={cn(
-        "px-3 py-1.5 rounded-lg text-xs font-medium transition",
+        "h-7 px-3 inline-flex items-center rounded-md text-[11.5px] font-medium transition-colors",
         active
-          ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30"
+          ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
           : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
       )}
     >
@@ -167,6 +181,3 @@ function FilterPill({
     </Link>
   );
 }
-
-// Re-export pra deixar Button/Trash2 detectáveis se usarmos depois
-export { Button, Trash2 };

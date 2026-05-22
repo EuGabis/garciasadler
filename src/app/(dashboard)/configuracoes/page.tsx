@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { PageHeader, cn } from "@/components/ui";
+import { cn } from "@/components/ui";
 import { canManageTeam } from "@/lib/team";
 import { listErrors, countUnacknowledged, listScopes, type ErrorLevel } from "@/lib/error-logs";
 import { WorkspaceTab } from "./workspace-tab";
@@ -63,8 +63,6 @@ export default async function ConfiguracoesPage({
   const activeTab = validTab(params.tab);
 
   const session = await auth();
-
-  // Sempre carrega contagem de erros pendentes pra badge no menu
   const unackCount = await countUnacknowledged(session!.user.workspaceId);
 
   const [workspaceRaw, user, integExato, aiConfig] = await Promise.all([
@@ -108,7 +106,7 @@ export default async function ConfiguracoesPage({
   ]);
 
   if (!workspaceRaw || !user) {
-    return <div className="p-8">Workspace ou usuário não encontrado.</div>;
+    return <div className="p-8 text-stone-600 dark:text-stone-300">Workspace ou usuário não encontrado.</div>;
   }
 
   const canManage = canManageTeam(session!.user.role);
@@ -148,7 +146,6 @@ export default async function ConfiguracoesPage({
     ultimoErro: integExato?.ultimoErro ?? null,
   };
 
-  // Logs: só carrega quando a aba está aberta (evita query extra)
   let logsData: {
     errors: Awaited<ReturnType<typeof listErrors>>;
     scopes: string[];
@@ -166,45 +163,56 @@ export default async function ConfiguracoesPage({
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl">
-      <PageHeader
-        title="Configurações"
-        description="Workspace, integrações, equipe, automações e diagnósticos."
-      />
+    <div className="p-6 lg:p-10 max-w-5xl mx-auto">
+      {/* Hero */}
+      <header className="mb-7">
+        <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+          Configurações
+        </h1>
+        <p className="mt-1.5 text-[13px] text-stone-500">
+          Workspace, integrações, equipe, automações e diagnósticos.
+        </p>
+      </header>
 
-      <nav className="mb-6 flex flex-wrap gap-1 p-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-sm">
-        {TABS.map((tab) => {
-          const isActive = activeTab === tab.value;
-          const showBadge = tab.value === "logs" && unackCount > 0;
-          return (
-            <Link
-              key={tab.value}
-              href={`/configuracoes?tab=${tab.value}`}
-              className={cn(
-                "relative flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-all",
-                isActive
-                  ? "bg-brand-500 text-white shadow-md shadow-brand-500/30"
-                  : "text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800/60"
-              )}
-            >
-              <tab.icon className="h-3.5 w-3.5" />
-              {tab.label}
-              {showBadge && (
-                <span
+      {/* Tabs nav — Stripe Docs style com underline */}
+      <nav className="mb-7 border-b border-stone-200 dark:border-stone-800 -mx-1 overflow-x-auto">
+        <div className="flex items-center gap-0.5 px-1 min-w-max">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.value;
+            const showBadge = tab.value === "logs" && unackCount > 0;
+            return (
+              <Link
+                key={tab.value}
+                href={`/configuracoes?tab=${tab.value}`}
+                className={cn(
+                  "relative inline-flex items-center gap-1.5 px-3 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors",
+                  isActive
+                    ? "text-stone-900 dark:text-stone-50"
+                    : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                )}
+              >
+                <tab.icon
                   className={cn(
-                    "ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold",
-                    isActive ? "bg-white text-brand-600" : "bg-red-500 text-white"
+                    "h-3.5 w-3.5",
+                    isActive ? "text-brand-600" : "text-stone-400"
                   )}
-                >
-                  {unackCount > 99 ? "99+" : unackCount}
-                </span>
-              )}
-            </Link>
-          );
-        })}
+                />
+                {tab.label}
+                {showBadge && (
+                  <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold bg-red-500 text-white tabular-nums">
+                    {unackCount > 99 ? "99+" : unackCount}
+                  </span>
+                )}
+                {isActive && (
+                  <span className="absolute left-0 right-0 -bottom-px h-[2px] bg-brand-600 rounded-t-full" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
-      <div className="animate-fade-in">
+      <div>
         {activeTab === "workspace" && (
           <WorkspaceTab workspace={workspace} canEdit={canManage} />
         )}

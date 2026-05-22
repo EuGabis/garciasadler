@@ -2,13 +2,21 @@
 
 import { useActionState } from "react";
 import { Mail, User as UserIcon, Lock, Save } from "lucide-react";
-import { Button, Input, Label, SectionCard } from "@/components/ui";
 import {
   updateProfileAction,
   updatePasswordAction,
   type ProfileState,
   type PasswordState,
 } from "./actions";
+import {
+  Section,
+  INPUT_CLS,
+  LABEL_CLS,
+  BTN_PRIMARY,
+  ERROR_BOX,
+  SUCCESS_BOX,
+} from "./_ui";
+import { avatarColor, avatarInitial } from "@/lib/avatar-color";
 
 type User = {
   id: string;
@@ -19,7 +27,7 @@ type User = {
 
 export function AccountTab({ user }: { user: User }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <ProfileForm user={user} />
       <PasswordForm />
     </div>
@@ -32,48 +40,57 @@ function ProfileForm({ user }: { user: User }) {
     null
   );
 
+  const color = avatarColor(user.name);
+
   return (
-    <SectionCard title="Perfil" description="Como você aparece pra equipe.">
+    <Section title="Perfil" description="Como você aparece para a equipe.">
       <form action={formAction} className="space-y-4">
-        <div className="flex items-center gap-4 pb-4 border-b border-stone-100 dark:border-stone-800">
-          <div className="h-14 w-14 rounded-full bg-brand-500 text-white text-lg font-bold flex items-center justify-center shadow-md shadow-brand-500/30">
-            {user.name?.[0]?.toUpperCase() ?? "?"}
+        <div className="flex items-center gap-4 pb-4 border-b border-stone-100 dark:border-stone-800/60">
+          <div
+            className={`h-14 w-14 rounded-full ring-1 text-lg font-semibold flex items-center justify-center ${color.bg} ${color.text} ${color.ring}`}
+          >
+            {avatarInitial(user.name)}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold truncate">{user.name}</p>
-            <p className="text-xs text-stone-500 truncate flex items-center gap-1">
+            <p className="text-[14px] font-semibold tracking-tight truncate text-stone-900 dark:text-stone-50">
+              {user.name}
+            </p>
+            <p className="text-[12px] text-stone-500 truncate flex items-center gap-1">
               <Mail className="h-3 w-3" />
               {user.email}
             </p>
-            <span className="mt-1 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-brand-500/10 text-brand-600">
+            <span className="mt-1.5 inline-block px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-400 ring-1 ring-brand-200/60 dark:ring-brand-500/20">
               {user.role}
             </span>
           </div>
         </div>
 
         <div>
-          <Label htmlFor="name" className="flex items-center gap-1.5">
+          <label htmlFor="name" className={`${LABEL_CLS} flex items-center gap-1.5`}>
             <UserIcon className="h-3 w-3" /> Nome
-          </Label>
-          <Input
+          </label>
+          <input
             id="name"
             name="name"
             required
             minLength={2}
             maxLength={80}
             defaultValue={user.name}
+            className={INPUT_CLS}
           />
         </div>
 
-        {state?.ok && <p className="text-sm text-emerald-600">Salvo.</p>}
-        {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.ok && <p className={SUCCESS_BOX}>Perfil salvo.</p>}
+        {state?.error && <p className={ERROR_BOX}>{state.error}</p>}
 
-        <Button type="submit" disabled={pending}>
-          <Save className="h-3.5 w-3.5" />
-          {pending ? "Salvando..." : "Salvar"}
-        </Button>
+        <div className="flex justify-end">
+          <button type="submit" disabled={pending} className={BTN_PRIMARY}>
+            <Save className="h-3.5 w-3.5" />
+            {pending ? "Salvando…" : "Salvar"}
+          </button>
+        </div>
       </form>
-    </SectionCard>
+    </Section>
   );
 }
 
@@ -84,57 +101,66 @@ function PasswordForm() {
   );
 
   return (
-    <SectionCard
-      title="Trocar senha"
-      description="Recomendamos atualizar periodicamente."
-    >
+    <Section title="Trocar senha" description="Recomendamos atualizar periodicamente.">
       <form action={formAction} className="space-y-4" key={state?.ok ? "ok" : "form"}>
         <div>
-          <Label htmlFor="currentPassword" className="flex items-center gap-1.5">
+          <label
+            htmlFor="currentPassword"
+            className={`${LABEL_CLS} flex items-center gap-1.5`}
+          >
             <Lock className="h-3 w-3" /> Senha atual
-          </Label>
-          <Input
+          </label>
+          <input
             id="currentPassword"
             name="currentPassword"
             type="password"
             required
             autoComplete="current-password"
+            className={INPUT_CLS}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="newPassword">Nova senha</Label>
-            <Input
+            <label htmlFor="newPassword" className={LABEL_CLS}>
+              Nova senha
+            </label>
+            <input
               id="newPassword"
               name="newPassword"
               type="password"
               required
               minLength={8}
               autoComplete="new-password"
+              className={INPUT_CLS}
             />
           </div>
           <div>
-            <Label htmlFor="confirmPassword">Confirmar</Label>
-            <Input
+            <label htmlFor="confirmPassword" className={LABEL_CLS}>
+              Confirmar
+            </label>
+            <input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
               required
               minLength={8}
               autoComplete="new-password"
+              className={INPUT_CLS}
             />
           </div>
         </div>
-        <p className="text-[11px] text-stone-500">Mínimo 8 caracteres.</p>
+        <p className="text-[11.5px] text-stone-500">Mínimo 8 caracteres.</p>
 
-        {state?.ok && <p className="text-sm text-emerald-600">Senha atualizada.</p>}
-        {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+        {state?.ok && <p className={SUCCESS_BOX}>Senha atualizada.</p>}
+        {state?.error && <p className={ERROR_BOX}>{state.error}</p>}
 
-        <Button type="submit" disabled={pending}>
-          <Save className="h-3.5 w-3.5" />
-          {pending ? "Salvando..." : "Trocar senha"}
-        </Button>
+        <div className="flex justify-end">
+          <button type="submit" disabled={pending} className={BTN_PRIMARY}>
+            <Save className="h-3.5 w-3.5" />
+            {pending ? "Salvando…" : "Trocar senha"}
+          </button>
+        </div>
       </form>
-    </SectionCard>
+    </Section>
   );
 }
