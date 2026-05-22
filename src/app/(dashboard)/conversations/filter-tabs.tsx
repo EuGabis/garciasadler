@@ -16,15 +16,15 @@ export function FilterTabs({ mineOnly }: { mineOnly: boolean }) {
   }
 
   return (
-    <div className="px-3 pt-3 pb-2 flex gap-1">
+    <div className="px-5 pb-3 flex gap-1 border-b border-stone-200/80 dark:border-stone-800/80">
       <button
         type="button"
         onClick={() => toggle(false)}
         disabled={pending}
-        className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition ${
+        className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors ${
           !mineOnly
-            ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+            ? "bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-50"
+            : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
         }`}
       >
         Todas
@@ -33,10 +33,10 @@ export function FilterTabs({ mineOnly }: { mineOnly: boolean }) {
         type="button"
         onClick={() => toggle(true)}
         disabled={pending}
-        className={`flex-1 px-2 py-1 rounded-md text-xs font-medium transition ${
+        className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors ${
           mineOnly
-            ? "bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900"
-            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+            ? "bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-50"
+            : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
         }`}
       >
         Minhas

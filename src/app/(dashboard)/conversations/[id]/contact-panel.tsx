@@ -43,23 +43,23 @@ const statusOptions: Array<{ value: Contact["status"]; label: string; cls: strin
   {
     value: "active",
     label: "Ativo",
-    cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-500/20",
+    cls: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 ring-emerald-200/60 dark:ring-emerald-500/20",
   },
   {
     value: "archived",
     label: "Arquivado",
-    cls: "bg-stone-500/10 text-stone-600 dark:text-stone-400 ring-stone-500/20",
+    cls: "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300 ring-stone-200/60 dark:ring-stone-700",
   },
   {
     value: "blocked",
     label: "Bloqueado",
-    cls: "bg-red-500/10 text-red-700 dark:text-red-400 ring-red-500/20",
+    cls: "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 ring-red-200/60 dark:ring-red-500/20",
   },
 ];
 
 export function ContactPanel({
   contact,
-  conversationId,
+  conversationId: _conversationId,
   otherConversations,
 }: {
   contact: Contact;
@@ -70,7 +70,6 @@ export function ContactPanel({
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  // Persistência leve da preferência local
   useEffect(() => {
     const v = window.localStorage.getItem("contact_panel_open");
     if (v !== null) setOpen(v === "1");
@@ -99,7 +98,7 @@ export function ContactPanel({
       <button
         type="button"
         onClick={toggle}
-        className="absolute right-4 top-4 z-10 p-2 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:text-brand-500 transition shadow-sm"
+        className="absolute right-4 top-4 z-10 p-2 rounded-lg bg-white dark:bg-stone-900 ring-1 ring-stone-200 dark:ring-stone-800 text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:ring-stone-300 dark:hover:ring-stone-700 transition shadow-sm"
         title="Abrir painel do contato"
       >
         <PanelRightOpen className="h-4 w-4" />
@@ -108,9 +107,9 @@ export function ContactPanel({
   }
 
   return (
-    <aside className="hidden lg:flex w-80 shrink-0 border-l border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 flex-col animate-slide-in-right">
-      <header className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
-        <h3 className="text-xs uppercase tracking-wider font-semibold text-stone-500">
+    <aside className="hidden lg:flex w-[320px] shrink-0 border-l border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col animate-slide-in-right">
+      <header className="px-5 py-3.5 border-b border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between">
+        <h3 className="text-[11px] uppercase tracking-[0.08em] font-semibold text-stone-500">
           Perfil do contato
         </h3>
         <button
@@ -125,28 +124,28 @@ export function ContactPanel({
 
       <div className="flex-1 overflow-y-auto">
         {/* Hero */}
-        <div className="px-5 pt-6 pb-4 text-center border-b border-stone-100 dark:border-stone-800">
-          <div className="mx-auto h-20 w-20 rounded-full gradient-brand text-white text-2xl font-bold flex items-center justify-center shadow-md shadow-brand-500/30 mb-3">
+        <div className="px-5 pt-6 pb-5 text-center border-b border-stone-200/80 dark:border-stone-800/80">
+          <div className="mx-auto h-16 w-16 rounded-full bg-stone-100 dark:bg-stone-800 ring-1 ring-stone-200 dark:ring-stone-700 text-stone-700 dark:text-stone-300 text-xl font-semibold flex items-center justify-center mb-3">
             {contact.name?.[0]?.toUpperCase() ?? "?"}
           </div>
           <InlineText
             value={contact.name}
             contactId={contact.id}
             field="name"
-            className="text-base font-semibold"
+            className="text-[15px] font-semibold text-stone-900 dark:text-stone-50 tracking-tight"
             singleLine
             required
           />
-          <p className="mt-1 text-xs text-stone-500 flex items-center justify-center gap-1.5">
+          <p className="mt-1.5 text-[12px] text-stone-500 flex items-center justify-center gap-1.5 tabular-nums">
             <Phone className="h-3 w-3" />
             {formatPhone(contact.phone)}
           </p>
         </div>
 
         {/* Status */}
-        <section className="px-5 py-4 border-b border-stone-100 dark:border-stone-800">
-          <Label>Status</Label>
-          <div className="mt-1.5 grid grid-cols-3 gap-1">
+        <section className="px-5 py-4 border-b border-stone-200/80 dark:border-stone-800/80">
+          <FieldLabel>Status</FieldLabel>
+          <div className="mt-2 grid grid-cols-3 gap-1.5">
             {statusOptions.map((s) => {
               const active = contact.status === s.value;
               return (
@@ -154,10 +153,10 @@ export function ContactPanel({
                   key={s.value}
                   type="button"
                   onClick={() => setStatus(s.value)}
-                  className={`px-2 py-1.5 rounded-lg text-[11px] font-medium ring-1 transition ${
+                  className={`px-2 py-1.5 rounded-md text-[11px] font-medium ring-1 transition ${
                     active
                       ? s.cls
-                      : "ring-stone-200 dark:ring-stone-800 text-stone-500 hover:bg-stone-50 dark:hover:bg-stone-800/50"
+                      : "ring-stone-200 dark:ring-stone-800 text-stone-500 hover:bg-stone-50 dark:hover:bg-stone-800/50 hover:text-stone-700 dark:hover:text-stone-300"
                   }`}
                 >
                   {s.label}
@@ -168,7 +167,7 @@ export function ContactPanel({
         </section>
 
         {/* Dados */}
-        <section className="px-5 py-4 border-b border-stone-100 dark:border-stone-800 space-y-4">
+        <section className="px-5 py-4 border-b border-stone-200/80 dark:border-stone-800/80 space-y-4">
           <Field icon={Mail} label="E-mail">
             <InlineText
               value={contact.email}
@@ -200,7 +199,7 @@ export function ContactPanel({
           </Field>
 
           <Field icon={Calendar} label="Cliente desde">
-            <p className="text-xs text-stone-600 dark:text-stone-400">
+            <p className="text-[12.5px] text-stone-700 dark:text-stone-300 px-2 py-1.5">
               {contact.createdAt.toLocaleDateString("pt-BR", {
                 day: "2-digit",
                 month: "long",
@@ -211,30 +210,30 @@ export function ContactPanel({
         </section>
 
         {/* Notas */}
-        <section className="px-5 py-4 border-b border-stone-100 dark:border-stone-800">
-          <div className="flex items-center justify-between mb-1.5">
-            <Label>
-              <span className="inline-flex items-center gap-1.5">
-                <StickyNote className="h-3 w-3" /> Notas internas
-              </span>
-            </Label>
-          </div>
+        <section className="px-5 py-4 border-b border-stone-200/80 dark:border-stone-800/80">
+          <FieldLabel>
+            <span className="inline-flex items-center gap-1.5">
+              <StickyNote className="h-3 w-3" /> Notas internas
+            </span>
+          </FieldLabel>
           <InlineText
             value={contact.notes}
             contactId={contact.id}
             field="notes"
-            placeholder="Visíveis só pra equipe..."
+            placeholder="Visíveis só pra equipe…"
             multiline
           />
         </section>
 
         {/* Conversas relacionadas */}
         <section className="px-5 py-4">
-          <Label>Outras conversas ({otherConversations.length})</Label>
+          <FieldLabel>Outras conversas ({otherConversations.length})</FieldLabel>
           {otherConversations.length === 0 ? (
-            <p className="mt-2 text-xs text-stone-500">Nenhuma outra conversa com este contato.</p>
+            <p className="mt-2 text-[12px] text-stone-500">
+              Nenhuma outra conversa com este contato.
+            </p>
           ) : (
-            <ul className="mt-2 space-y-1.5">
+            <ul className="mt-2 space-y-1">
               {otherConversations.slice(0, 5).map((c) => (
                 <li key={c.id}>
                   <Link
@@ -246,11 +245,11 @@ export function ContactPanel({
                       <span className="text-[10px] uppercase tracking-wider font-semibold text-stone-500">
                         {c.status}
                       </span>
-                      <span className="text-[10px] text-stone-500 ml-auto">
+                      <span className="text-[10px] text-stone-500 ml-auto tabular-nums">
                         {formatRelativeTime(c.lastMessageAt)}
                       </span>
                     </div>
-                    <p className="text-xs text-stone-700 dark:text-stone-300 truncate">
+                    <p className="text-[12px] text-stone-700 dark:text-stone-300 truncate">
                       {c.lastMessage ?? "—"}
                     </p>
                   </Link>
@@ -261,10 +260,10 @@ export function ContactPanel({
         </section>
       </div>
 
-      <footer className="px-5 py-3 border-t border-stone-100 dark:border-stone-800">
+      <footer className="px-5 py-3 border-t border-stone-200/80 dark:border-stone-800/80">
         <Link
           href={`/contatos/${contact.id}`}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800/60 transition"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[12px] font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800/60 hover:text-stone-900 dark:hover:text-stone-50 transition"
         >
           Ver perfil completo
           <ExternalLink className="h-3 w-3" />
@@ -274,9 +273,9 @@ export function ContactPanel({
   );
 }
 
-function Label({ children }: { children: React.ReactNode }) {
+function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+    <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500">
       {children}
     </span>
   );
@@ -293,7 +292,7 @@ function Field({
 }) {
   return (
     <div>
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500 flex items-center gap-1.5 mb-1">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500 flex items-center gap-1.5 mb-1">
         <Icon className="h-3 w-3" />
         {label}
       </span>
@@ -307,7 +306,7 @@ function InlineText({
   contactId,
   field,
   placeholder,
-  singleLine,
+  singleLine: _singleLine,
   multiline,
   required,
   className,
@@ -375,7 +374,7 @@ function InlineText({
               autoFocus
               rows={3}
               maxLength={2000}
-              className="flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+              className="flex-1 rounded-md border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-2.5 py-1.5 text-[12px] text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 resize-none"
               placeholder={placeholder}
             />
           ) : (
@@ -389,7 +388,7 @@ function InlineText({
                 if (e.key === "Enter") save();
                 if (e.key === "Escape") cancel();
               }}
-              className={`flex-1 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 ${className ?? ""}`}
+              className={`flex-1 rounded-md border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-2.5 py-1.5 text-[12px] text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 ${className ?? ""}`}
               placeholder={placeholder}
             />
           )}
@@ -424,18 +423,18 @@ function InlineText({
     <button
       type="button"
       onClick={() => setEditing(true)}
-      className={`mt-1 w-full text-left rounded-lg px-2 py-1.5 hover:bg-stone-50 dark:hover:bg-stone-800/60 transition ${
-        singleLine ? "" : ""
-      }`}
+      className="mt-1 w-full text-left rounded-md px-2 py-1.5 hover:bg-stone-50 dark:hover:bg-stone-800/60 transition"
     >
       {display ? (
         <p
-          className={`text-xs text-stone-700 dark:text-stone-200 ${multiline ? "whitespace-pre-wrap" : "truncate"} ${className ?? ""}`}
+          className={`text-[12.5px] text-stone-700 dark:text-stone-200 ${
+            multiline ? "whitespace-pre-wrap" : "truncate"
+          } ${className ?? ""}`}
         >
           {display}
         </p>
       ) : (
-        <p className="text-xs text-stone-400 dark:text-stone-500 italic">
+        <p className="text-[12px] text-stone-400 dark:text-stone-500 italic">
           {placeholder ?? "—"}
         </p>
       )}

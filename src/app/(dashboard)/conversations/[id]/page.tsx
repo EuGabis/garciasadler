@@ -13,9 +13,9 @@ import { AiBadge } from "./ai-badge";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
-  if (status === "delivered") return <CheckCheck className="h-3 w-3 text-brand-100" />;
-  if (status === "sent") return <Check className="h-3 w-3 text-brand-100" />;
-  if (status === "pending") return <Clock className="h-3 w-3 text-brand-100" />;
+  if (status === "delivered") return <CheckCheck className="h-3 w-3 text-white/60" />;
+  if (status === "sent") return <Check className="h-3 w-3 text-white/60" />;
+  if (status === "pending") return <Clock className="h-3 w-3 text-white/60" />;
   if (status === "failed") return <AlertCircle className="h-3 w-3 text-red-300" />;
   return null;
 }
@@ -64,33 +64,50 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   const attachedLabels = conversation.labels.map((l) => l.label);
   const assignedUsers = conversation.assignments.map((a) => a.user);
 
+  const statusColor =
+    conversation.status === "open"
+      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 ring-emerald-200/60 dark:ring-emerald-500/20"
+      : conversation.status === "resolved"
+      ? "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400 ring-stone-200/60 dark:ring-stone-700"
+      : "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 ring-amber-200/60 dark:ring-amber-500/20";
+
   return (
     <div className="h-full flex relative">
-      <div className="flex-1 min-w-0 flex flex-col">
-        <header className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 px-5 py-3">
+      <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
+        <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-6 py-3">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-brand-500/10 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 text-sm font-semibold flex items-center justify-center">
+            <div className="h-10 w-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-sm font-semibold flex items-center justify-center">
               {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium truncate">{conversation.contact.name}</p>
-              <p className="text-xs text-stone-500">{formatPhone(conversation.contact.phone)}</p>
+              <p className="text-sm font-semibold truncate text-stone-900 dark:text-stone-50 tracking-tight">
+                {conversation.contact.name}
+              </p>
+              <p className="text-[12px] text-stone-500 tabular-nums">
+                {formatPhone(conversation.contact.phone)}
+              </p>
             </div>
-            <AssignPicker
-              conversationId={conversation.id}
-              assigned={assignedUsers}
-              team={team}
-            />
-            <LabelPicker
-              conversationId={conversation.id}
-              attached={attachedLabels}
-              available={availableLabels}
-            />
-            <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
-            <span className="text-xs text-stone-500 capitalize">{conversation.status}</span>
+            <div className="flex items-center gap-1">
+              <AssignPicker
+                conversationId={conversation.id}
+                assigned={assignedUsers}
+                team={team}
+              />
+              <LabelPicker
+                conversationId={conversation.id}
+                attached={attachedLabels}
+                available={availableLabels}
+              />
+              <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider ring-1 ${statusColor}`}
+              >
+                {conversation.status}
+              </span>
+            </div>
           </div>
           {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
               {assignedUsers.length > 0 && (
                 <AssignedBadges conversationId={conversation.id} assigned={assignedUsers} />
               )}
@@ -101,9 +118,9 @@ export default async function ConversationPage({ params }: { params: Promise<Par
           )}
         </header>
 
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-2.5">
           {conversation.messages.length === 0 ? (
-            <div className="text-center text-sm text-stone-500 py-12">
+            <div className="text-center text-sm text-stone-500 py-16">
               Nenhuma mensagem ainda.
             </div>
           ) : (
@@ -118,10 +135,10 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                   className={`flex ${isInbound ? "justify-start" : "justify-end"}`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-2xl px-3.5 py-2 text-sm ${
+                    className={`max-w-[72%] rounded-2xl px-4 py-2.5 text-[13.5px] leading-relaxed ${
                       isInbound
-                        ? "bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
-                        : "bg-brand-500 text-white"
+                        ? "bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 ring-1 ring-stone-200/80 dark:ring-stone-800/80 shadow-sm"
+                        : "bg-brand-600 text-white shadow-sm shadow-brand-600/10"
                     }`}
                   >
                     <MediaBubble
@@ -133,13 +150,17 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                       fileName={m.fileName}
                     />
                     <div
-                      className={`mt-1 flex items-center gap-1 text-[10px] ${
-                        isInbound ? "text-stone-500" : "text-brand-100"
+                      className={`mt-1.5 flex items-center gap-1.5 text-[10.5px] ${
+                        isInbound ? "text-stone-400" : "text-white/70"
                       }`}
                     >
-                      {!isInbound && m.sender?.name && <span>{m.sender.name}</span>}
-                      {!isInbound && m.sender?.name && <span>·</span>}
-                      <span>{formatTime(m.createdAt)}</span>
+                      {!isInbound && m.sender?.name && (
+                        <>
+                          <span className="font-medium">{m.sender.name}</span>
+                          <span>·</span>
+                        </>
+                      )}
+                      <span className="tabular-nums">{formatTime(m.createdAt)}</span>
                       {!isInbound && (
                         <>
                           <span>·</span>
