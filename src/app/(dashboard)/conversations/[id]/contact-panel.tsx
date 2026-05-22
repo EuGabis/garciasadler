@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { updateContactFieldAction } from "./contact-actions";
 import { formatPhone, formatRelativeTime } from "@/lib/format";
+import { avatarColor, avatarInitial } from "@/lib/avatar-color";
 
 type Contact = {
   id: string;
@@ -82,6 +83,8 @@ export function ContactPanel({
     });
   }
 
+  const heroAvatar = avatarColor(contact.name);
+
   function setStatus(s: Contact["status"]) {
     startTransition(async () => {
       const fd = new FormData();
@@ -125,8 +128,10 @@ export function ContactPanel({
       <div className="flex-1 overflow-y-auto">
         {/* Hero */}
         <div className="px-5 pt-6 pb-5 text-center border-b border-stone-200/80 dark:border-stone-800/80">
-          <div className="mx-auto h-16 w-16 rounded-full bg-stone-100 dark:bg-stone-800 ring-1 ring-stone-200 dark:ring-stone-700 text-stone-700 dark:text-stone-300 text-xl font-semibold flex items-center justify-center mb-3">
-            {contact.name?.[0]?.toUpperCase() ?? "?"}
+          <div
+            className={`mx-auto h-16 w-16 rounded-full ring-1 text-xl font-semibold flex items-center justify-center mb-3 ${heroAvatar.bg} ${heroAvatar.text} ${heroAvatar.ring}`}
+          >
+            {avatarInitial(contact.name)}
           </div>
           <InlineText
             value={contact.name}

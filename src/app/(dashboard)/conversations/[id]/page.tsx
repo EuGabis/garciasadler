@@ -10,6 +10,7 @@ import { LabelPicker, AttachedLabels } from "./label-picker";
 import { AssignPicker, AssignedBadges } from "./assign-picker";
 import { ContactPanel } from "./contact-panel";
 import { AiBadge } from "./ai-badge";
+import { avatarColor, avatarInitial } from "@/lib/avatar-color";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "read") return <CheckCheck className="h-3 w-3 text-sky-300" />;
@@ -64,6 +65,8 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   const attachedLabels = conversation.labels.map((l) => l.label);
   const assignedUsers = conversation.assignments.map((a) => a.user);
 
+  const headerAvatar = avatarColor(conversation.contact.name);
+
   const statusColor =
     conversation.status === "open"
       ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 ring-emerald-200/60 dark:ring-emerald-500/20"
@@ -76,8 +79,10 @@ export default async function ConversationPage({ params }: { params: Promise<Par
       <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
         <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-6 py-3">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-sm font-semibold flex items-center justify-center">
-              {conversation.contact.name?.[0]?.toUpperCase() ?? "?"}
+            <div
+              className={`h-10 w-10 rounded-full ring-1 text-sm font-semibold flex items-center justify-center ${headerAvatar.bg} ${headerAvatar.text} ${headerAvatar.ring}`}
+            >
+              {avatarInitial(conversation.contact.name)}
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold truncate text-stone-900 dark:text-stone-50 tracking-tight">
