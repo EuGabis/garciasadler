@@ -207,7 +207,7 @@ model Conversation {
   unreadCount  Int      @default(0)
   lastMessage  String?
   lastMessageAt DateTime?
-  aiEnabled    Boolean  @default(true)
+  aiEnabled    Boolean  @default(false)
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
