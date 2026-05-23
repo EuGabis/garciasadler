@@ -133,6 +133,10 @@ export default async function ConversationPage({ params }: { params: Promise<Par
               const isInbound = m.direction === "inbound";
               const isTool = m.role === "tool";
               if (isTool) return null;
+              // Pula mensagens internas da IA que são só tool_calls (sem texto pro cliente).
+              // Quando o modelo só pede pra rodar uma tool, persiste com content="" — isso
+              // não deve aparecer como bolha vazia no chat.
+              if (m.role === "assistant" && !m.content?.trim()) return null;
 
               return (
                 <div
