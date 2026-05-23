@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { after } from "next/server";
 import { prisma } from "@/lib/db";
 import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
@@ -269,29 +270,44 @@ async function handleMessageUpsert(
     preview: previewText,
   });
 
-  // Automações: roda em background sem bloquear o ack do webhook
-  runAutomations({
-    workspaceId,
-    conversationId: conversation.id,
-    isFirstMessage,
-    messageText: extracted.content,
-    contactPhone: phone,
-    evolutionConfig,
-  }).catch((e) =>
-    logger("webhook").error("automations failed", e, { workspaceId, conversationId: conversation.id })
-  );
+  // Automações + IA: rodam em background via `after()` do Next 16.
+  // CRÍTICO usar `after()` em vez de Promise solta — Vercel Serverless mata
+  // a função após o Response, então fire-and-forget perdia o persist da resposta
+  // da IA (chegava no WhatsApp via Evolution mas não era salva no DB).
+  after(async () => {
+    try {
+      await runAutomations({
+        workspaceId,
+        conversationId: conversation.id,
+        isFirstMessage,
+        messageText: extracted.content,
+        contactPhone: phone,
+        evolutionConfig,
+      });
+    } catch (e) {
+      logger("webhook").error("automations failed", e, {
+        workspaceId,
+        conversationId: conversation.id,
+      });
+    }
+  });
 
-  // IA: roda em background. Só dispara se conversation.aiEnabled (toggle por conv)
-  // e se temos Evolution pra responder. Não bloqueia o ack do webhook.
   if (conversation.aiEnabled && evolutionConfig) {
-    invokeAiResponse({
-      workspaceId,
-      conversationId: conversation.id,
-      contactPhone: phone,
-      evolutionConfig,
-    }).catch((e) =>
-      logger("webhook").error("ai response failed", e, { workspaceId, conversationId: conversation.id })
-    );
+    after(async () => {
+      try {
+        await invokeAiResponse({
+          workspaceId,
+          conversationId: conversation.id,
+          contactPhone: phone,
+          evolutionConfig,
+        });
+      } catch (e) {
+        logger("webhook").error("ai response failed", e, {
+          workspaceId,
+          conversationId: conversation.id,
+        });
+      }
+    });
   }
 
   return Response.json({ ok: true, messageId: message.id });
