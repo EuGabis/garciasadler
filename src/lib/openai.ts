@@ -34,8 +34,13 @@ import {
 const log = logger("ai/openai");
 
 const MAX_HISTORY = 20;
-const MAX_TOOL_ROUNDS = 5;
+const MAX_TOOL_ROUNDS = 8;
 const MAX_TOKENS_PER_RESPONSE = 600;
+
+// Fallback usado quando IA não consegue gerar texto final (ex: loop de tools).
+// Garante que o cliente sempre recebe alguma resposta em vez de silêncio.
+const FALLBACK_REPLY =
+  "Estou consultando algumas informações pra te ajudar. Um atendente vai dar continuidade em instantes.";
 
 const TOOLS: ChatCompletionTool[] = [
   {
@@ -120,7 +125,17 @@ async function executeTool(
       };
     } catch (e) {
       log.error("buscar_produto failed", e, { workspaceId: ctx.workspaceId, termo });
-      return { erro: "Não consegui consultar o estoque agora. Avise um atendente." };
+      // IMPORTANTE: dizer ao modelo que NÃO adianta tentar de novo. Sem isso
+      // ele entra em loop de tool calls e estoura MAX_TOOL_ROUNDS.
+      return {
+        erro: "estoque_indisponivel",
+        permanente: true,
+        mensagem:
+          "A integração com o estoque está temporariamente indisponível. " +
+          "Não tente buscar produtos novamente nesta conversa. " +
+          "Responda ao cliente normalmente sem dados de estoque, " +
+          "ou ofereça transferir para um vendedor humano.",
+      };
     }
   }
 
@@ -218,13 +233,17 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
   let completionTokensTotal = 0;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    // No último round, removemos tools pra FORÇAR o modelo a gerar texto final
+    // (caso contrário ele poderia ficar pedindo tool calls indefinidamente).
+    const isLastRound = round === MAX_TOOL_ROUNDS - 1;
+
     let response;
     try {
       response = await client.chat.completions.create({
         model: cfg.model,
         max_tokens: MAX_TOKENS_PER_RESPONSE,
         messages,
-        tools: TOOLS,
+        ...(isLastRound ? {} : { tools: TOOLS }),
       });
     } catch (e) {
       log.error("openai call failed", e, { workspaceId: input.workspaceId, round });
@@ -292,9 +311,16 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
     return { ok: true, reply: finalText, rounds: round + 1 };
   }
 
-  log.warn("max tool rounds reached", { workspaceId: input.workspaceId });
+  // Caso teórico: passou de todos os rounds (incluindo o último sem tools) sem
+  // gerar texto. Manda fallback amigável em vez de silenciar o cliente.
+  log.warn("max tool rounds reached — sending fallback", {
+    workspaceId: input.workspaceId,
+    conversationId: input.conversationId,
+    promptTokens: promptTokensTotal,
+    completionTokens: completionTokensTotal,
+  });
   await incrementTokenUsage(input.workspaceId, promptTokensTotal, completionTokensTotal);
-  return { ok: false, reason: "error", error: "loop de ferramentas estourou" };
+  return { ok: true, reply: FALLBACK_REPLY, rounds: MAX_TOOL_ROUNDS };
 }
 
 function safeParseJson(s: string): Record<string, unknown> {
