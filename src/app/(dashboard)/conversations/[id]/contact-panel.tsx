@@ -16,6 +16,7 @@ import {
   PanelRightOpen,
   MessageSquare,
   Calendar,
+  Info,
 } from "lucide-react";
 import { updateContactFieldAction } from "./contact-actions";
 import { formatPhone, formatRelativeTime } from "@/lib/format";
@@ -68,6 +69,7 @@ export function ContactPanel({
   otherConversations: RelatedConversation[];
 }) {
   const [open, setOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
   const [, startTransition] = useTransition();
 
@@ -75,6 +77,16 @@ export function ContactPanel({
     const v = window.localStorage.getItem("contact_panel_open");
     if (v !== null) setOpen(v === "1");
   }, []);
+
+  // Trava scroll quando drawer mobile está aberto
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [mobileOpen]);
 
   function toggle() {
     setOpen((v) => {
@@ -96,35 +108,8 @@ export function ContactPanel({
     });
   }
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={toggle}
-        className="absolute right-4 top-4 z-10 p-2 rounded-lg bg-white dark:bg-stone-900 ring-1 ring-stone-200 dark:ring-stone-800 text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:ring-stone-300 dark:hover:ring-stone-700 transition shadow-sm"
-        title="Abrir painel do contato"
-      >
-        <PanelRightOpen className="h-4 w-4" />
-      </button>
-    );
-  }
-
-  return (
-    <aside className="hidden lg:flex w-[320px] shrink-0 border-l border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col animate-slide-in-right">
-      <header className="px-5 py-3.5 border-b border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between">
-        <h3 className="text-[11px] uppercase tracking-[0.08em] font-semibold text-stone-500">
-          Perfil do contato
-        </h3>
-        <button
-          type="button"
-          onClick={toggle}
-          className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
-          title="Recolher painel"
-        >
-          <PanelRightClose className="h-4 w-4" />
-        </button>
-      </header>
-
+  const panelBody = (
+    <>
       <div className="flex-1 overflow-y-auto">
         {/* Hero */}
         <div className="px-5 pt-6 pb-5 text-center border-b border-stone-200/80 dark:border-stone-800/80">
@@ -274,7 +259,81 @@ export function ContactPanel({
           <ExternalLink className="h-3 w-3" />
         </Link>
       </footer>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile: floating trigger (visível só em <lg) */}
+      <button
+        type="button"
+        onClick={() => setMobileOpen(true)}
+        className="lg:hidden fixed bottom-24 right-4 z-30 p-3 rounded-full bg-brand-600 text-white shadow-lg shadow-brand-600/30 hover:bg-brand-700 active:scale-95 transition"
+        aria-label="Abrir perfil do contato"
+      >
+        <Info className="h-5 w-5" />
+      </button>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex justify-end">
+          <button
+            type="button"
+            aria-label="Fechar painel"
+            onClick={() => setMobileOpen(false)}
+            className="absolute inset-0 bg-stone-900/50 dark:bg-black/60"
+          />
+          <aside className="relative w-[320px] max-w-[85vw] h-full bg-white dark:bg-stone-900 flex flex-col shadow-2xl animate-slide-in-right">
+            <header className="px-5 py-3.5 border-b border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between">
+              <h3 className="text-[11px] uppercase tracking-[0.08em] font-semibold text-stone-500">
+                Perfil do contato
+              </h3>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="p-1.5 rounded text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
+                title="Fechar"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </header>
+            {panelBody}
+          </aside>
+        </div>
+      )}
+
+      {/* Desktop: collapsed trigger */}
+      {!open && (
+        <button
+          type="button"
+          onClick={toggle}
+          className="hidden lg:block absolute right-4 top-4 z-10 p-2 rounded-lg bg-white dark:bg-stone-900 ring-1 ring-stone-200 dark:ring-stone-800 text-stone-600 dark:text-stone-300 hover:text-brand-600 dark:hover:text-brand-400 hover:ring-stone-300 dark:hover:ring-stone-700 transition shadow-sm"
+          title="Abrir painel do contato"
+        >
+          <PanelRightOpen className="h-4 w-4" />
+        </button>
+      )}
+
+      {/* Desktop sidebar */}
+      {open && (
+        <aside className="hidden lg:flex w-[320px] shrink-0 border-l border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col animate-slide-in-right">
+          <header className="px-5 py-3.5 border-b border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between">
+            <h3 className="text-[11px] uppercase tracking-[0.08em] font-semibold text-stone-500">
+              Perfil do contato
+            </h3>
+            <button
+              type="button"
+              onClick={toggle}
+              className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition"
+              title="Recolher painel"
+            >
+              <PanelRightClose className="h-4 w-4" />
+            </button>
+          </header>
+          {panelBody}
+        </aside>
+      )}
+    </>
   );
 }
 

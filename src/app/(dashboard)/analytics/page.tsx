@@ -30,7 +30,7 @@ export default async function AnalyticsPage({
       : 0;
 
   return (
-    <div className="p-6 lg:p-10 max-w-6xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       <header className="flex items-end justify-between gap-4 mb-8 flex-wrap">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">

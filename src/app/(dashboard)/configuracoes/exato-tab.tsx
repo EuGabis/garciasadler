@@ -324,8 +324,8 @@ function ProdutoSearchSection() {
         )}
 
         {state?.produtos && state.produtos.length > 0 && (
-          <div className="border border-stone-200/80 dark:border-stone-800/80 rounded-lg overflow-hidden">
-            <table className="w-full text-[12.5px]">
+          <div className="border border-stone-200/80 dark:border-stone-800/80 rounded-lg overflow-x-auto">
+            <table className="w-full text-[12.5px] min-w-[520px]">
               <thead className="bg-stone-50 dark:bg-stone-800/40 text-[10.5px] uppercase tracking-[0.08em] text-stone-500 font-semibold">
                 <tr>
                   <th className="text-left px-3 py-2.5">Código</th>

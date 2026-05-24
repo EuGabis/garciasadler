@@ -163,7 +163,7 @@ export default async function ConfiguracoesPage({
   }
 
   return (
-    <div className="p-6 lg:p-10 max-w-5xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-5xl mx-auto">
       {/* Hero */}
       <header className="mb-7">
         <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">

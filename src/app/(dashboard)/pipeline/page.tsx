@@ -17,7 +17,7 @@ export default async function PipelinePage() {
 
   if (columns.length === 0) {
     return (
-      <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+      <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto">
         <header className="mb-7">
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Pipeline
@@ -47,7 +47,7 @@ export default async function PipelinePage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 h-full flex flex-col max-w-[1400px] mx-auto">
+    <div className="p-4 md:p-6 lg:p-8 h-full flex flex-col max-w-[1400px] mx-auto">
       <header className="flex items-end justify-between gap-4 mb-5 shrink-0 flex-wrap">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">

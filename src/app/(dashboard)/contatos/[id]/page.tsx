@@ -19,7 +19,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
   const color = avatarColor(contact.name);
 
   return (
-    <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto">
       {/* Breadcrumb + delete */}
       <div className="mb-6 flex items-center justify-between">
         <Link

@@ -18,7 +18,7 @@ export default function NewContactPage() {
   );
 
   return (
-    <div className="p-6 lg:p-10 max-w-2xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-2xl mx-auto">
       <Link
         href="/contatos"
         className="inline-flex items-center gap-1.5 text-[12px] font-medium text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 mb-6 transition-colors"

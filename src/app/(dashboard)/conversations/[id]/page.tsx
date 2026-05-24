@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { Check, CheckCheck, Clock, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { Check, CheckCheck, Clock, AlertCircle, ArrowLeft } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { getConversationWithMessages, markConversationRead } from "@/lib/conversations";
@@ -77,10 +78,17 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   return (
     <div className="h-full flex relative">
       <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
-        <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-6 py-3">
-          <div className="flex items-center gap-3">
+        <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            <Link
+              href="/conversations"
+              className="md:hidden p-1.5 -ml-1 rounded-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors shrink-0"
+              aria-label="Voltar para conversas"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
             <div
-              className={`h-10 w-10 rounded-full ring-1 text-sm font-semibold flex items-center justify-center ${headerAvatar.bg} ${headerAvatar.text} ${headerAvatar.ring}`}
+              className={`h-9 w-9 md:h-10 md:w-10 rounded-full ring-1 text-sm font-semibold flex items-center justify-center shrink-0 ${headerAvatar.bg} ${headerAvatar.text} ${headerAvatar.ring}`}
             >
               {avatarInitial(conversation.contact.name)}
             </div>
@@ -92,7 +100,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                 {formatPhone(conversation.contact.phone)}
               </p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5 md:gap-1">
               <AssignPicker
                 conversationId={conversation.id}
                 assigned={assignedUsers}
@@ -105,7 +113,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
               />
               <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
               <span
-                className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider ring-1 ${statusColor}`}
+                className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider ring-1 ${statusColor}`}
               >
                 {conversation.status}
               </span>
@@ -123,7 +131,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
           )}
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-2.5">
+        <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 md:py-5 space-y-2.5">
           {conversation.messages.length === 0 ? (
             <div className="text-center text-sm text-stone-500 py-16">
               Nenhuma mensagem ainda.

@@ -21,7 +21,7 @@ export default async function LabelsPage() {
   });
 
   return (
-    <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto">
       <header className="mb-6 flex items-end justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">

@@ -58,7 +58,7 @@ export function MessageForm({
       <form
         ref={mediaFormRef}
         action={mediaAction}
-        className="border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-6 py-3.5"
+        className="border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3 md:py-3.5"
         encType="multipart/form-data"
       >
         <input type="hidden" name="conversationId" value={conversationId} />
@@ -123,7 +123,7 @@ export function MessageForm({
     <form
       ref={textFormRef}
       action={textAction}
-      className="relative border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-6 py-3.5"
+      className="relative border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3 md:py-3.5"
     >
       <input type="hidden" name="conversationId" value={conversationId} />
       <input
@@ -179,7 +179,7 @@ export function MessageForm({
           }
         >
           <Sparkles className="h-4 w-4" />
-          <span className="text-[12px] font-medium">Rápidas</span>
+          <span className="hidden md:inline text-[12px] font-medium">Rápidas</span>
         </button>
 
         <textarea

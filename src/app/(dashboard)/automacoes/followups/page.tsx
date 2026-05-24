@@ -29,7 +29,7 @@ export default async function FollowUpsPage() {
   ]);
 
   return (
-    <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto">
       <nav className="flex items-center gap-1.5 text-[12px] text-stone-500 mb-3">
         <Link
           href="/configuracoes?tab=automacoes"

@@ -117,7 +117,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="p-6 lg:p-10 max-w-6xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       {/* Hero */}
       <header className="mb-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500 mb-2">

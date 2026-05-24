@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { LogOut } from "lucide-react";
 import { Notifications } from "./notifications";
 import { ThemeToggle } from "@/components/ui";
 import { SidebarNav } from "./sidebar-nav";
+import { MobileNav } from "./mobile-nav";
+import { signOutAction } from "./sign-out-action";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -12,8 +14,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const initial = session.user.name?.[0]?.toUpperCase() ?? "?";
 
   return (
-    <div className="h-screen flex bg-stone-50 dark:bg-stone-950 overflow-hidden">
+    <div className="h-screen flex flex-col md:flex-row bg-stone-50 dark:bg-stone-950 overflow-hidden">
       <Notifications workspaceId={session.user.workspaceId} />
+
+      <MobileNav
+        userName={session.user.name ?? ""}
+        userRole={session.user.role}
+        userInitial={initial}
+      />
 
       <aside className="hidden md:flex w-60 shrink-0 border-r border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col">
         {/* Brand */}
@@ -49,13 +57,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
             <ThemeToggle />
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-            className="mt-1"
-          >
+          <form action={signOutAction} className="mt-1">
             <button
               type="submit"
               className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-medium text-stone-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
@@ -67,7 +69,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </aside>
 
-      <main className="flex-1 min-w-0 overflow-y-auto bg-stone-50 dark:bg-stone-950">
+      <main className="flex-1 min-w-0 min-h-0 overflow-y-auto bg-stone-50 dark:bg-stone-950">
         {children}
       </main>
     </div>

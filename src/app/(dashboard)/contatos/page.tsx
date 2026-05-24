@@ -41,7 +41,7 @@ export default async function ContactsPage({
   const activeStatus = params.status ?? "all";
 
   return (
-    <div className="p-6 lg:p-10 max-w-6xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       {/* Header */}
       <header className="flex items-end justify-between gap-4 mb-6 flex-wrap">
         <div>
