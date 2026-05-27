@@ -15,11 +15,29 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const TZ = "America/Sao_Paulo";
+
 function greeting(hour: number): string {
   if (hour < 6) return "Boa madrugada";
   if (hour < 12) return "Bom dia";
   if (hour < 18) return "Boa tarde";
   return "Boa noite";
+}
+
+/**
+ * Hora local em São Paulo (BRT/UTC-3).
+ * Necessário porque Server Components na Vercel rodam em UTC —
+ * `new Date().getHours()` lá retorna hora UTC, não local.
+ */
+function getSaoPauloHour(): number {
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: TZ,
+  }).format(new Date());
+  // Em algumas locales, "0" vira "24"; normaliza
+  const h = Number(formatted);
+  return h === 24 ? 0 : h;
 }
 
 export default async function DashboardPage() {
@@ -51,13 +69,13 @@ export default async function DashboardPage() {
   ]);
 
   const firstName = session!.user.name?.split(" ")[0] ?? "";
-  const now = new Date();
-  const hello = greeting(now.getHours());
+  const hello = greeting(getSaoPauloHour());
 
-  const dateLabel = now.toLocaleDateString("pt-BR", {
+  const dateLabel = new Date().toLocaleDateString("pt-BR", {
     weekday: "long",
     day: "2-digit",
     month: "long",
+    timeZone: TZ,
   });
 
   const kpis = [
