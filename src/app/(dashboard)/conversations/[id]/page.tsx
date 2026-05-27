@@ -76,7 +76,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
       : "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 ring-amber-200/60 dark:ring-amber-500/20";
 
   return (
-    <div className="h-full flex relative">
+    <div className="h-full w-full flex-1 flex relative min-w-0">
       <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
         <header className="border-b border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3">
           <div className="flex items-center gap-2 md:gap-3">
