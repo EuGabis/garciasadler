@@ -292,6 +292,9 @@ async function handleMessageUpsert(
     }
   });
 
+  // DIAGNÓSTICO TEMPORÁRIO: log curto e legível na tabela do Vercel.
+  console.log(`AIGATE aiEnabled=${conversation.aiEnabled} evo=${!!evolutionConfig} fromMe=${fromMe}`);
+
   if (conversation.aiEnabled && evolutionConfig) {
     after(async () => {
       try {
@@ -325,6 +328,9 @@ async function invokeAiResponse(params: {
     conversationId: params.conversationId,
   });
 
+  // DIAGNÓSTICO TEMPORÁRIO
+  console.log(`AIRESULT ${result.ok ? "ok-sending" : "FAIL:" + result.reason}`);
+
   if (!result.ok) {
     aiLog.warn("ai skipped", { reason: result.reason, error: result.error });
     return;
@@ -332,7 +338,9 @@ async function invokeAiResponse(params: {
 
   try {
     await sendWhatsAppText(params.contactPhone, result.reply, params.evolutionConfig);
+    console.log("AISENT ok"); // DIAGNÓSTICO TEMPORÁRIO
   } catch (e) {
+    console.log(`AISEND FAIL: ${(e as Error).message?.slice(0, 60)}`); // DIAGNÓSTICO TEMPORÁRIO
     aiLog.error("evolution send failed for ai reply", e, { conversationId: params.conversationId });
     return;
   }
