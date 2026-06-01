@@ -34,12 +34,21 @@ export async function buscarProdutos(
   const t = termo.trim();
   if (!t) return [];
 
-  // Heurística: <= 6 chars e parece código (sem espaços) → busca por código
-  const looksLikeCode = t.length <= 6 && !/\s/.test(t);
+  const pagina = opts.pagina ?? 1;
+  const tamanho = opts.tamanho ?? DEFAULT_TAMANHO;
 
-  return await listarProdutos(workspaceId, {
-    [looksLikeCode ? "codigoProduto" : "descricaoProduto"]: t,
-    pagina: opts.pagina ?? 1,
-    tamanho: opts.tamanho ?? DEFAULT_TAMANHO,
-  });
+  // Heurística de código: até 6 chars, sem espaço E com pelo menos um dígito
+  // (ex: CIM50, 1759). Palavras puras como "areia", "pedra", "tinta", "bloco"
+  // NÃO são código — vão por descrição. (Antes, qualquer palavra <=6 letras
+  // caía na busca por código e retornava zero, quebrando "areia"/"pedra".)
+  const looksLikeCode = t.length <= 6 && !/\s/.test(t) && /\d/.test(t);
+
+  if (looksLikeCode) {
+    const byCode = await listarProdutos(workspaceId, { codigoProduto: t, pagina, tamanho });
+    if (byCode.length > 0) return byCode;
+    // Fallback: pode ser uma descrição curta. Tenta por descrição antes de desistir.
+    return await listarProdutos(workspaceId, { descricaoProduto: t, pagina, tamanho });
+  }
+
+  return await listarProdutos(workspaceId, { descricaoProduto: t, pagina, tamanho });
 }

@@ -33,7 +33,11 @@ import {
 
 const log = logger("ai/openai");
 
-const MAX_HISTORY = 20;
+// Janela de contexto da IA. Mantida alta porque uma cotação real acumula muitas
+// mensagens (cada busca de produto gera tool_call + resultado, somado à coleta de
+// dados do cliente). Com 20, conversas longas perdiam os itens originais do
+// carrinho e a IA remontava o pedido errado. 60 cobre uma cotação longa com folga.
+const MAX_HISTORY = 60;
 const MAX_TOOL_ROUNDS = 8;
 const MAX_TOKENS_PER_RESPONSE = 600;
 
