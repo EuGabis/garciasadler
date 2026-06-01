@@ -44,11 +44,20 @@ function redact(value: unknown, depth = 0): unknown {
   if (typeof value === "bigint") return value.toString();
   if (value instanceof Date) return value.toISOString();
   if (value instanceof Error) {
-    return {
+    const out: Record<string, unknown> = {
       name: value.name,
       message: value.message,
       stack: value.stack?.split("\n").slice(0, 8).join("\n"),
     };
+    // Preserva props custom de erros (ex: ExatoError.status/body) que de outra
+    // forma seriam descartadas — essenciais pra diagnosticar falhas do Exato.
+    // Passam pela mesma redaction recursiva (mascara chaves sensíveis, trunca
+    // strings longas), então é seguro.
+    for (const k of Object.keys(value as object)) {
+      if (k in out) continue;
+      out[k] = redact((value as unknown as Record<string, unknown>)[k], depth + 1);
+    }
+    return out;
   }
   if (Buffer.isBuffer?.(value as Buffer)) return `[Buffer ${(value as Buffer).length}b]`;
   if (Array.isArray(value)) {
