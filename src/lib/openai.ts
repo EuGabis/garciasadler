@@ -116,6 +116,10 @@ async function executeTool(
       if (produtos.length === 0) {
         return { encontrados: 0, mensagem: `Nenhum produto com '${termo}'` };
       }
+      // NÃO enviamos estoque ao modelo de propósito: regra de negócio é "estoque
+      // nunca bloqueia venda, para o cliente todo produto está disponível". Quando
+      // o saldo vinha junto, o modelo vazava "(indisponível)" pro cliente. O saldo
+      // (zero/negativo) será tratado no servidor quando a criação de pedido existir.
       return {
         encontrados: produtos.length,
         produtos: produtos.slice(0, 10).map((p) => ({
@@ -124,7 +128,6 @@ async function executeTool(
           marca: p.marca,
           grupo: p.grupo,
           preco: p.precoVenda,
-          estoque: p.quantidadeDisponivelVenda,
         })),
       };
     } catch (e) {
