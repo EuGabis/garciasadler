@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { after } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, withDbRetry } from "@/lib/db";
 import { normalizePhone } from "@/lib/evolution";
 import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
@@ -292,9 +292,6 @@ async function handleMessageUpsert(
     }
   });
 
-  // DIAGNÓSTICO TEMPORÁRIO: console.error pra aparecer na tabela de logs do Vercel.
-  console.error(`AIGATE aiEnabled=${conversation.aiEnabled} evo=${!!evolutionConfig} fromMe=${fromMe}`);
-
   if (conversation.aiEnabled && evolutionConfig) {
     after(async () => {
       try {
@@ -323,13 +320,14 @@ async function invokeAiResponse(params: {
   evolutionConfig: { url: string; key: string; instance: string };
 }) {
   const aiLog = logger("webhook/ai", { workspaceId: params.workspaceId });
-  const result = await generateReply({
-    workspaceId: params.workspaceId,
-    conversationId: params.conversationId,
-  });
-
-  // DIAGNÓSTICO TEMPORÁRIO
-  console.error(`AIRESULT ${result.ok ? "ok-sending" : "FAIL:" + result.reason}`);
+  // withDbRetry: se a conexão Postgres cair no meio (erro intermitente do
+  // serverless), tenta de novo com conexão nova em vez de falhar a resposta toda.
+  const result = await withDbRetry(() =>
+    generateReply({
+      workspaceId: params.workspaceId,
+      conversationId: params.conversationId,
+    })
+  );
 
   if (!result.ok) {
     aiLog.warn("ai skipped", { reason: result.reason, error: result.error });
@@ -338,9 +336,7 @@ async function invokeAiResponse(params: {
 
   try {
     await sendWhatsAppText(params.contactPhone, result.reply, params.evolutionConfig);
-    console.error("AISENT ok"); // DIAGNÓSTICO TEMPORÁRIO
   } catch (e) {
-    console.error(`AISEND FAIL: ${(e as Error).message?.slice(0, 60)}`); // DIAGNÓSTICO TEMPORÁRIO
     aiLog.error("evolution send failed for ai reply", e, { conversationId: params.conversationId });
     return;
   }
@@ -348,28 +344,37 @@ async function invokeAiResponse(params: {
   // Persiste a mensagem final (já texto puro, sem tool_calls).
   // O loop em generateReply só cria mensagens das ROUNDS com tool_calls + resultados;
   // a resposta final (texto puro) é criada aqui após o envio confirmar.
-  await prisma.message.create({
-    data: {
-      conversationId: params.conversationId,
-      role: "assistant",
-      direction: "outbound",
-      type: "text",
-      status: "sent",
-      content: result.reply,
-    },
-  });
+  await withDbRetry(() =>
+    prisma.message.create({
+      data: {
+        conversationId: params.conversationId,
+        role: "assistant",
+        direction: "outbound",
+        type: "text",
+        status: "sent",
+        content: result.reply,
+      },
+    })
+  );
 
   const truncated = result.reply.length > 80 ? result.reply.slice(0, 79) + "…" : result.reply;
-  await prisma.conversation.update({
-    where: { id: params.conversationId },
-    data: { lastMessage: truncated, lastMessageAt: new Date() },
-  });
+  await withDbRetry(() =>
+    prisma.conversation.update({
+      where: { id: params.conversationId },
+      data: { lastMessage: truncated, lastMessageAt: new Date() },
+    })
+  );
 
-  await publishRealtime(params.workspaceId, {
-    type: "message:new",
-    conversationId: params.conversationId,
-    preview: truncated,
-  });
+  // Realtime é best-effort: se falhar, não derruba a resposta (já foi enviada).
+  try {
+    await publishRealtime(params.workspaceId, {
+      type: "message:new",
+      conversationId: params.conversationId,
+      preview: truncated,
+    });
+  } catch (e) {
+    aiLog.warn("publishRealtime falhou (não-crítico)", { error: (e as Error).message });
+  }
 
   aiLog.info("ai reply sent", { conversationId: params.conversationId, rounds: result.rounds });
 }
