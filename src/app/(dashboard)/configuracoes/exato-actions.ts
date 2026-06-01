@@ -207,6 +207,13 @@ export async function searchExatoProdutoAction(
       })),
     };
   } catch (e) {
-    return { error: (e as Error).message, termo };
+    // Surface o corpo da resposta do Exato (ex: motivo real do 500), que de
+    // outra forma fica escondido — essencial pra diagnosticar.
+    let detail = "";
+    if (e instanceof ExatoError && e.body != null) {
+      const raw = typeof e.body === "string" ? e.body : JSON.stringify(e.body);
+      if (raw) detail = ` — ${raw.slice(0, 400)}`;
+    }
+    return { error: `${(e as Error).message}${detail}`, termo };
   }
 }
