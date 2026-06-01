@@ -8,7 +8,7 @@ import { encrypt } from "@/lib/crypto";
 import { canManageTeam } from "@/lib/team";
 import { testarLogin } from "@/lib/exato/auth";
 import { listarLojas } from "@/lib/exato/lojas";
-import { buscarProdutos } from "@/lib/exato/produtos";
+import { buscarProdutos, listarProdutos } from "@/lib/exato/produtos";
 import { ExatoError } from "@/lib/exato/types";
 
 // ----- save credentials -----
@@ -192,6 +192,28 @@ export async function searchExatoProdutoAction(
   const termo = String(formData.get("termo") ?? "").trim();
   if (!termo) return { error: "Digite um termo." };
 
+  // Surface o corpo da resposta do Exato (ex: motivo real do 500), que de
+  // outra forma fica escondido — essencial pra diagnosticar.
+  const fmtErr = (e: unknown) => {
+    let detail = "";
+    if (e instanceof ExatoError && e.body != null) {
+      const raw = typeof e.body === "string" ? e.body : JSON.stringify(e.body);
+      if (raw) detail = ` — ${raw.slice(0, 300)}`;
+    }
+    return `${(e as Error).message}${detail}`;
+  };
+
+  // Probe diagnóstico: chamada SEM filtro de descrição (espelha exatamente o
+  // teste que funcionou no suporte Exato: produtos?pagina=1&tamanho=N). Isola
+  // se o 500 vem do filtro descricaoProduto ou de token/codigoAcesso.
+  let probe = "";
+  try {
+    const bare = await listarProdutos(session.user.workspaceId, { pagina: 1, tamanho: 5 });
+    probe = `[diagnóstico] sem filtro: OK (${bare.length} itens). `;
+  } catch (e) {
+    probe = `[diagnóstico] sem filtro: FALHOU (${fmtErr(e)}). `;
+  }
+
   try {
     const arr = await buscarProdutos(session.user.workspaceId, termo, { tamanho: 20 });
     return {
@@ -207,13 +229,6 @@ export async function searchExatoProdutoAction(
       })),
     };
   } catch (e) {
-    // Surface o corpo da resposta do Exato (ex: motivo real do 500), que de
-    // outra forma fica escondido — essencial pra diagnosticar.
-    let detail = "";
-    if (e instanceof ExatoError && e.body != null) {
-      const raw = typeof e.body === "string" ? e.body : JSON.stringify(e.body);
-      if (raw) detail = ` — ${raw.slice(0, 400)}`;
-    }
-    return { error: `${(e as Error).message}${detail}`, termo };
+    return { error: `${probe}com termo "${termo}": ${fmtErr(e)}`, termo };
   }
 }
