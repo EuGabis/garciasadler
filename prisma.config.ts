@@ -9,6 +9,10 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Migrations precisam de session mode (CREATE TABLE, etc) — usa DIRECT_URL
+    // (Session Pooler 5432 no Supabase) que mantém sessão persistente.
+    // Runtime (queries normais) usa DATABASE_URL via adapter-pg em src/lib/db.ts.
+    // Fallback pra DATABASE_URL se DIRECT_URL não estiver setada (compat dev local).
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
