@@ -215,7 +215,7 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
   });
   recent.reverse();
 
-  const messages: ChatCompletionMessageParam[] = [
+  const rawMessages: ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt },
     ...recent.map((m): ChatCompletionMessageParam => {
       if (m.role === "tool") {
@@ -235,6 +235,15 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
       };
     }),
   ];
+
+  const messages = sanitizeMessages(rawMessages);
+  if (messages.length !== rawMessages.length) {
+    log.warn("messages sanitized (orphan tool sequences dropped)", {
+      conversationId: input.conversationId,
+      before: rawMessages.length,
+      after: messages.length,
+    });
+  }
 
   let promptTokensTotal = 0;
   let completionTokensTotal = 0;
@@ -336,4 +345,78 @@ function safeParseJson(s: string): Record<string, unknown> {
   } catch {
     return {};
   }
+}
+
+/**
+ * Sanitiza a array de messages pra respeitar invariantes da OpenAI Chat API:
+ *
+ * 1. Toda `tool` precisa vir DEPOIS de um `assistant` com `tool_calls`, e o
+ *    `tool_call_id` precisa casar com algum id dos `tool_calls`.
+ * 2. Todo `assistant` com `tool_calls` precisa ter um `tool` (response) pra
+ *    CADA id de `tool_calls`, todos vindo logo em seguida no array.
+ *
+ * Quando o slice de MAX_HISTORY corta no meio de uma sequência (ex: o início
+ * do array fica sendo um `tool` órfão sem o `assistant(tool_calls)` antes),
+ * a OpenAI rejeita com 400 "messages with role 'tool' must be a response to
+ * a preceeding message with 'tool_calls'". Esse sanitizer dropa as
+ * sequências incompletas pra evitar isso.
+ */
+function sanitizeMessages(msgs: ChatCompletionMessageParam[]): ChatCompletionMessageParam[] {
+  if (msgs.length === 0) return msgs;
+
+  // Marca quais índices são válidos. System (índice 0) sempre é.
+  const valid = new Array(msgs.length).fill(false);
+  const hasSystem = msgs[0]?.role === "system";
+  const startIdx = hasSystem ? 1 : 0;
+  if (hasSystem) valid[0] = true;
+
+  let i = startIdx;
+  while (i < msgs.length) {
+    const m = msgs[i];
+
+    // Tool órfão (sem assistant tool_calls precedente válido) → drop.
+    // Tools que casam com um assistant tool_calls são marcados válidos no
+    // bloco do assistant abaixo.
+    if (m.role === "tool") {
+      i++;
+      continue;
+    }
+
+    // Assistant com tool_calls → precisa ter TODAS as tool responses em seguida.
+    // Se faltar qualquer uma, dropa o assistant inteiro (e qualquer tool órfão
+    // que viesse depois é ignorado pelo branch acima).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const toolCalls = (m as any).tool_calls as
+      | Array<{ id: string }>
+      | undefined;
+    if (m.role === "assistant" && Array.isArray(toolCalls) && toolCalls.length > 0) {
+      const requiredIds = new Set(toolCalls.map((c) => c.id));
+      const matchedIdxs: number[] = [];
+      let j = i + 1;
+      while (j < msgs.length && msgs[j].role === "tool") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tid = (msgs[j] as any).tool_call_id as string | undefined;
+        if (tid && requiredIds.has(tid)) {
+          matchedIdxs.push(j);
+          requiredIds.delete(tid);
+        }
+        j++;
+      }
+
+      if (requiredIds.size === 0) {
+        // Sequência completa: assistant + todas as tools → marca tudo válido
+        valid[i] = true;
+        matchedIdxs.forEach((idx) => (valid[idx] = true));
+      }
+      // Avança para depois do bloco de tools (válido ou não)
+      i = j;
+      continue;
+    }
+
+    // user, assistant textual (sem tool_calls), system inline → mantém
+    valid[i] = true;
+    i++;
+  }
+
+  return msgs.filter((_, idx) => valid[idx]);
 }
