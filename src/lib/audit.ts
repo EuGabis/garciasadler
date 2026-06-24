@@ -10,6 +10,7 @@ export type AuditAction =
   | "user.delete"
   | "user.update_role"
   | "user.password_change"
+  | "user.reset_password"
   | "workspace.update"
   | "workspace.evolution_key_change"
   | "automation.create"
