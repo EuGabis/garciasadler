@@ -56,8 +56,15 @@ const SEMANTIC_SUBSTITUTIONS: Array<[RegExp, string]> = [
   [/\bmeio\b/gi, "1/2"],
   [/\bmeia\b/gi, "1/2"],
   [/\bduas?\s+polegadas?\b/gi, "2"],
-  // Unidades comuns confundidas: "metros" → "" (deixa só o número)
-  // Não fazemos isso aqui pra não bagunçar — IA é responsável por extrair só o produto
+
+  // Apelidos do depósito Garcia Sadler (system prompt v6 §5.1.a).
+  // Cliente fala "bloco 15" mas o cadastro é "BLOCO CONCRETO 14 X 19 X 39"
+  // (apelido vem da largura arredondada ao múltiplo de 5 mais próximo).
+  // Substituímos o apelido pra dimensão real ANTES de tokenizar.
+  // Ordem importa: padrões mais específicos primeiro pra evitar match parcial.
+  [/\bbloco\s+15\b/gi, "bloco 14"],
+  [/\bbloco\s+10\b/gi, "bloco 9"],
+  // "bloco 19" já bate exato com a descrição "19 X 19 X 39" — sem substituição.
 ];
 
 function normalize(s: string): string {
