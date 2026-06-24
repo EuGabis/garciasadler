@@ -2,11 +2,12 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, X, Users } from "lucide-react";
+import { Plus, Trash2, X, Users, KeyRound } from "lucide-react";
 import {
   createUserAction,
   updateRoleAction,
   deleteUserAction,
+  resetPasswordAction,
   type TeamState,
 } from "./actions";
 import { avatarColor, avatarInitial } from "@/lib/avatar-color";
@@ -127,6 +128,14 @@ export function TeamList({
                     </span>
                   )}
 
+                  {canManage && m.id !== currentUser.id && (
+                    <ResetPasswordButton
+                      userId={m.id}
+                      userName={m.name}
+                      isTargetOwner={m.role === "owner"}
+                      canResetOwner={currentUser.role === "owner"}
+                    />
+                  )}
                   {canManage && m.id !== currentUser.id && <DeleteButton userId={m.id} />}
                 </li>
               );
@@ -171,6 +180,148 @@ function RoleSelector({
         <option value="agent">Agente</option>
       </select>
     </form>
+  );
+}
+
+function ResetPasswordButton({
+  userId,
+  userName,
+  isTargetOwner,
+  canResetOwner,
+}: {
+  userId: string;
+  userName: string;
+  isTargetOwner: boolean;
+  canResetOwner: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const disabled = isTargetOwner && !canResetOwner;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => !disabled && setOpen(true)}
+        disabled={disabled}
+        className="shrink-0 p-1.5 rounded-md text-stone-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition"
+        title={
+          disabled
+            ? "Só owner pode resetar senha de outro owner"
+            : "Resetar senha"
+        }
+      >
+        <KeyRound className="h-3.5 w-3.5" />
+      </button>
+      {open && (
+        <ResetPasswordModal
+          userId={userId}
+          userName={userName}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
+  );
+}
+
+function ResetPasswordModal({
+  userId,
+  userName,
+  onClose,
+}: {
+  userId: string;
+  userName: string;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const [state, formAction, pending] = useActionState<TeamState, FormData>(
+    resetPasswordAction,
+    null
+  );
+
+  if (state?.ok) {
+    setTimeout(() => {
+      onClose();
+      router.refresh();
+    }, 800);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-stone-900/40 dark:bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md bg-white dark:bg-stone-900 rounded-xl shadow-2xl border border-stone-200 dark:border-stone-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className="flex items-center justify-between px-5 py-4 border-b border-stone-200/80 dark:border-stone-800/80">
+          <div>
+            <h2 className="text-[15px] font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+              Resetar senha
+            </h2>
+            <p className="text-[12px] text-stone-500 mt-0.5 truncate">{userName}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-md text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-100 transition"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </header>
+
+        <form action={formAction} className="p-5 space-y-4">
+          <input type="hidden" name="userId" value={userId} />
+          <div>
+            <label htmlFor="newPassword" className={LABEL}>
+              Nova senha
+            </label>
+            <input
+              id="newPassword"
+              name="newPassword"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              autoFocus
+              className={INPUT}
+            />
+            <p className="mt-1.5 text-[11px] text-stone-500">
+              Mínimo 8 caracteres. As sessões ativas do agente serão invalidadas.
+            </p>
+          </div>
+
+          {state?.ok && (
+            <p className="text-[12.5px] text-emerald-700 dark:text-emerald-400 px-3 py-2 rounded-md bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-200/60 dark:ring-emerald-500/20">
+              Senha redefinida. Avise o agente da nova senha por canal seguro.
+            </p>
+          )}
+          {state?.error && (
+            <p className="text-[12.5px] text-red-600 dark:text-red-400 px-3 py-2 rounded-md bg-red-50 dark:bg-red-500/10 ring-1 ring-red-200/60 dark:ring-red-500/20">
+              {state.error}
+            </p>
+          )}
+
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center justify-center h-9 px-3.5 rounded-lg text-[13px] font-medium text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-[13px] font-medium shadow-sm transition-colors"
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              {pending ? "Redefinindo…" : "Redefinir"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 

@@ -127,6 +127,62 @@ export async function updateRoleAction(
   return { ok: true };
 }
 
+const resetPasswordSchema = z.object({
+  userId: z.string().min(1),
+  newPassword: z.string().min(8).max(128),
+});
+
+export async function resetPasswordAction(
+  _prev: TeamState,
+  formData: FormData
+): Promise<TeamState> {
+  const session = await auth();
+  if (!session?.user) return { error: "Não autenticado." };
+  if (!canManageTeam(session.user.role)) return { error: "Sem permissão." };
+
+  const parsed = resetPasswordSchema.safeParse({
+    userId: formData.get("userId"),
+    newPassword: formData.get("newPassword"),
+  });
+  if (!parsed.success) return { error: "Senha precisa ter pelo menos 8 caracteres." };
+
+  if (parsed.data.userId === session.user.id) {
+    return { error: "Use a aba Conta pra trocar sua própria senha." };
+  }
+
+  const target = await prisma.user.findFirst({
+    where: { id: parsed.data.userId, workspaceId: session.user.workspaceId },
+  });
+  if (!target) return { error: "Usuário não encontrado." };
+
+  // RBAC: só owner pode resetar senha de outro owner
+  if (target.role === "owner" && session.user.role !== "owner") {
+    return { error: "Só owner pode resetar senha de outro owner." };
+  }
+
+  const passwordHash = await hashPassword(parsed.data.newPassword);
+
+  await prisma.user.update({
+    where: { id: target.id },
+    data: {
+      password: passwordHash,
+      // Invalida sessões antigas dele — JWT carrega passwordChangedAt
+      passwordChangedAt: new Date(),
+    },
+  });
+
+  await audit({
+    workspaceId: session.user.workspaceId,
+    userId: session.user.id,
+    action: "user.reset_password",
+    target: target.id,
+    meta: { email: target.email, role: target.role },
+  });
+
+  revalidatePath("/equipe");
+  return { ok: true };
+}
+
 export async function deleteUserAction(userId: string): Promise<TeamState> {
   const session = await auth();
   if (!session?.user) return { error: "Não autenticado." };
