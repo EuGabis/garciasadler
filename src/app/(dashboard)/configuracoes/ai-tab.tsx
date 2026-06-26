@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Bot, Key, Save, Cpu, Sparkles, Zap } from "lucide-react";
 import {
@@ -47,11 +47,26 @@ export function AiTab({ config, canEdit }: Props) {
     null
   );
   const [enabled, setEnabled] = useState(config.enabled);
+  const [model, setModel] = useState(config.model);
   const router = useRouter();
 
-  if (state?.ok && state) {
-    setTimeout(() => router.refresh(), 50);
-  }
+  // Sincroniza estado controlado com a prop quando o server re-fetcha
+  // (ex: após router.refresh pós-save).
+  useEffect(() => {
+    setEnabled(config.enabled);
+  }, [config.enabled]);
+  useEffect(() => {
+    setModel(config.model);
+  }, [config.model]);
+
+  // Refresh apenas UMA vez quando state.ok vira true — antes estava no corpo
+  // do componente sem useEffect, disparando refreshes em cascata e deixando
+  // o estado client desincronizado com o DB.
+  useEffect(() => {
+    if (state?.ok) {
+      router.refresh();
+    }
+  }, [state?.ok, router]);
 
   return (
     <div className="space-y-3">
@@ -112,7 +127,8 @@ export function AiTab({ config, canEdit }: Props) {
             <select
               id="model"
               name="model"
-              defaultValue={config.model}
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
               disabled={!canEdit}
               className={INPUT_CLS}
             >
