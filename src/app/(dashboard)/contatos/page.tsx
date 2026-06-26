@@ -45,6 +45,10 @@ export default async function ContactsPage({
       {/* Header */}
       <header className="flex items-end justify-between gap-4 mb-6 flex-wrap">
         <div>
+          <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+            <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
+            Base de clientes
+          </p>
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Contatos
           </h1>
@@ -54,7 +58,7 @@ export default async function ContactsPage({
         </div>
         <Link
           href="/contatos/new"
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-[13px] font-medium shadow-sm transition-colors"
+          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg gradient-brand glow-brand-sm hover:glow-brand text-white text-[13px] font-semibold ring-1 ring-inset ring-white/10 transition-all"
         >
           <Plus className="h-3.5 w-3.5" />
           Novo contato
@@ -106,8 +110,8 @@ export default async function ContactsPage({
       <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 overflow-hidden">
         {contacts.length === 0 ? (
           <div className="p-16 text-center">
-            <div className="mx-auto h-10 w-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-3">
-              <Search className="h-4 w-4 text-stone-400" />
+            <div className="mx-auto h-11 w-11 rounded-full bg-brand-50 dark:bg-brand-500/15 ring-1 ring-brand-600/15 dark:ring-brand-400/20 flex items-center justify-center mb-3">
+              <Search className="h-4 w-4 text-brand-600 dark:text-brand-400" />
             </div>
             <p className="text-sm font-medium text-stone-700 dark:text-stone-300">
               Nenhum contato encontrado

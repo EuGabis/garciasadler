@@ -166,6 +166,10 @@ export default async function ConfiguracoesPage({
     <div className="p-4 md:p-6 lg:p-10 max-w-5xl mx-auto">
       {/* Hero */}
       <header className="mb-7">
+        <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+          <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
+          Ajustes do sistema
+        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
           Configurações
         </h1>
@@ -204,7 +208,7 @@ export default async function ConfiguracoesPage({
                   </span>
                 )}
                 {isActive && (
-                  <span className="absolute left-0 right-0 -bottom-px h-[2px] bg-brand-600 rounded-t-full" />
+                  <span className="absolute left-0 right-0 -bottom-px h-[2px] rule-brand rounded-t-full" />
                 )}
               </Link>
             );
