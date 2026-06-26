@@ -12,11 +12,10 @@ export function KpiCard({
   trend?: { direction: "up" | "down"; label: string } | null;
 }) {
   return (
-    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
-      <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500">
-        {label}
-      </p>
-      <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums text-stone-900 dark:text-stone-50">
+    <div className="group relative overflow-hidden rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 transition-colors hover:border-stone-300 dark:hover:border-stone-700">
+      <span aria-hidden className="tape-rule absolute inset-x-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <p className="spec-label text-stone-500">{label}</p>
+      <p className="num mt-2 text-[2.25rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
         {value}
       </p>
       {(hint || trend) && (
@@ -56,9 +55,7 @@ export function BarList({
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
     <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500 mb-4">
-        {title}
-      </h2>
+      <h2 className="spec-label text-stone-500 mb-4">{title}</h2>
       {items.length === 0 ? (
         <p className="text-[12.5px] text-stone-400 py-2">{emptyText}</p>
       ) : (
@@ -72,7 +69,7 @@ export function BarList({
                   <span className="truncate font-medium text-stone-700 dark:text-stone-300">
                     {item.label}
                   </span>
-                  <span className="text-stone-500 font-medium tabular-nums shrink-0 ml-3">
+                  <span className="num text-stone-500 font-medium shrink-0 ml-3">
                     {item.value}
                   </span>
                 </div>
@@ -134,9 +131,7 @@ export function MessagesChart({
   return (
     <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500">
-          Mensagens por dia
-        </h2>
+        <h2 className="spec-label text-stone-500">Mensagens por dia</h2>
         <div className="flex items-center gap-4 text-[11.5px] text-stone-500">
           <span className="inline-flex items-center gap-1.5">
             <span
@@ -230,9 +225,7 @@ export function HourHeatmap({ data }: { data: Array<{ hour: number; count: numbe
   const max = Math.max(1, ...data.map((d) => d.count));
   return (
     <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5">
-      <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-stone-500 mb-4">
-        Distribuição por hora do dia
-      </h2>
+      <h2 className="spec-label text-stone-500 mb-4">Distribuição por hora do dia</h2>
       <div
         className="grid grid-cols-24 gap-1"
         style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
@@ -254,7 +247,7 @@ export function HourHeatmap({ data }: { data: Array<{ hour: number; count: numbe
           );
         })}
       </div>
-      <div className="mt-3 flex justify-between text-[10px] text-stone-400 tabular-nums">
+      <div className="num mt-3 flex justify-between text-[10px] text-stone-400">
         <span>00h</span>
         <span>06h</span>
         <span>12h</span>

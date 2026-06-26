@@ -4,6 +4,7 @@
 
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   /* Garcia Sadler — identidade própria
    *
@@ -122,6 +123,45 @@ html.dark .bg-blueprint {
 /* Fio-fundação: hairline da marca (alusão a base/alicerce) */
 .rule-brand {
   background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-700));
+}
+
+/* Assinatura: régua de fita métrica (trena) — base de marca + tiquinhos
+ * minor a cada 8px, major a cada 40px. Usar como acento curto sob títulos. */
+.tape-rule {
+  height: 11px;
+  background-image:
+    repeating-linear-gradient(90deg, var(--color-brand-600) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, var(--color-brand-400) 0 1px, transparent 1px 8px),
+    linear-gradient(90deg, var(--color-brand-500), var(--color-brand-700));
+  background-repeat: repeat-x, repeat-x, no-repeat;
+  background-size:
+    40px 9px,
+    8px 5px,
+    100% 1.5px;
+  background-position:
+    left bottom,
+    left bottom,
+    left bottom;
+}
+html.dark .tape-rule {
+  opacity: 0.85;
+}
+
+/* Rótulo de ficha técnica: mono, caixa-alta, tracking de etiqueta de desenho */
+.spec-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Numerais tabulares em mono (medidas) */
+.num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .no-scrollbar::-webkit-scrollbar {

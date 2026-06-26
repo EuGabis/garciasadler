@@ -19,7 +19,7 @@ export default async function PipelinePage() {
     return (
       <div className="p-4 md:p-6 lg:p-10 max-w-3xl mx-auto">
         <header className="mb-7">
-          <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+          <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2">
             <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
             Funil de atendimento
           </p>
@@ -54,7 +54,7 @@ export default async function PipelinePage() {
     <div className="p-4 md:p-6 lg:p-8 h-full flex flex-col max-w-[1400px] mx-auto">
       <header className="flex items-end justify-between gap-4 mb-5 shrink-0 flex-wrap">
         <div>
-          <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+          <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2">
             <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
             Funil de atendimento
           </p>

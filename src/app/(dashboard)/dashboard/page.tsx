@@ -138,7 +138,7 @@ export default async function DashboardPage() {
     <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       {/* Hero */}
       <header className="mb-8">
-        <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2.5">
+        <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2.5">
           <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
           {dateLabel}
         </p>
@@ -154,6 +154,7 @@ export default async function DashboardPage() {
             Abrir conversas <ArrowUpRight className="h-3 w-3" />
           </Link>
         </p>
+        <div aria-hidden className="tape-rule w-32 mt-5" />
       </header>
 
       {/* KPIs */}
@@ -169,12 +170,10 @@ export default async function DashboardPage() {
             }`}
           >
             {accent && (
-              <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand opacity-80" />
+              <span aria-hidden className="tape-rule absolute inset-x-0 top-0" />
             )}
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500">
-                {label}
-              </span>
+              <span className="spec-label text-stone-500">{label}</span>
               <span
                 className={`h-7 w-7 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 ${
                   accent
@@ -185,16 +184,16 @@ export default async function DashboardPage() {
                 <Icon className="h-3.5 w-3.5" />
               </span>
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold tracking-tight tabular-nums text-stone-900 dark:text-stone-50">
+            <div className="flex items-baseline gap-1">
+              <span className="num text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                 {value}
               </span>
               {total !== undefined && total !== value && (
-                <span className="text-sm text-stone-400 tabular-nums">/ {total}</span>
+                <span className="num text-sm text-stone-400">/{total}</span>
               )}
             </div>
             {hint && (
-              <p className="mt-1 text-[11.5px] text-stone-500 flex items-center gap-1.5">
+              <p className="mt-2 text-[11.5px] text-stone-500 flex items-center gap-1.5">
                 {accent && openConversations > 0 && (
                   <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" />
                 )}
@@ -210,17 +209,15 @@ export default async function DashboardPage() {
         {/* Pipeline */}
         <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-1">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500">
-              Pipeline
-            </span>
+            <span className="spec-label text-stone-500">Pipeline</span>
             <span className="h-7 w-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-500 flex items-center justify-center">
               <Columns3 className="h-3.5 w-3.5" />
             </span>
           </div>
-          <p className="text-3xl font-semibold tracking-tight tabular-nums text-stone-900 dark:text-stone-50">
+          <p className="num text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             {columnsCount}
           </p>
-          <p className="text-[11.5px] text-stone-500 mt-1">
+          <p className="text-[11.5px] text-stone-500 mt-2">
             colunas configuradas
           </p>
           <Link
@@ -234,9 +231,7 @@ export default async function DashboardPage() {
         {/* Next steps */}
         <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500">
-              Próximos passos
-            </span>
+            <span className="spec-label text-stone-500">Próximos passos</span>
             <span className="h-7 w-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-500 flex items-center justify-center">
               <Zap className="h-3.5 w-3.5" />
             </span>
@@ -248,8 +243,8 @@ export default async function DashboardPage() {
                   href={step.href}
                   className="group flex items-center gap-3 px-2.5 py-2 -mx-2.5 rounded-md hover:bg-stone-50 dark:hover:bg-stone-800/60 transition-colors"
                 >
-                  <span className="shrink-0 h-6 w-6 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-center group-hover:bg-brand-100 group-hover:text-brand-700 dark:group-hover:bg-brand-500/20 dark:group-hover:text-brand-400 transition-colors">
-                    {i + 1}
+                  <span className="num shrink-0 h-6 w-6 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-semibold text-stone-600 dark:text-stone-400 flex items-center justify-center group-hover:bg-brand-100 group-hover:text-brand-700 dark:group-hover:bg-brand-500/20 dark:group-hover:text-brand-400 transition-colors">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <step.icon className="h-3.5 w-3.5 text-stone-400 shrink-0" />
                   <span className="flex-1 text-[13px] text-stone-700 dark:text-stone-300 group-hover:text-stone-900 dark:group-hover:text-stone-100">

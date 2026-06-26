@@ -45,7 +45,7 @@ export default async function ContactsPage({
       {/* Header */}
       <header className="flex items-end justify-between gap-4 mb-6 flex-wrap">
         <div>
-          <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+          <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2">
             <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
             Base de clientes
           </p>
@@ -150,7 +150,7 @@ export default async function ContactsPage({
                           </span>
                         )}
                       </div>
-                      <p className="text-[12px] text-stone-500 truncate tabular-nums">
+                      <p className="num text-[12px] text-stone-500 truncate">
                         {formatPhone(c.phone)}
                         {c.email ? ` · ${c.email}` : ""}
                       </p>
@@ -161,7 +161,7 @@ export default async function ContactsPage({
                       )}
                     </div>
                     <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                      <p className="text-[11.5px] tabular-nums text-stone-500">
+                      <p className="num text-[11.5px] text-stone-500">
                         {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "—"}
                       </p>
                       {c.status !== "active" && (

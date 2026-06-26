@@ -33,14 +33,14 @@ export default async function AnalyticsPage({
     <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       <header className="flex items-end justify-between gap-4 mb-8 flex-wrap">
         <div>
-          <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2">
+          <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2">
             <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
             Desempenho
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Analytics
           </h1>
-          <p className="mt-1 text-[13px] text-stone-500 tabular-nums">
+          <p className="num mt-1 text-[12px] text-stone-500">
             {metrics.period.label} ·{" "}
             {metrics.period.from.toLocaleDateString("pt-BR")} →{" "}
             {metrics.period.to.toLocaleDateString("pt-BR")}
