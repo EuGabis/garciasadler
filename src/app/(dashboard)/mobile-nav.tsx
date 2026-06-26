@@ -44,9 +44,10 @@ export function MobileNav({ userName, userRole, userInitial }: Props) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-[12px] shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="relative h-8 w-8 rounded-lg gradient-brand text-white flex items-center justify-center font-bold text-[13px] shadow-md shadow-brand-900/20 ring-1 ring-inset ring-white/15">
             G
+            <span aria-hidden className="absolute inset-x-1.5 bottom-1.5 h-px bg-white/35 rounded-full" />
           </div>
           <p className="text-[14px] font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Garcia Sadler
@@ -67,18 +68,20 @@ export function MobileNav({ userName, userRole, userInitial }: Props) {
 
           {/* Painel */}
           <aside className="relative w-72 max-w-[85vw] h-full bg-white dark:bg-stone-900 flex flex-col shadow-2xl animate-slide-in-left">
+            <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand opacity-90" />
             {/* Header */}
             <div className="px-4 py-4 flex items-center justify-between border-b border-stone-200/80 dark:border-stone-800/80">
-              <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="relative h-9 w-9 rounded-xl gradient-brand text-white flex items-center justify-center font-bold text-[15px] shadow-md shadow-brand-900/20 ring-1 ring-inset ring-white/15">
                   G
+                  <span aria-hidden className="absolute inset-x-[7px] bottom-[7px] h-px bg-white/35 rounded-full" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">
+                  <p className="text-[13.5px] font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">
                     Garcia Sadler
                   </p>
-                  <p className="text-[10px] uppercase tracking-[0.08em] font-medium text-stone-500 leading-tight mt-0.5">
-                    CRM
+                  <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-brand-600/80 dark:text-brand-400/80 leading-tight mt-0.5">
+                    CRM · Atendimento
                   </p>
                 </div>
               </div>

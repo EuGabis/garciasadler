@@ -138,7 +138,8 @@ export default async function DashboardPage() {
     <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       {/* Hero */}
       <header className="mb-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500 mb-2">
+        <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500 mb-2.5">
+          <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
           {dateLabel}
         </p>
         <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
@@ -161,21 +162,24 @@ export default async function DashboardPage() {
           <Link
             key={label}
             href={href}
-            className={`group rounded-xl border bg-white dark:bg-stone-900 p-5 transition-all ${
+            className={`group relative overflow-hidden rounded-xl border bg-white dark:bg-stone-900 p-5 transition-all hover:-translate-y-0.5 ${
               accent
-                ? "border-stone-200 dark:border-stone-800 ring-1 ring-brand-600/10 hover:ring-brand-600/30 hover:border-brand-600/30 shadow-sm"
-                : "border-stone-200/80 dark:border-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700"
+                ? "border-brand-600/20 dark:border-brand-500/25 ring-1 ring-brand-600/10 hover:ring-brand-600/30 hover:border-brand-600/40 shadow-sm hover:glow-brand-sm"
+                : "border-stone-200/80 dark:border-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-sm"
             }`}
           >
+            {accent && (
+              <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand opacity-80" />
+            )}
             <div className="flex items-center justify-between mb-4">
               <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-500">
                 {label}
               </span>
               <span
-                className={`h-7 w-7 rounded-lg flex items-center justify-center ${
+                className={`h-7 w-7 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 ${
                   accent
                     ? "bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-400"
-                    : "bg-stone-100 dark:bg-stone-800 text-stone-500"
+                    : "bg-stone-100 dark:bg-stone-800 text-stone-500 group-hover:text-stone-700 dark:group-hover:text-stone-300"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />

@@ -100,6 +100,30 @@ body {
   box-shadow: 0 0 0 1px rgba(181, 73, 26, 0.12), 0 1px 3px rgba(28, 25, 23, 0.04);
 }
 
+/* Planta baixa — grade técnica sutil (papel milimetrado) p/ fundos de fachada */
+.bg-blueprint {
+  background-image:
+    linear-gradient(rgba(120, 113, 108, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 113, 108, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center;
+}
+html.dark .bg-blueprint {
+  background-image:
+    linear-gradient(rgba(168, 162, 158, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 162, 158, 0.05) 1px, transparent 1px);
+}
+
+/* Brilho de marca pra ancorar o hero/login */
+.bg-brand-radial {
+  background: radial-gradient(58% 50% at 50% 0%, rgba(181, 73, 26, 0.1), transparent 72%);
+}
+
+/* Fio-fundação: hairline da marca (alusão a base/alicerce) */
+.rule-brand {
+  background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-700));
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

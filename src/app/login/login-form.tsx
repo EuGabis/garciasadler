@@ -11,23 +11,32 @@ export function LoginForm() {
   );
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-6">
-      <div className="w-full max-w-[380px]">
+    <main className="relative min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-6 overflow-hidden">
+      {/* Fundo: planta baixa + brilho de marca */}
+      <div aria-hidden className="absolute inset-0 bg-blueprint" />
+      <div aria-hidden className="absolute inset-0 bg-brand-radial" />
+
+      <div className="relative w-full max-w-[380px]">
         {/* Brand */}
         <div className="mb-8 text-center">
-          <div className="mx-auto h-10 w-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-base shadow-sm mb-5">
+          <div className="relative mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-900/25 ring-1 ring-inset ring-white/15 glow-brand mb-5">
             G
+            <span aria-hidden className="absolute inset-x-2.5 bottom-2.5 h-px bg-white/35 rounded-full" />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600/80 dark:text-brand-400/80 mb-2">
+            Garcia Sadler · CRM
+          </p>
+          <h1 className="text-[26px] leading-tight font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Bem-vindo de volta
           </h1>
           <p className="mt-1.5 text-[13px] text-stone-500">
-            Entre na sua conta Garcia Sadler.
+            Entre pra atender sua loja.
           </p>
         </div>
 
         {/* Card */}
-        <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-6 shadow-sm">
+        <div className="relative rounded-2xl border border-stone-200/80 dark:border-stone-800/80 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm p-6 shadow-xl shadow-stone-900/5 overflow-hidden">
+          <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand" />
           <form action={formAction} className="space-y-4">
             <div>
               <label
@@ -73,7 +82,7 @@ export function LoginForm() {
             <button
               type="submit"
               disabled={pending}
-              className="w-full inline-flex items-center justify-center h-10 px-4 rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-[13.5px] font-medium shadow-sm transition-colors"
+              className="group w-full inline-flex items-center justify-center h-10 px-4 rounded-lg gradient-brand glow-brand-sm hover:glow-brand disabled:opacity-60 disabled:cursor-not-allowed text-white text-[13.5px] font-semibold ring-1 ring-inset ring-white/10 transition-all"
             >
               {pending ? "Entrando…" : "Entrar"}
             </button>
