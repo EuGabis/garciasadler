@@ -155,7 +155,6 @@ export default async function DashboardPage() {
             Abrir conversas <ArrowUpRight className="h-3 w-3" />
           </Link>
         </p>
-        <div aria-hidden className="tape-rule tape-draw w-32 mt-5" />
       </header>
 
       {/* KPIs */}
@@ -171,9 +170,6 @@ export default async function DashboardPage() {
                 : "border-stone-200/80 dark:border-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-md"
             }`}
           >
-            {accent && (
-              <span aria-hidden className="tape-rule absolute inset-x-0 top-0" />
-            )}
             <div className="flex items-center justify-between mb-4">
               <span className="spec-label text-stone-500">{label}</span>
               <span

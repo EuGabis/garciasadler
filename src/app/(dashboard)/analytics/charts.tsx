@@ -12,8 +12,7 @@ export function KpiCard({
   trend?: { direction: "up" | "down"; label: string } | null;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 transition-colors hover:border-stone-300 dark:hover:border-stone-700">
-      <span aria-hidden className="tape-rule absolute inset-x-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 transition-colors hover:border-stone-300 dark:hover:border-stone-700">
       <p className="spec-label text-stone-500">{label}</p>
       <p className="num mt-2 text-[2.25rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
         {value}

@@ -176,7 +176,6 @@ export default async function ConfiguracoesPage({
         <p className="mt-1.5 text-[13px] text-stone-500">
           Workspace, integrações, equipe, automações e diagnósticos.
         </p>
-        <div aria-hidden className="tape-rule w-32 mt-5" />
       </header>
 
       {/* Tabs nav — Stripe Docs style com underline */}
