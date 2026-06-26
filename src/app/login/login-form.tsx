@@ -19,23 +19,23 @@ export function LoginForm() {
       <div className="relative w-full max-w-[380px]">
         {/* Brand */}
         <div className="mb-8 text-center">
-          <div className="relative mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-900/25 ring-1 ring-inset ring-white/15 glow-brand mb-5">
+          <div className="reveal-pop relative mx-auto h-12 w-12 rounded-2xl gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-900/25 ring-1 ring-inset ring-white/15 glow-brand mb-5">
             G
             <span aria-hidden className="absolute inset-x-2.5 bottom-2.5 h-px bg-white/35 rounded-full" />
           </div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600/80 dark:text-brand-400/80 mb-2">
+          <p className="reveal rd-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600/80 dark:text-brand-400/80 mb-2">
             Garcia Sadler · CRM
           </p>
-          <h1 className="text-[26px] leading-tight font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+          <h1 className="reveal rd-3 text-[26px] leading-tight font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Bem-vindo de volta
           </h1>
-          <p className="mt-1.5 text-[13px] text-stone-500">
+          <p className="reveal rd-4 mt-1.5 text-[13px] text-stone-500">
             Entre pra atender sua loja.
           </p>
         </div>
 
         {/* Card */}
-        <div className="relative rounded-2xl border border-stone-200/80 dark:border-stone-800/80 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm p-6 shadow-xl shadow-stone-900/5 overflow-hidden">
+        <div className="reveal rd-5 relative rounded-2xl border border-stone-200/80 dark:border-stone-800/80 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm p-6 shadow-xl shadow-stone-900/5 overflow-hidden">
           <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand" />
           <form action={formAction} className="space-y-4">
             <div>
@@ -89,7 +89,7 @@ export function LoginForm() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-[13px] text-stone-500">
+        <p className="reveal rd-6 mt-6 text-center text-[13px] text-stone-500">
           Não tem conta?{" "}
           <Link
             href="/register"

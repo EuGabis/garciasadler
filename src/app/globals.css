@@ -164,6 +164,65 @@ html.dark .tape-rule {
   font-variant-numeric: tabular-nums;
 }
 
+/* ───────────────────────────────────────────────────────────
+ * Movimento orquestrado — sequência de entrada em cascata.
+ * Tudo visível por padrão; a animação só roda quando o usuário
+ * NÃO pediu pra reduzir movimento (acessível por padrão).
+ * ─────────────────────────────────────────────────────────── */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) rotate(-8deg);
+  }
+  60% {
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes tape-extend {
+  from {
+    width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    animation: reveal-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .reveal-pop {
+    opacity: 0;
+    animation: pop-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /* Régua que se estende como uma trena */
+  .tape-draw {
+    animation: tape-extend 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  }
+
+  .rd-1 { animation-delay: 0.05s; }
+  .rd-2 { animation-delay: 0.12s; }
+  .rd-3 { animation-delay: 0.19s; }
+  .rd-4 { animation-delay: 0.26s; }
+  .rd-5 { animation-delay: 0.33s; }
+  .rd-6 { animation-delay: 0.4s; }
+  .rd-7 { animation-delay: 0.47s; }
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

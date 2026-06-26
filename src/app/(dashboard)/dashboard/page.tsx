@@ -12,6 +12,7 @@ import {
   Sparkles,
   UserCog,
 } from "lucide-react";
+import { CountUp } from "./count-up";
 
 export const dynamic = "force-dynamic";
 
@@ -138,14 +139,14 @@ export default async function DashboardPage() {
     <div className="p-4 md:p-6 lg:p-10 max-w-6xl mx-auto">
       {/* Hero */}
       <header className="mb-8">
-        <p className="spec-label inline-flex items-center gap-2 text-stone-500 mb-2.5">
+        <p className="reveal rd-1 spec-label inline-flex items-center gap-2 text-stone-500 mb-2.5">
           <span aria-hidden className="h-3 w-[3px] rounded-full rule-brand" />
           {dateLabel}
         </p>
-        <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+        <h1 className="reveal rd-2 text-3xl lg:text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
           {hello}, {firstName}.
         </h1>
-        <p className="mt-2 text-[14px] text-stone-500 dark:text-stone-400 max-w-xl">
+        <p className="reveal rd-3 mt-2 text-[14px] text-stone-500 dark:text-stone-400 max-w-xl">
           Aqui está como sua loja está atendendo hoje.{" "}
           <Link
             href="/conversations"
@@ -154,19 +155,20 @@ export default async function DashboardPage() {
             Abrir conversas <ArrowUpRight className="h-3 w-3" />
           </Link>
         </p>
-        <div aria-hidden className="tape-rule w-32 mt-5" />
+        <div aria-hidden className="tape-rule tape-draw w-32 mt-5" />
       </header>
 
       {/* KPIs */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        {kpis.map(({ label, value, total, href, icon: Icon, hint, accent }) => (
+        {kpis.map(({ label, value, total, href, icon: Icon, hint, accent }, i) => (
           <Link
             key={label}
             href={href}
-            className={`group relative overflow-hidden rounded-xl border bg-white dark:bg-stone-900 p-5 transition-all hover:-translate-y-0.5 ${
+            style={{ animationDelay: `${0.32 + i * 0.09}s` }}
+            className={`reveal group relative overflow-hidden rounded-xl border bg-white dark:bg-stone-900 p-5 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 ${
               accent
                 ? "border-brand-600/20 dark:border-brand-500/25 ring-1 ring-brand-600/10 hover:ring-brand-600/30 hover:border-brand-600/40 shadow-sm hover:glow-brand-sm"
-                : "border-stone-200/80 dark:border-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-sm"
+                : "border-stone-200/80 dark:border-stone-800/80 hover:border-stone-300 dark:hover:border-stone-700 hover:shadow-md"
             }`}
           >
             {accent && (
@@ -185,9 +187,10 @@ export default async function DashboardPage() {
               </span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="num text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
-                {value}
-              </span>
+              <CountUp
+                value={value}
+                className="num text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50"
+              />
               {total !== undefined && total !== value && (
                 <span className="num text-sm text-stone-400">/{total}</span>
               )}
@@ -207,16 +210,17 @@ export default async function DashboardPage() {
       {/* Bottom row: pipeline summary + next steps */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Pipeline */}
-        <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-1">
+        <div className="reveal rd-7 rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-1">
           <div className="flex items-center justify-between mb-4">
             <span className="spec-label text-stone-500">Pipeline</span>
             <span className="h-7 w-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-500 flex items-center justify-center">
               <Columns3 className="h-3.5 w-3.5" />
             </span>
           </div>
-          <p className="num text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50">
-            {columnsCount}
-          </p>
+          <CountUp
+            value={columnsCount}
+            className="num block text-[2.5rem] leading-none font-semibold tracking-tight text-stone-900 dark:text-stone-50"
+          />
           <p className="text-[11.5px] text-stone-500 mt-2">
             colunas configuradas
           </p>
@@ -229,7 +233,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Next steps */}
-        <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-2">
+        <div className="reveal rd-7 rounded-xl border border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 lg:col-span-2" style={{ animationDelay: "0.5s" }}>
           <div className="flex items-center justify-between mb-4">
             <span className="spec-label text-stone-500">Próximos passos</span>
             <span className="h-7 w-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-500 flex items-center justify-center">
