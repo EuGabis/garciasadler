@@ -23,18 +23,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
         userInitial={initial}
       />
 
-      <aside className="hidden md:flex w-60 shrink-0 border-r border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col">
+      <aside className="hidden md:flex w-60 shrink-0 border-r border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col relative">
+        {/* Fio-fundação no topo do shell */}
+        <span aria-hidden className="absolute inset-x-0 top-0 h-[2px] rule-brand opacity-90" />
+
         {/* Brand */}
-        <div className="px-4 py-5 flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+        <div className="px-4 py-5 flex items-center gap-3">
+          <div className="relative h-9 w-9 rounded-xl gradient-brand text-white flex items-center justify-center font-bold text-[15px] shadow-md shadow-brand-900/20 ring-1 ring-inset ring-white/15">
             G
+            <span aria-hidden className="absolute inset-x-[7px] bottom-[7px] h-px bg-white/35 rounded-full" />
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">
+            <p className="text-[13.5px] font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">
               Garcia Sadler
             </p>
-            <p className="text-[10px] uppercase tracking-[0.08em] font-medium text-stone-500 leading-tight mt-0.5">
-              CRM
+            <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-brand-600/80 dark:text-brand-400/80 leading-tight mt-0.5">
+              CRM · Atendimento
             </p>
           </div>
         </div>
@@ -44,7 +48,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* User card */}
         <div className="px-3 py-3 border-t border-stone-200/80 dark:border-stone-800/80">
           <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg">
-            <div className="h-8 w-8 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-[11px] font-semibold flex items-center justify-center ring-1 ring-stone-200 dark:ring-stone-700">
+            <div className="h-8 w-8 rounded-full bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-400 text-[11px] font-bold flex items-center justify-center ring-1 ring-brand-600/15 dark:ring-brand-400/20">
               {initial}
             </div>
             <div className="flex-1 min-w-0">

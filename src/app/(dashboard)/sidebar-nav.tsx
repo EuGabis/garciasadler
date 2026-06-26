@@ -27,6 +27,9 @@ export function SidebarNav() {
 
   return (
     <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto">
+      <p className="px-3 pt-1 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-400 dark:text-stone-500">
+        Navegação
+      </p>
       {NAV.map(({ href, label, icon: Icon }) => {
         const isActive =
           href === "/dashboard"
@@ -37,18 +40,21 @@ export function SidebarNav() {
           <Link
             key={href}
             href={href}
-            className={`relative flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
+            aria-current={isActive ? "page" : undefined}
+            className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
               isActive
-                ? "bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-50"
+                ? "bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300"
                 : "text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800/60 hover:text-stone-900 dark:hover:text-stone-100"
             }`}
           >
             {isActive && (
-              <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-brand-600" />
+              <span aria-hidden className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full rule-brand" />
             )}
             <Icon
-              className={`h-4 w-4 shrink-0 ${
-                isActive ? "text-brand-600" : "text-stone-400"
+              className={`h-4 w-4 shrink-0 transition-colors ${
+                isActive
+                  ? "text-brand-600 dark:text-brand-400"
+                  : "text-stone-400 group-hover:text-stone-500 dark:group-hover:text-stone-300"
               }`}
             />
             <span className="truncate">{label}</span>
