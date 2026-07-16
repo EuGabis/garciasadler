@@ -62,7 +62,7 @@ export async function toggleAiAction(
           }
         });
       } else {
-        logger("ai-toggle").warn("no evolution config — skipping ai resume", {
+        logger("ai-toggle").warn("no evolution config - skipping ai resume", {
           workspaceId,
           conversationId,
         });

@@ -240,7 +240,7 @@ export function ContactPanel({
                       </span>
                     </div>
                     <p className="text-[12px] text-stone-700 dark:text-stone-300 truncate">
-                      {c.lastMessage ?? "—"}
+                      {c.lastMessage ?? "-"}
                     </p>
                   </Link>
                 </li>
@@ -499,7 +499,7 @@ function InlineText({
         </p>
       ) : (
         <p className="text-[12px] text-stone-400 dark:text-stone-500 italic">
-          {placeholder ?? "—"}
+          {placeholder ?? "-"}
         </p>
       )}
     </button>

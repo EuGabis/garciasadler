@@ -162,7 +162,7 @@ export default async function ContactsPage({
                     </div>
                     <div className="text-right shrink-0 flex flex-col items-end gap-1">
                       <p className="num text-[11.5px] text-stone-500">
-                        {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "—"}
+                        {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "-"}
                       </p>
                       {c.status !== "active" && (
                         <span

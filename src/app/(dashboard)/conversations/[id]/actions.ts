@@ -25,7 +25,7 @@ function genericEvolutionError(e: unknown): string {
 
 /**
  * Detecta MIME real via magic bytes (cobre os formatos comuns aceitos pelo WhatsApp).
- * Retorna null se não bateu nenhuma assinatura conhecida — nesse caso a gente
+ * Retorna null se não bateu nenhuma assinatura conhecida - nesse caso a gente
  * confia no claimed (defesa em profundidade, não bloqueia 100% mas pega mismatches óbvios).
  */
 function sniffMime(buf: Buffer): string | null {

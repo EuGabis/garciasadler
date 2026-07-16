@@ -24,7 +24,7 @@ export function decryptSecret(stored: string | null | undefined): string | null 
       return null;
     }
   }
-  // Legacy plain — retorna pra compatibilidade enquanto migração não rodou
+  // Legacy plain - retorna pra compatibilidade enquanto migração não rodou
   return stored;
 }
 

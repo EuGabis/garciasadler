@@ -130,7 +130,7 @@ export function WorkspaceTab({
             />
             <p className="mt-1.5 text-[11.5px] text-stone-500 leading-relaxed">
               Criptografada com AES-256-GCM. O valor nunca volta para o navegador depois de
-              salvo — para trocar, digite a chave nova; para manter, não mexa.
+              salvo - para trocar, digite a chave nova; para manter, não mexa.
             </p>
           </div>
         </div>

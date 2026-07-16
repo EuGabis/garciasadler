@@ -34,7 +34,7 @@ export async function saveExatoCredentialsAction(
   });
   if (!parsed.success) return { error: "Dados inválidos." };
 
-  // Testa antes de salvar — evita persistir credencial errada
+  // Testa antes de salvar - evita persistir credencial errada
   try {
     await testarLogin(parsed.data.usuario, parsed.data.senha);
   } catch (e) {
@@ -193,12 +193,12 @@ export async function searchExatoProdutoAction(
   if (!termo) return { error: "Digite um termo." };
 
   // Surface o corpo da resposta do Exato (ex: motivo real do 500), que de
-  // outra forma fica escondido — essencial pra diagnosticar.
+  // outra forma fica escondido - essencial pra diagnosticar.
   const fmtErr = (e: unknown) => {
     let detail = "";
     if (e instanceof ExatoError && e.body != null) {
       const raw = typeof e.body === "string" ? e.body : JSON.stringify(e.body);
-      if (raw) detail = ` — ${raw.slice(0, 300)}`;
+      if (raw) detail = ` - ${raw.slice(0, 300)}`;
     }
     return `${(e as Error).message}${detail}`;
   };

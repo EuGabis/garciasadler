@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Anima um número de 0 até `value` ao montar (easeOutCubic).
  * Respeita prefers-reduced-motion: nesse caso mostra o valor final direto.
- * Só dispara quando entra na viewport (IntersectionObserver) — bom pro analytics.
+ * Só dispara quando entra na viewport (IntersectionObserver) - bom pro analytics.
  */
 export function CountUp({
   value,

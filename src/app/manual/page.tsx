@@ -35,7 +35,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Manual — Garcia Sadler CRM",
+  title: "Manual - Garcia Sadler CRM",
   description:
     "Guia completo do CRM Garcia Sadler: atendimento WhatsApp, IA, integração Exato, pipeline, equipe.",
 };
@@ -349,8 +349,8 @@ function LoginSection() {
       />
       <Callout variant="warn" title="Esqueci a senha">
         Ainda não existe recuperação por e-mail. Se você esqueceu, avise o{" "}
-        <strong>owner</strong> ou <strong>admin</strong> do seu workspace — eles
-        conseguem redefinir a sua senha em <em>Configurações → Equipe → 🔑</em>.
+        <strong>owner</strong> ou <strong>admin</strong> do seu workspace - eles
+        conseguem redefinir a sua senha em <em>Configurações → Equipe → </em>.
       </Callout>
       <Sub>Papéis no sistema</Sub>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
@@ -419,7 +419,7 @@ function DashboardSection() {
       </ul>
       <p>
         O card <em>Conversas abertas</em> tem um destaque em laranja quando tem
-        cliente aguardando — funciona como alerta pra não deixar ninguém sem
+        cliente aguardando - funciona como alerta pra não deixar ninguém sem
         resposta.
       </p>
       <Callout title="Saudação dinâmica" variant="info">
@@ -471,7 +471,7 @@ function ConversasSection() {
           </>,
           <>
             A mensagem aparece como bolha laranja (você enviou) e vai pro
-            WhatsApp do cliente na hora. O ícone ✓✓ mostra o status:{" "}
+            WhatsApp do cliente na hora. O ícone  mostra o status:{" "}
             <em>enviada, entregue, lida</em>.
           </>,
         ]}
@@ -487,7 +487,7 @@ function ConversasSection() {
       <p>
         Toda mídia que o cliente manda aparece no chat inline: áudio com player,
         foto/vídeo em thumbnail, documento com link pra baixar. Se você usa
-        celular, clique no clipe 📎 ao lado do campo de mensagem pra anexar
+        celular, clique no clipe  ao lado do campo de mensagem pra anexar
         arquivo.
       </p>
       <Sub>Atribuir a um atendente</Sub>
@@ -514,7 +514,7 @@ function ConversasSection() {
         </p>
         <p>
           Quando um <strong>agente humano envia uma mensagem</strong>, a IA
-          desliga automaticamente naquela conversa — pra não gerar respostas
+          desliga automaticamente naquela conversa - pra não gerar respostas
           conflitantes.
         </p>
       </Callout>
@@ -522,7 +522,7 @@ function ConversasSection() {
       <p>
         Mostra os dados do cliente: nome, telefone, e-mail, notas internas,
         produto de interesse, origem e todas as outras conversas dele. Você pode{" "}
-        <strong>editar os campos direto ali</strong> — clique num campo pra
+        <strong>editar os campos direto ali</strong> - clique num campo pra
         virar editável.
       </p>
       <Callout variant="warn">
@@ -587,7 +587,7 @@ function ContatosSection() {
       <ul className="list-disc pl-5 space-y-1.5">
         <li><strong>Ativo</strong>: cliente normal.</li>
         <li><strong>Arquivado</strong>: cliente inativo, some dos filtros padrão.</li>
-        <li><strong>Bloqueado</strong>: cliente indesejado — mensagens dele não são processadas pela IA nem entram na fila.</li>
+        <li><strong>Bloqueado</strong>: cliente indesejado - mensagens dele não são processadas pela IA nem entram na fila.</li>
       </ul>
     </Section>
   );
@@ -617,7 +617,7 @@ function PipelineSection() {
       />
       <Callout variant="info" title="Limite WIP">
         Cada coluna pode ter um <strong>limite máximo</strong> de cards (WIP
-        limit). Quando bate o limite, novos cards não são aceitos ali —
+        limit). Quando bate o limite, novos cards não são aceitos ali -
         te obriga a "fechar" alguém antes de puxar mais lead. Configura na
         engrenagem da coluna.
       </Callout>
@@ -679,7 +679,7 @@ function ConfigSection() {
       <ConfigTab
         icon={UserCircle}
         title="Workspace"
-        desc="Nome e slug do seu workspace + credenciais da Evolution API (URL, instância, key). Só edite se souber o que está fazendo — se apagar, o WhatsApp para de receber mensagens."
+        desc="Nome e slug do seu workspace + credenciais da Evolution API (URL, instância, key). Só edite se souber o que está fazendo - se apagar, o WhatsApp para de receber mensagens."
       />
 
       <ConfigTab
@@ -709,7 +709,7 @@ function ConfigSection() {
       <ConfigTab
         icon={UserCog}
         title="Equipe"
-        desc="Adiciona/remove atendentes, muda papéis (owner/admin/agente), reseta senha de outros usuários (botão 🔑). Cada usuário criado aqui recebe login separado."
+        desc="Adiciona/remove atendentes, muda papéis (owner/admin/agente), reseta senha de outros usuários (botão ). Cada usuário criado aqui recebe login separado."
       />
 
       <ConfigTab
@@ -787,10 +787,10 @@ function IaSection() {
 
       <Sub>Regras que a IA sempre segue</Sub>
       <ul className="list-disc pl-5 space-y-1.5">
-        <li>Nunca inventa preço — sempre consulta via <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">buscar_produto</code>.</li>
+        <li>Nunca inventa preço - sempre consulta via <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">buscar_produto</code>.</li>
         <li>Não coleta dados pessoais até o cliente confirmar que quer fechar.</li>
         <li>Não gera protocolo até o cliente confirmar o pedido.</li>
-        <li>Não fala de estoque com o cliente — pra o cliente, todo produto está disponível.</li>
+        <li>Não fala de estoque com o cliente - pra o cliente, todo produto está disponível.</li>
         <li>Se acontecer erro em qualquer ferramenta, transfere pra atendente humano.</li>
         <li>Se cliente pedir desconto, brigar por valor, ou reclamar → transfere direto pra humano.</li>
       </ul>
@@ -809,7 +809,7 @@ function IaSection() {
         <p>
           Um atendente humano envia mensagem naquela conversa. Isso evita
           respostas duplas confusas. Pra religar, clique no badge{" "}
-          <strong>IA OFF</strong> e ele vira <strong>IA ON</strong> — a IA
+          <strong>IA OFF</strong> e ele vira <strong>IA ON</strong> - a IA
           responde a próxima mensagem do cliente.
         </p>
       </Callout>
@@ -824,7 +824,7 @@ function IaSection() {
       <Sub>Editando o comportamento</Sub>
       <p>
         Em <em>Configurações → IA</em> tem uma caixa grande de texto (<em>System
-        Prompt</em>) onde você pode ajustar o comportamento da IA — mudar tom
+        Prompt</em>) onde você pode ajustar o comportamento da IA - mudar tom
         de voz, adicionar regras específicas, ensinar termos usados na loja. Se
         deixar em branco, usa o prompt padrão da Garcia Sadler.
       </p>
@@ -971,7 +971,7 @@ function ProblemasSection() {
         cause="O banco de dados ficou temporariamente indisponível (recovery, reboot, saldo do Railway acabou)."
         fix={[
           "Espera 1-5 minutos e recarrega (F5)",
-          "Se persistir, avisa o administrador — pode precisar recarregar crédito ou reiniciar o serviço",
+          "Se persistir, avisa o administrador - pode precisar recarregar crédito ou reiniciar o serviço",
         ]}
       />
       <Problem
@@ -979,18 +979,18 @@ function ProblemasSection() {
         title="Não consigo trocar minha senha"
         cause="Você não sabe a senha atual ou é um agente sem permissão."
         fix={[
-          "Peça pro owner ou admin do workspace ir em Configurações → Equipe → clicar no ícone 🔑 do seu usuário",
+          "Peça pro owner ou admin do workspace ir em Configurações → Equipe → clicar no ícone  do seu usuário",
           "Ele define uma nova senha e te passa por WhatsApp ou canal seguro",
-          "Suas sessões antigas são invalidadas automaticamente — faça login com a senha nova",
+          "Suas sessões antigas são invalidadas automaticamente - faça login com a senha nova",
         ]}
       />
       <Problem
         icon={XCircle}
         title="A IA está copiando resposta ruim de conversas antigas"
-        cause="Vício de histórico — modelos pequenos tendem a imitar padrões repetidos."
+        cause="Vício de histórico - modelos pequenos tendem a imitar padrões repetidos."
         fix={[
           "Arquive a conversa problemática (some da lista principal)",
-          "Se o cliente voltar, o histórico velho ainda existe. Pra zerar, o admin pode deletar o contato — próxima mensagem cria contato novo do zero",
+          "Se o cliente voltar, o histórico velho ainda existe. Pra zerar, o admin pode deletar o contato - próxima mensagem cria contato novo do zero",
         ]}
       />
       <Problem

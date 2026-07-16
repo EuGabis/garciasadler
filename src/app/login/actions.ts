@@ -39,7 +39,7 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
       }
       return { error: "Erro ao fazer login. Tente de novo." };
     }
-    // NEXT_REDIRECT é jogado pelo signIn quando dá certo — propagar pra Next tratar
+    // NEXT_REDIRECT é jogado pelo signIn quando dá certo - propagar pra Next tratar
     throw error;
   }
 }

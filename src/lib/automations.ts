@@ -17,10 +17,10 @@ const log = logger("automations");
  *
  * Ações disponíveis (executadas em ordem, falha individual não derruba as outras):
  *
- * 1. `addLabelName` — anexa label (cria se não existir)
- * 2. `assignUserId` — atribui conversa ao agente
- * 3. `pipelineColumnId` — cria card na coluna do pipeline
- * 4. `replyMessage` — envia mensagem automática via Evolution e salva
+ * 1. `addLabelName` - anexa label (cria se não existir)
+ * 2. `assignUserId` - atribui conversa ao agente
+ * 3. `pipelineColumnId` - cria card na coluna do pipeline
+ * 4. `replyMessage` - envia mensagem automática via Evolution e salva
  */
 
 type Context = {
@@ -174,7 +174,7 @@ export async function runAutomations(ctx: Context): Promise<{ matched: number; a
     if (!matches(automation, ctx)) continue;
     matched++;
 
-    // Aplicar cada ação isoladamente — falha de uma não bloqueia as outras
+    // Aplicar cada ação isoladamente - falha de uma não bloqueia as outras
     const tasks: Array<Promise<void>> = [
       applyAddLabel(automation, ctx).catch((e) =>
         log.error("addLabel failed", e, { automationId: automation.id })

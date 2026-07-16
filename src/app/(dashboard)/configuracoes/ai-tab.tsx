@@ -59,7 +59,7 @@ export function AiTab({ config, canEdit }: Props) {
     setModel(config.model);
   }, [config.model]);
 
-  // Refresh apenas UMA vez quando state.ok vira true — antes estava no corpo
+  // Refresh apenas UMA vez quando state.ok vira true - antes estava no corpo
   // do componente sem useEffect, disparando refreshes em cascata e deixando
   // o estado client desincronizado com o DB.
   useEffect(() => {
@@ -197,7 +197,7 @@ export function AiTab({ config, canEdit }: Props) {
             <p className="text-[11.5px] text-stone-500 mt-1 tabular-nums">
               {config.tokensResetAt
                 ? `Reset em ${new Date(config.tokensResetAt).toLocaleDateString("pt-BR")}`
-                : "—"}
+                : "-"}
             </p>
           </div>
           <div className="rounded-lg border border-stone-200/80 dark:border-stone-800/80 p-4">
@@ -265,8 +265,8 @@ function TestConnectionButton() {
           start(async () => {
             setResult(null);
             const r = await testOpenAiAction();
-            if (r.error) setResult(`❌ ${r.error}`);
-            else if (r.ok) setResult(`✅ Conexão ok (${r.model ?? "modelo confirmado"})`);
+            if (r.error) setResult(` ${r.error}`);
+            else if (r.ok) setResult(` Conexão ok (${r.model ?? "modelo confirmado"})`);
           })
         }
         className={BTN_SECONDARY}

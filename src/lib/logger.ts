@@ -50,7 +50,7 @@ function redact(value: unknown, depth = 0): unknown {
       stack: value.stack?.split("\n").slice(0, 8).join("\n"),
     };
     // Preserva props custom de erros (ex: ExatoError.status/body) que de outra
-    // forma seriam descartadas — essenciais pra diagnosticar falhas do Exato.
+    // forma seriam descartadas - essenciais pra diagnosticar falhas do Exato.
     // Passam pela mesma redaction recursiva (mascara chaves sensíveis, trunca
     // strings longas), então é seguro.
     for (const k of Object.keys(value as object)) {

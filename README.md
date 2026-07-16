@@ -18,12 +18,12 @@ npm run dev
 | Variável         | O que é                                                                     |
 |------------------|-----------------------------------------------------------------------------|
 | `DATABASE_URL`   | URL do Postgres                                                             |
-| `AUTH_SECRET`    | Secret do NextAuth (min 32 chars — gere com `openssl rand -hex 32`)         |
+| `AUTH_SECRET`    | Secret do NextAuth (min 32 chars - gere com `openssl rand -hex 32`)         |
 | `WEBHOOK_SECRET` | Header `x-webhook-secret` exigido em `POST /api/webhook` (fail-closed)      |
 | `CRON_SECRET`    | `Authorization: Bearer ...` exigido em `/api/cron/followups` (fail-closed)  |
 | `INTEGRATION_ENCRYPTION_KEY` | Chave de criptografia AES-256 pra credenciais de integrações (Exato etc). Min 32 chars. |
 
-> **Importante**: sem `WEBHOOK_SECRET` e `CRON_SECRET` setados, os respectivos endpoints retornam 503. Isso é proposital — fail-closed.
+> **Importante**: sem `WEBHOOK_SECRET` e `CRON_SECRET` setados, os respectivos endpoints retornam 503. Isso é proposital - fail-closed.
 
 ## Variáveis opcionais
 
@@ -46,10 +46,10 @@ A IA pode consultar produtos e gerar pedidos no ERP Exato via API. Configuraçã
 4. Clicar **Buscar produto (teste)** pra validar end-to-end
 
 Endpoints integrados:
-- `POST /autenticacao/login` + `POST /autenticacao/refresh` — token cache automático no DB
-- `GET /lojas` — descoberta de `codigoAcesso` por loja
-- `GET /produtos` — busca paginada com filtros (código, descrição, marca, aplicação)
-- `POST /PedidoVenda` — preparado, mas **sempre exige confirmação humana** antes de enviar (Fase D)
+- `POST /autenticacao/login` + `POST /autenticacao/refresh` - token cache automático no DB
+- `GET /lojas` - descoberta de `codigoAcesso` por loja
+- `GET /produtos` - busca paginada com filtros (código, descrição, marca, aplicação)
+- `POST /PedidoVenda` - preparado, mas **sempre exige confirmação humana** antes de enviar (Fase D)
 
 ## Procedimentos de segurança
 
@@ -77,7 +77,7 @@ Sem esse header com o valor exato, o webhook retorna 401.
 
 ### Cron do Vercel
 
-`vercel.json` agenda `POST /api/cron/followups` 1×/dia (9h UTC, limite do plano Hobby). O Vercel envia `Authorization: Bearer ${CRON_SECRET}` automaticamente — só precisa setar a env var.
+`vercel.json` agenda `POST /api/cron/followups` 1×/dia (9h UTC, limite do plano Hobby). O Vercel envia `Authorization: Bearer ${CRON_SECRET}` automaticamente - só precisa setar a env var.
 
 ### Registro público
 

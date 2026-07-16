@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Garcia Sadler — Atendimento",
+  title: "Garcia Sadler - Atendimento",
   description: "CRM de atendimento WhatsApp da Garcia Sadler Materiais de Construção",
 };
 

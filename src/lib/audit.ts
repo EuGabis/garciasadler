@@ -32,7 +32,7 @@ type AuditInput = {
 };
 
 /**
- * Registra um evento de auditoria. Nunca lança — se o write falhar,
+ * Registra um evento de auditoria. Nunca lança - se o write falhar,
  * só logamos no console (não pode quebrar a action que chamou).
  */
 export async function audit(input: AuditInput): Promise<void> {

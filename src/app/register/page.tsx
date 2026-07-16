@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { RegisterForm } from "./register-form";
 
-// Força dynamic rendering — necessário pra CSP nonce funcionar.
+// Força dynamic rendering - necessário pra CSP nonce funcionar.
 export const dynamic = "force-dynamic";
 
 // Registro público fica fechado por padrão. Pra reabrir temporariamente:

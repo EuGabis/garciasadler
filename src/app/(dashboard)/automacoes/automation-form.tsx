@@ -177,7 +177,7 @@ export function AutomationFormModal({
                   defaultValue={initial?.assignUserId ?? ""}
                   className={INPUT}
                 >
-                  <option value="">— Não atribuir —</option>
+                  <option value="">- Não atribuir -</option>
                   {team.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.name}
@@ -196,7 +196,7 @@ export function AutomationFormModal({
                   defaultValue={initial?.pipelineColumnId ?? ""}
                   className={INPUT}
                 >
-                  <option value="">— Não mover —</option>
+                  <option value="">- Não mover -</option>
                   {columns.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}

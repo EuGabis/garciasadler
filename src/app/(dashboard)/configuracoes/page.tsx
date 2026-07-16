@@ -178,7 +178,7 @@ export default async function ConfiguracoesPage({
         </p>
       </header>
 
-      {/* Tabs nav — Stripe Docs style com underline */}
+      {/* Tabs nav - Stripe Docs style com underline */}
       <nav className="mb-7 border-b border-stone-200 dark:border-stone-800 -mx-1 overflow-x-auto">
         <div className="flex items-center gap-0.5 px-1 min-w-max">
           {TABS.map((tab) => {

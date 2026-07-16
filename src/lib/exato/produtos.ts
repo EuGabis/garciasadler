@@ -64,7 +64,7 @@ const SEMANTIC_SUBSTITUTIONS: Array<[RegExp, string]> = [
   // Ordem importa: padrões mais específicos primeiro pra evitar match parcial.
   [/\bbloco\s+15\b/gi, "bloco 14"],
   [/\bbloco\s+10\b/gi, "bloco 9"],
-  // "bloco 19" já bate exato com a descrição "19 X 19 X 39" — sem substituição.
+  // "bloco 19" já bate exato com a descrição "19 X 19 X 39" - sem substituição.
 ];
 
 function normalize(s: string): string {
@@ -88,7 +88,7 @@ function tokenize(s: string): string[] {
 /**
  * Escolhe o token mais distintivo (mais longo) pra usar como filtro inicial
  * no Exato. Tokens longos costumam ser substantivos (cotovelo, vergalhao,
- * argamassa) — muito mais seletivos que números ou bitolas curtas.
+ * argamassa) - muito mais seletivos que números ou bitolas curtas.
  */
 function pickDistinctiveToken(tokens: string[]): string {
   return [...tokens].sort((a, b) => b.length - a.length)[0];

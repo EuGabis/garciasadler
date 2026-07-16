@@ -12,7 +12,7 @@ import { logger } from "@/lib/logger";
  *  - webhook (mensagem nova chega + aiEnabled=true)
  *  - toggle IA OFF→ON (responde a última msg pendente do cliente)
  *
- * Todas as escritas no Postgres passam por withDbRetry — a conexão pode cair
+ * Todas as escritas no Postgres passam por withDbRetry - a conexão pode cair
  * de forma transitória em serverless e o retry com conexão nova resolve.
  */
 export async function invokeAiResponse(params: {

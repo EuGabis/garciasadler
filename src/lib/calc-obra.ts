@@ -1,5 +1,5 @@
 /**
- * Calculadora de obra — fórmulas práticas usadas em loja de material de construção.
+ * Calculadora de obra - fórmulas práticas usadas em loja de material de construção.
  *
  * Todas as funções recebem dimensões e devolvem a lista de materiais necessários
  * com quantidade + unidade. A IA combina isso com `buscar_produto` pra gerar
@@ -163,7 +163,7 @@ export function pintura(areaM2: number, demaos = 2): ObraResult {
 }
 
 // ============================================================
-// Concreto (vigas, lajes, pilares) — traço 1:2:3 (cimento:areia:brita)
+// Concreto (vigas, lajes, pilares) - traço 1:2:3 (cimento:areia:brita)
 // ============================================================
 
 export function concreto(volumeM3: number): ObraResult {
@@ -179,7 +179,7 @@ export function concreto(volumeM3: number): ObraResult {
       { produto: "Brita 1", quantidade: britaM3, unidade: "m3" },
     ],
     observacoes: [
-      `Concreto estrutural traço 1:2:3 — ${volumeM3} m³`,
+      `Concreto estrutural traço 1:2:3 - ${volumeM3} m³`,
       "Acréscimo de 5% pra perda",
       "Para vergalhão de aço, informe a estrutura (viga/laje/pilar)",
     ],
@@ -201,7 +201,7 @@ export function aco(elemento: "viga" | "pilar" | "laje", quantidadeM: number, bi
       { produto: "Arame recozido 18", quantidade: Math.ceil(barras * 0.2), unidade: "kg" },
     ],
     observacoes: [
-      `${elemento} de ${quantidadeM}m — ferragem CA-50 ${bitolaMm}mm`,
+      `${elemento} de ${quantidadeM}m - ferragem CA-50 ${bitolaMm}mm`,
       "Bitolas variam conforme cálculo estrutural. Confirme com engenheiro.",
     ],
   };

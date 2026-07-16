@@ -35,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: parsed.data.email },
         });
 
-        // SEMPRE roda bcrypt — mesmo sem user — pra equalizar timing
+        // SEMPRE roda bcrypt - mesmo sem user - pra equalizar timing
         const hash = user?.password ?? DUMMY_HASH;
         const ok = await bcrypt.compare(parsed.data.password, hash);
         if (!user || !user.password || !ok) return null;

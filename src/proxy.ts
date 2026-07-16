@@ -6,7 +6,7 @@ const { auth } = NextAuth(authConfig);
 
 /**
  * Proxy do Next 16:
- *  1. Roda gate de auth (NextAuth — usa `authorized` callback em auth.config).
+ *  1. Roda gate de auth (NextAuth - usa `authorized` callback em auth.config).
  *  2. Gera nonce CSP único por request e seta:
  *      - request header `x-nonce` (Next.js lê e injeta nos scripts framework/page).
  *      - request header `Content-Security-Policy` (Next.js parseia pra extrair nonce).
@@ -14,21 +14,21 @@ const { auth } = NextAuth(authConfig);
  *
  * Resultado: XSS via inline script bloqueado em prod sem mais `unsafe-inline`
  * em script-src. Custo: /login e /register saem do prerender estático e viram
- * dinâmicos (uma única passagem extra de SSR — irrelevante na latência).
+ * dinâmicos (uma única passagem extra de SSR - irrelevante na latência).
  */
 export default auth((req) => {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
 
   // Em dev, React precisa de 'unsafe-eval' pra reconstruir stacks de erro.
-  // Em prod, nem React nem Next usam eval — pode ser removido.
+  // Em prod, nem React nem Next usam eval - pode ser removido.
   const scriptSrcDev = isDev ? " 'unsafe-eval'" : "";
 
   const cspHeader = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${scriptSrcDev}`,
     // Tailwind 4 + componentes com style={{...}} usam inline styles em runtime.
-    // 'unsafe-inline' aqui é OK — vetor de XSS via style é muito mais fraco que via script.
+    // 'unsafe-inline' aqui é OK - vetor de XSS via style é muito mais fraco que via script.
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "media-src 'self' data: blob:",
@@ -58,7 +58,7 @@ export default auth((req) => {
 export const config = {
   matcher: [
     // Cobre todas as páginas, exclui assets/APIs (API tem CSP herdado dos
-    // security headers e geralmente serve JSON — CSP não se aplica).
+    // security headers e geralmente serve JSON - CSP não se aplica).
     "/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg).*)",
   ],
 };

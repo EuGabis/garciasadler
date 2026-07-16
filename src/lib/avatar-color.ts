@@ -1,6 +1,6 @@
 /**
  * Gera cores de avatar consistentes por nome.
- * Mesmo nome sempre cai na mesma paleta — útil pra identificar contatos de relance.
+ * Mesmo nome sempre cai na mesma paleta - útil pra identificar contatos de relance.
  * Paleta dessaturada (não-saturada) pra manter ar profissional.
  */
 const PALETTE = [

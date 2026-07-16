@@ -148,5 +148,5 @@ export async function deleteAutomationAction(id: string): Promise<void> {
   revalidatePath("/automacoes");
 }
 
-// Marker pra type checker — evita warning de createSchema unused
+// Marker pra type checker - evita warning de createSchema unused
 export type _Create = z.infer<typeof createSchema>;

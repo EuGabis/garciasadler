@@ -113,7 +113,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
                   <MessageSquare className="h-3.5 w-3.5 text-stone-400 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] text-stone-700 dark:text-stone-200 truncate">
-                      {c.lastMessage ?? "—"}
+                      {c.lastMessage ?? "-"}
                     </p>
                     <p className="text-[11.5px] text-stone-500 mt-0.5 flex items-center gap-1.5">
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
@@ -121,7 +121,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
                       </span>
                       <span>·</span>
                       <span className="tabular-nums">
-                        {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "—"}
+                        {c.lastMessageAt ? formatRelativeTime(c.lastMessageAt) : "-"}
                       </span>
                       {c.unreadCount > 0 && (
                         <>

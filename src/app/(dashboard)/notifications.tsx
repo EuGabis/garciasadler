@@ -24,7 +24,7 @@ function playBeep() {
     osc.stop(ctx.currentTime + 0.3);
     osc.onended = () => ctx.close();
   } catch {
-    // áudio bloqueado (usuário ainda não interagiu) — sem problema
+    // áudio bloqueado (usuário ainda não interagiu) - sem problema
   }
 }
 

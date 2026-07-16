@@ -153,7 +153,7 @@ export function Board({
                             {card.contactName}
                           </p>
                           <p className="text-[11px] text-stone-500 truncate mt-0.5">
-                            {card.lastMessage ?? "—"}
+                            {card.lastMessage ?? "-"}
                           </p>
                         </div>
                         <button

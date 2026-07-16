@@ -91,7 +91,7 @@ export async function ensureToken(workspaceId: string): Promise<{
       });
       return { token: updated.tokenAtual!, codigoAcesso: updated.lojaCodigoAcesso };
     } catch (e) {
-      // Refresh falhou — cai pro login full
+      // Refresh falhou - cai pro login full
       console.warn("[exato.auth] refresh falhou, refazendo login:", (e as Error).message);
     }
   }

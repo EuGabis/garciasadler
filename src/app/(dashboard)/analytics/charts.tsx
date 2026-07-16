@@ -234,7 +234,7 @@ export function HourHeatmap({ data }: { data: Array<{ hour: number; count: numbe
           return (
             <div
               key={d.hour}
-              title={`${String(d.hour).padStart(2, "0")}:00 — ${d.count} msgs`}
+              title={`${String(d.hour).padStart(2, "0")}:00 - ${d.count} msgs`}
               className="aspect-square rounded-sm transition-transform hover:scale-110"
               style={{
                 backgroundColor:

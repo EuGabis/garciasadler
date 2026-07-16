@@ -252,7 +252,7 @@ function LojaSection({ integ, canEdit }: { integ: Integ; canEdit: boolean }) {
                       )}
                     </p>
                     <p className="text-[11.5px] text-stone-500 tabular-nums">
-                      id {l.id} · {l.cidade ?? "—"}/{l.uf ?? "—"}
+                      id {l.id} · {l.cidade ?? "-"}/{l.uf ?? "-"}
                     </p>
                   </div>
                   {canEdit &&
@@ -347,7 +347,7 @@ function ProdutoSearchSection() {
                     <td className="px-3 py-2 text-stone-900 dark:text-stone-100">
                       {p.descricao}
                     </td>
-                    <td className="px-3 py-2 text-stone-500">{p.marca ?? "—"}</td>
+                    <td className="px-3 py-2 text-stone-500">{p.marca ?? "-"}</td>
                     <td className="px-3 py-2 text-right tabular-nums text-stone-900 dark:text-stone-100 font-medium">
                       R$ {p.precoVenda.toFixed(2)}
                     </td>

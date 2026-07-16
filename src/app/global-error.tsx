@@ -39,7 +39,7 @@ export default function GlobalError({
         }}
       >
         <div style={{ textAlign: "center", maxWidth: 420, padding: 24 }}>
-          <div style={{ fontSize: 48 }}>⚠</div>
+          <div style={{ fontSize: 48 }}></div>
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: "16px 0 8px" }}>
             Erro crítico
           </h1>

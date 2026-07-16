@@ -19,7 +19,7 @@ async function handle(req: NextRequest) {
 
   const expected = process.env.CRON_SECRET;
   if (!expected) {
-    log.error("CRON_SECRET não configurada — recusando request");
+    log.error("CRON_SECRET não configurada - recusando request");
     return Response.json(
       { ok: false, error: "cron secret not configured" },
       { status: 503 }

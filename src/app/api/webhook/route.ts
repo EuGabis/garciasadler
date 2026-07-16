@@ -13,7 +13,7 @@ import type { MessageStatus, MessageType } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
 
-const MAX_WEBHOOK_BODY_BYTES = 6 * 1024 * 1024; // 6 MB — cabe mídia inline, bloqueia flood
+const MAX_WEBHOOK_BODY_BYTES = 6 * 1024 * 1024; // 6 MB - cabe mídia inline, bloqueia flood
 
 type EvolutionMediaMessage = {
   url?: string;
@@ -270,7 +270,7 @@ async function handleMessageUpsert(
   });
 
   // Automações + IA: rodam em background via `after()` do Next 16.
-  // CRÍTICO usar `after()` em vez de Promise solta — Vercel Serverless mata
+  // CRÍTICO usar `after()` em vez de Promise solta - Vercel Serverless mata
   // a função após o Response, então fire-and-forget perdia o persist da resposta
   // da IA (chegava no WhatsApp via Evolution mas não era salva no DB).
   after(async () => {
@@ -360,11 +360,11 @@ export async function POST(req: NextRequest) {
 
   // Fail-closed
   if (!env.WEBHOOK_SECRET) {
-    log.error("WEBHOOK_SECRET não configurada — recusando request");
+    log.error("WEBHOOK_SECRET não configurada - recusando request");
     return Response.json({ ok: false, error: "webhook secret not configured" }, { status: 503 });
   }
   // Aceita tanto `x-webhook-secret` (header customizado) quanto `apikey`
-  // (default da Evolution v2.x — manda a global API key da instância).
+  // (default da Evolution v2.x - manda a global API key da instância).
   // Operador configura WEBHOOK_SECRET = global apikey da Evolution.
   const provided =
     req.headers.get("x-webhook-secret") ?? req.headers.get("apikey");
@@ -395,7 +395,7 @@ export async function POST(req: NextRequest) {
   if (!instance) return Response.json({ ok: true, ignored: "no instance" });
 
   // Rate limit por instância: 600 req / 60s (10 req/s sustentado).
-  // Defesa em profundidade — webhook já autentica com WEBHOOK_SECRET, mas
+  // Defesa em profundidade - webhook já autentica com WEBHOOK_SECRET, mas
   // protege contra Evolution buggy em retry-loop ou secret vazado sendo abusado.
   const rl = await checkRateLimit(`webhook:${instance}`, 600, 60);
   if (!rl.ok) {

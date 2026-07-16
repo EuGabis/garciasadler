@@ -57,7 +57,7 @@ export async function persistError(input: PersistedError): Promise<void> {
       },
     });
   } catch (e) {
-    // Falha silenciosa — não pode quebrar quem chamou.
+    // Falha silenciosa - não pode quebrar quem chamou.
     // Imprime cru pra Vercel logs ainda capturarem.
     // eslint-disable-next-line no-console
     console.error("[error-store] persist failed", e instanceof Error ? e.message : e);

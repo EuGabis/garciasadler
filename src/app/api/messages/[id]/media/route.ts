@@ -67,7 +67,7 @@ export async function GET(
   }
 
   if (message.mediaUrl) {
-    // Sem cache nem reuso — só redireciona pra URL externa do WhatsApp.
+    // Sem cache nem reuso - só redireciona pra URL externa do WhatsApp.
     return Response.redirect(message.mediaUrl, 302);
   }
 

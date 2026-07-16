@@ -166,7 +166,7 @@ export async function resetPasswordAction(
     where: { id: target.id },
     data: {
       password: passwordHash,
-      // Invalida sessões antigas dele — JWT carrega passwordChangedAt
+      // Invalida sessões antigas dele - JWT carrega passwordChangedAt
       passwordChangedAt: new Date(),
     },
   });

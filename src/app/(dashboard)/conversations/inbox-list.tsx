@@ -30,7 +30,7 @@ const MEDIA_PATTERNS: Array<{
 ];
 
 function MessagePreview({ text }: { text: string | null }) {
-  if (!text) return <span className="text-stone-400 italic">—</span>;
+  if (!text) return <span className="text-stone-400 italic">-</span>;
   for (const p of MEDIA_PATTERNS) {
     if (p.match.test(text)) {
       const rest = text.replace(p.match, "").trim();

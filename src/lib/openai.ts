@@ -1,5 +1,5 @@
 /**
- * Agente IA — Sprint IA.
+ * Agente IA - Sprint IA.
  *
  * Engine com tool use:
  * - `buscar_produto`: consulta ERP Exato (real).
@@ -329,7 +329,7 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
 
   // Caso teórico: passou de todos os rounds (incluindo o último sem tools) sem
   // gerar texto. Manda fallback amigável em vez de silenciar o cliente.
-  log.warn("max tool rounds reached — sending fallback", {
+  log.warn("max tool rounds reached - sending fallback", {
     workspaceId: input.workspaceId,
     conversationId: input.conversationId,
     promptTokens: promptTokensTotal,

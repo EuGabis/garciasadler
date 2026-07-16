@@ -231,7 +231,7 @@ export async function getMetrics(workspaceId: string, period: AnalyticsPeriod): 
 }
 
 export function formatDuration(seconds: number | null): string {
-  if (seconds === null) return "—";
+  if (seconds === null) return "-";
   if (seconds < 60) return `${seconds}s`;
   if (seconds < 3600) return `${Math.round(seconds / 60)} min`;
   const h = Math.floor(seconds / 3600);

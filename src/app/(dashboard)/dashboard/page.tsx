@@ -27,7 +27,7 @@ function greeting(hour: number): string {
 
 /**
  * Hora local em São Paulo (BRT/UTC-3).
- * Necessário porque Server Components na Vercel rodam em UTC —
+ * Necessário porque Server Components na Vercel rodam em UTC -
  * `new Date().getHours()` lá retorna hora UTC, não local.
  */
 function getSaoPauloHour(): number {

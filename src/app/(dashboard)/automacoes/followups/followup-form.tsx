@@ -173,7 +173,7 @@ export function FollowUpFormModal({
                 defaultValue={initial?.columnId ?? ""}
                 className={INPUT}
               >
-                <option value="">— Selecione —</option>
+                <option value="">- Selecione -</option>
                 {columns.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -224,7 +224,7 @@ export function FollowUpFormModal({
                 defaultValue={initial?.transferToUserId ?? ""}
                 className={INPUT}
               >
-                <option value="">— Ninguém —</option>
+                <option value="">- Ninguém -</option>
                 {team.map((u) => (
                   <option key={u.id} value={u.id}>
                     {u.name}

@@ -83,7 +83,7 @@ export function LogsTab({ errors, scopes, filters, unackCount, canManage }: Prop
               : "/configuracoes?tab=logs&unack=1"
           }
         >
-          {filters.onlyUnack ? "✓ Só pendentes" : "Só pendentes"}
+          {filters.onlyUnack ? " Só pendentes" : "Só pendentes"}
         </FilterPill>
 
         {scopes.length > 0 && <ScopeFilter scopes={scopes} active={filters.scope} />}

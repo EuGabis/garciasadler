@@ -29,7 +29,7 @@ export default function ErrorPage({
     <main className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-6">
       <div className="w-full max-w-md text-center">
         <div className="mx-auto h-14 w-14 rounded-2xl bg-red-500/10 text-red-600 flex items-center justify-center mb-4 text-2xl">
-          ⚠
+          
         </div>
         <h1 className="text-xl font-bold tracking-tight">Algo deu errado</h1>
         <p className="mt-2 text-sm text-stone-500">
