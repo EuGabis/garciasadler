@@ -15,11 +15,26 @@ const log = logger("ai-actions");
 
 const KEY_UNCHANGED_SENTINEL = "__UNCHANGED__";
 
+const hourField = z
+  .union([z.string(), z.null()])
+  .transform((v) => {
+    if (v === null || v === undefined) return null;
+    const s = String(v).trim();
+    if (s === "") return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  })
+  .refine((n) => n === null || (Number.isInteger(n) && n >= 0 && n <= 23), {
+    message: "Hora precisa ser um inteiro entre 0 e 23.",
+  });
+
 const schema = z.object({
   enabled: z.boolean(),
   systemPrompt: z.string().max(50000).nullable(),
   model: z.enum(["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini", "gpt-4.1"]),
   apiKey: z.string().max(500),
+  scheduleStartHour: hourField,
+  scheduleEndHour: hourField,
 });
 
 export type AiConfigState = { error?: string; ok?: boolean } | null;
@@ -37,8 +52,17 @@ export async function saveAiConfigAction(
     systemPrompt: ((formData.get("systemPrompt") as string) || "").trim() || null,
     model: formData.get("model"),
     apiKey: (formData.get("apiKey") as string) ?? "",
+    scheduleStartHour: formData.get("scheduleStartHour"),
+    scheduleEndHour: formData.get("scheduleEndHour"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+
+  // Ambos os horários devem ser preenchidos juntos ou deixados vazios juntos.
+  const startH = parsed.data.scheduleStartHour;
+  const endH = parsed.data.scheduleEndHour;
+  if ((startH === null) !== (endH === null)) {
+    return { error: "Preencha os dois horários (início e fim) ou deixe ambos vazios." };
+  }
 
   const current = await prisma.agentConfig.findUnique({
     where: { workspaceId: session.user.workspaceId },
@@ -68,12 +92,16 @@ export async function saveAiConfigAction(
       systemPrompt: parsed.data.systemPrompt,
       model: parsed.data.model,
       apiKey: newKey,
+      scheduleStartHour: startH,
+      scheduleEndHour: endH,
     },
     update: {
       enabled: parsed.data.enabled,
       systemPrompt: parsed.data.systemPrompt,
       model: parsed.data.model,
       apiKey: newKey,
+      scheduleStartHour: startH,
+      scheduleEndHour: endH,
     },
   });
 

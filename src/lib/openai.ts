@@ -29,6 +29,8 @@ import {
   getAgentConfig,
   resolveSystemPrompt,
   incrementTokenUsage,
+  isWithinSchedule,
+  getSaoPauloHour,
 } from "@/lib/agent-config";
 
 const log = logger("ai/openai");
@@ -191,7 +193,7 @@ export type GenerateReplyInput = {
 
 export type GenerateReplyResult =
   | { ok: true; reply: string; rounds: number }
-  | { ok: false; reason: "not-configured" | "disabled" | "no-content" | "error"; error?: string };
+  | { ok: false; reason: "not-configured" | "disabled" | "outside-schedule" | "no-content" | "error"; error?: string };
 
 /**
  * Gera uma resposta da IA pra próxima mensagem da conversa.
@@ -203,6 +205,14 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
 
   if (!cfg.enabled) return { ok: false, reason: "disabled" };
   if (!cfg.apiKey) return { ok: false, reason: "not-configured" };
+
+  // Gate horario: se a config tem janela definida (scheduleStartHour/EndHour),
+  // so responde dentro dela. Fora da janela, deixa passar pra atendimento humano.
+  // Janela que atravessa meia-noite (ex: 19-7) e suportada.
+  const nowHour = getSaoPauloHour();
+  if (!isWithinSchedule(nowHour, cfg.scheduleStartHour, cfg.scheduleEndHour)) {
+    return { ok: false, reason: "outside-schedule" };
+  }
 
   const client = new OpenAI({ apiKey: cfg.apiKey });
   const systemPrompt = resolveSystemPrompt(cfg);

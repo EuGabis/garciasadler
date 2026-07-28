@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, Key, Save, Cpu, Sparkles, Zap } from "lucide-react";
+import { Bot, Key, Save, Cpu, Sparkles, Zap, Clock } from "lucide-react";
 import {
   saveAiConfigAction,
   testOpenAiAction,
@@ -28,6 +28,8 @@ type Props = {
     tokensUsedMonth: number;
     tokensUsedTotal: number;
     tokensResetAt: Date | null;
+    scheduleStartHour: number | null;
+    scheduleEndHour: number | null;
   };
   canEdit: boolean;
 };
@@ -167,6 +169,47 @@ export function AiTab({ config, canEdit }: Props) {
                 calcular_obra
               </code>{" "}
               (contrapiso, alvenaria, reboco, telhado, pintura, concreto, aço).
+            </p>
+          </div>
+
+          <div>
+            <label className={`${LABEL_CLS} flex items-center gap-1.5`}>
+              <Clock className="h-3 w-3" /> Janela de atendimento automatico
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="scheduleStartHour"
+                name="scheduleStartHour"
+                type="number"
+                min={0}
+                max={23}
+                step={1}
+                placeholder="ex: 19"
+                defaultValue={config.scheduleStartHour ?? ""}
+                disabled={!canEdit}
+                className={`${INPUT_CLS} w-24 text-center tabular-nums`}
+                aria-label="Hora de inicio (0 a 23)"
+              />
+              <span className="text-[12px] text-stone-500">as</span>
+              <input
+                id="scheduleEndHour"
+                name="scheduleEndHour"
+                type="number"
+                min={0}
+                max={23}
+                step={1}
+                placeholder="ex: 7"
+                defaultValue={config.scheduleEndHour ?? ""}
+                disabled={!canEdit}
+                className={`${INPUT_CLS} w-24 text-center tabular-nums`}
+                aria-label="Hora de fim (0 a 23)"
+              />
+              <span className="text-[12px] text-stone-500">(horario de Sao Paulo)</span>
+            </div>
+            <p className="mt-1.5 text-[11.5px] text-stone-500 leading-relaxed">
+              Deixe ambos vazios pra IA responder 24h. Se preencher, IA so responde
+              dentro da janela; ex: <strong>19 as 7</strong> = fora do horario comercial
+              (das 19h ate as 06:59, atravessando meia-noite).
             </p>
           </div>
 

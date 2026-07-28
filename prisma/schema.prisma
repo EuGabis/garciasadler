@@ -207,7 +207,7 @@ model Conversation {
   unreadCount  Int      @default(0)
   lastMessage  String?
   lastMessageAt DateTime?
-  aiEnabled    Boolean  @default(false)
+  aiEnabled    Boolean  @default(true)
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -386,6 +386,13 @@ model AgentConfig {
   stopCommand      String?  @default("/parar")
   model            String   @default("gpt-4o-mini")
   apiKey           String?
+
+  // Janela horária opcional (hora do dia, 0-23, America/Sao_Paulo).
+  // Ambos null = IA sempre ativa 24h. Ambos setados = IA responde
+  // apenas dentro da janela [startHour, endHour). Ex: 19 e 7 =
+  // ativa das 19:00 as 06:59 (janela que atravessa meia-noite).
+  scheduleStartHour Int?
+  scheduleEndHour   Int?
 
   tokensUsedTotal  Int      @default(0)
   tokensUsedMonth  Int      @default(0)

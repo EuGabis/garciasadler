@@ -9,6 +9,9 @@ export type AgentConfigData = {
   apiKey: string | null; // descriptografada
   tokensUsedTotal: number;
   tokensUsedMonth: number;
+  // Janela horária (0-23 em America/Sao_Paulo). Ambos null = IA 24h.
+  scheduleStartHour: number | null;
+  scheduleEndHour: number | null;
 };
 
 const DEFAULT_SYSTEM_PROMPT = `Atendimento Garcia Sadler - System Prompt (v6)
@@ -494,6 +497,8 @@ export async function getAgentConfig(workspaceId: string): Promise<AgentConfigDa
       apiKey: null,
       tokensUsedTotal: 0,
       tokensUsedMonth: 0,
+      scheduleStartHour: null,
+      scheduleEndHour: null,
     };
   }
   return {
@@ -504,7 +509,42 @@ export async function getAgentConfig(workspaceId: string): Promise<AgentConfigDa
     apiKey: decryptSecret(raw.apiKey),
     tokensUsedTotal: raw.tokensUsedTotal,
     tokensUsedMonth: raw.tokensUsedMonth,
+    scheduleStartHour: raw.scheduleStartHour,
+    scheduleEndHour: raw.scheduleEndHour,
   };
+}
+
+/**
+ * Retorna true se `hour` (0-23) está dentro da janela [start, end).
+ * Janelas normais: start < end (ex: 8-18 = 8h às 17:59).
+ * Janelas que atravessam meia-noite: start > end (ex: 19-7 = 19h às 06:59).
+ * start == end é tratado como fechado (nunca ativo).
+ */
+export function isWithinSchedule(
+  hour: number,
+  startHour: number | null | undefined,
+  endHour: number | null | undefined
+): boolean {
+  // Ambos null/undefined = 24h
+  if (startHour == null || endHour == null) return true;
+  if (startHour === endHour) return false;
+  if (startHour < endHour) {
+    return hour >= startHour && hour < endHour;
+  }
+  // Atravessa meia-noite (ex: 19-7): dentro se hour >= 19 OU hour < 7
+  return hour >= startHour || hour < endHour;
+}
+
+/** Hora atual (0-23) em America/Sao_Paulo. */
+export function getSaoPauloHour(now: Date = new Date()): number {
+  // "en-US" com hour12:false + timeZone dá "0" a "24"; normaliza 24 -> 0.
+  const s = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: "America/Sao_Paulo",
+  }).format(now);
+  const h = Number(s);
+  return h === 24 ? 0 : h;
 }
 
 export function resolveSystemPrompt(config: AgentConfigData): string {
