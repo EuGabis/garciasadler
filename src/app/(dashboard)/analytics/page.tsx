@@ -42,8 +42,8 @@ export default async function AnalyticsPage({
           </h1>
           <p className="num mt-1 text-[12px] text-stone-500">
             {metrics.period.label} ·{" "}
-            {metrics.period.from.toLocaleDateString("pt-BR")} →{" "}
-            {metrics.period.to.toLocaleDateString("pt-BR")}
+            {metrics.period.from.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })} →{" "}
+            {metrics.period.to.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
           </p>
         </div>
         <PeriodTabs active={period} />

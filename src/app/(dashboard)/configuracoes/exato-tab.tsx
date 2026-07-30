@@ -122,7 +122,7 @@ function ConnectionSection({ integ }: { integ: Integ }) {
             <>
               Último login bem-sucedido em{" "}
               <strong className="text-stone-900 dark:text-stone-50 font-semibold">
-                {new Date(integ.ultimoLoginEm).toLocaleString("pt-BR")}
+                {new Date(integ.ultimoLoginEm).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
               </strong>
             </>
           ) : (

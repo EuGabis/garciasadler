@@ -239,7 +239,7 @@ export function AiTab({ config, canEdit }: Props) {
             </p>
             <p className="text-[11.5px] text-stone-500 mt-1 tabular-nums">
               {config.tokensResetAt
-                ? `Reset em ${new Date(config.tokensResetAt).toLocaleDateString("pt-BR")}`
+                ? `Reset em ${new Date(config.tokensResetAt).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}`
                 : "-"}
             </p>
           </div>

@@ -1,3 +1,9 @@
+// Todos os timestamps do sistema sao interpretados como horario da loja
+// (America/Sao_Paulo, UTC-3 sem horario de verao desde 2019). Fixado em
+// TZ pra garantir que o SSR na Vercel (container em UTC) renderize a
+// hora local do usuario, e nao a hora UTC.
+const TZ = "America/Sao_Paulo";
+
 export function formatRelativeTime(date: Date | string | null): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
@@ -11,12 +17,12 @@ export function formatRelativeTime(date: Date | string | null): string {
   if (diffMin < 60) return `${diffMin}min`;
   if (diffHr < 24) return `${diffHr}h`;
   if (diffDay < 7) return `${diffDay}d`;
-  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", timeZone: TZ });
 }
 
 export function formatTime(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: TZ });
 }
 
 export function formatPhone(phone: string): string {

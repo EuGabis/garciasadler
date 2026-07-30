@@ -47,7 +47,7 @@ function fmtRelative(d: Date | string): string {
   if (h < 24) return `${h}h atrás`;
   const days = Math.floor(h / 24);
   if (days < 7) return `${days}d atrás`;
-  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" });
+  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", timeZone: "America/Sao_Paulo" });
 }
 
 export function LogRow({ err, canManage }: { err: ErrorLogRow; canManage: boolean }) {
