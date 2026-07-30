@@ -9,6 +9,8 @@ export type AgentConfigData = {
   apiKey: string | null; // descriptografada
   tokensUsedTotal: number;
   tokensUsedMonth: number;
+  // Glossario tecnico do deposito, injetado no system prompt.
+  searchGlossary: string | null;
   // Janela horária (0-23 em America/Sao_Paulo). Ambos null = IA 24h.
   scheduleStartHour: number | null;
   scheduleEndHour: number | null;
@@ -497,6 +499,7 @@ export async function getAgentConfig(workspaceId: string): Promise<AgentConfigDa
       apiKey: null,
       tokensUsedTotal: 0,
       tokensUsedMonth: 0,
+      searchGlossary: null,
       scheduleStartHour: null,
       scheduleEndHour: null,
     };
@@ -509,6 +512,7 @@ export async function getAgentConfig(workspaceId: string): Promise<AgentConfigDa
     apiKey: decryptSecret(raw.apiKey),
     tokensUsedTotal: raw.tokensUsedTotal,
     tokensUsedMonth: raw.tokensUsedMonth,
+    searchGlossary: raw.searchGlossary,
     scheduleStartHour: raw.scheduleStartHour,
     scheduleEndHour: raw.scheduleEndHour,
   };
@@ -548,9 +552,25 @@ export function getSaoPauloHour(now: Date = new Date()): number {
 }
 
 export function resolveSystemPrompt(config: AgentConfigData): string {
-  return (config.systemPrompt && config.systemPrompt.trim().length > 0)
+  const base = (config.systemPrompt && config.systemPrompt.trim().length > 0)
     ? config.systemPrompt
     : DEFAULT_SYSTEM_PROMPT;
+  const glossary = config.searchGlossary?.trim();
+  if (!glossary) return base;
+  // Anexa como secao final pro modelo ler apos todo o system prompt principal.
+  // Marcador explicito porque a IA respeita muito "instrucoes do lojista".
+  return (
+    base +
+    "\n\n============================================================\n" +
+    "GLOSSARIO / DICIONARIO TECNICO DO DEPOSITO (fornecido pelo lojista)\n" +
+    "============================================================\n\n" +
+    glossary +
+    "\n\n" +
+    "Use este glossario pra TRADUZIR termos e apelidos do cliente antes de chamar\n" +
+    "buscar_produto. Estes termos vieram do proprio dono do deposito e sao a fonte\n" +
+    "de verdade sobre o vocabulario local. Se o glossario diz que 'X = Y', busque\n" +
+    "por Y no Exato quando o cliente falar X.\n"
+  );
 }
 
 export async function incrementTokenUsage(

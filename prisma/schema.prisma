@@ -387,6 +387,13 @@ model AgentConfig {
   model            String   @default("gpt-4o-mini")
   apiKey           String?
 
+  // Glossario / dicionario tecnico do lojista. Free-text que e injetado
+  // no system prompt antes de cada chamada, dando contexto extra de
+  // vocabulario do deposito (ex: "bloco 15 = BLOCO CONCRETO 14x19x39",
+  // "cliente fala 3 quartos, cadastro tem 3/4"). Ajuda a IA a traduzir
+  // termos do cliente para a descricao real cadastrada no Exato.
+  searchGlossary   String?
+
   // Janela horária opcional (hora do dia, 0-23, America/Sao_Paulo).
   // Ambos null = IA sempre ativa 24h. Ambos setados = IA responde
   // apenas dentro da janela [startHour, endHour). Ex: 19 e 7 =

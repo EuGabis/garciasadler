@@ -33,6 +33,7 @@ const schema = z.object({
   systemPrompt: z.string().max(50000).nullable(),
   model: z.enum(["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini", "gpt-4.1"]),
   apiKey: z.string().max(500),
+  searchGlossary: z.string().max(20000).nullable(),
   scheduleStartHour: hourField,
   scheduleEndHour: hourField,
 });
@@ -52,6 +53,7 @@ export async function saveAiConfigAction(
     systemPrompt: ((formData.get("systemPrompt") as string) || "").trim() || null,
     model: formData.get("model"),
     apiKey: (formData.get("apiKey") as string) ?? "",
+    searchGlossary: ((formData.get("searchGlossary") as string) || "").trim() || null,
     scheduleStartHour: formData.get("scheduleStartHour"),
     scheduleEndHour: formData.get("scheduleEndHour"),
   });
@@ -92,6 +94,7 @@ export async function saveAiConfigAction(
       systemPrompt: parsed.data.systemPrompt,
       model: parsed.data.model,
       apiKey: newKey,
+      searchGlossary: parsed.data.searchGlossary,
       scheduleStartHour: startH,
       scheduleEndHour: endH,
     },
@@ -100,6 +103,7 @@ export async function saveAiConfigAction(
       systemPrompt: parsed.data.systemPrompt,
       model: parsed.data.model,
       apiKey: newKey,
+      searchGlossary: parsed.data.searchGlossary,
       scheduleStartHour: startH,
       scheduleEndHour: endH,
     },

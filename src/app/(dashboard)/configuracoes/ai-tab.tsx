@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, Key, Save, Cpu, Sparkles, Zap, Clock } from "lucide-react";
+import { Bot, Key, Save, Cpu, Sparkles, Zap, Clock, BookOpen } from "lucide-react";
 import {
   saveAiConfigAction,
   testOpenAiAction,
@@ -28,6 +28,7 @@ type Props = {
     tokensUsedMonth: number;
     tokensUsedTotal: number;
     tokensResetAt: Date | null;
+    searchGlossary: string | null;
     scheduleStartHour: number | null;
     scheduleEndHour: number | null;
   };
@@ -169,6 +170,37 @@ export function AiTab({ config, canEdit }: Props) {
                 calcular_obra
               </code>{" "}
               (contrapiso, alvenaria, reboco, telhado, pintura, concreto, aço).
+            </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="searchGlossary"
+              className={`${LABEL_CLS} flex items-center gap-1.5`}
+            >
+              <BookOpen className="h-3 w-3" /> Glossário do depósito (opcional)
+            </label>
+            <textarea
+              id="searchGlossary"
+              name="searchGlossary"
+              rows={7}
+              maxLength={20000}
+              defaultValue={config.searchGlossary ?? ""}
+              placeholder={`Traduz termos que o cliente fala pra descrição real cadastrada no Exato.
+Um por linha. Exemplos:
+
+bloco 15 = BLOCO CONCRETO 14 X 19 X 39
+bloco 10 = BLOCO CONCRETO 9 X 19 X 39
+3 quartos = 3/4
+metro de areia = areia a granel (unidade m³), não saco
+canaleta = bloco canaleta em U pra viga`}
+              disabled={!canEdit}
+              className={`${INPUT_CLS} resize-y font-mono text-[12px]`}
+            />
+            <p className="mt-1.5 text-[11.5px] text-stone-500 leading-relaxed">
+              A IA lê antes de cada busca. Use pra ensinar apelidos e unidades
+              usadas na loja que o cliente costuma falar (ex: "bloco 15" quando
+              o cadastro é "14×19×39"), evitando busca zero por termo diferente.
             </p>
           </div>
 

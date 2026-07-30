@@ -101,6 +101,7 @@ export default async function ConfiguracoesPage({
         tokensUsedMonth: true,
         tokensUsedTotal: true,
         tokensResetAt: true,
+        searchGlossary: true,
         scheduleStartHour: true,
         scheduleEndHour: true,
       },
@@ -136,6 +137,7 @@ export default async function ConfiguracoesPage({
     tokensUsedMonth: aiConfig?.tokensUsedMonth ?? 0,
     tokensUsedTotal: aiConfig?.tokensUsedTotal ?? 0,
     tokensResetAt: aiConfig?.tokensResetAt ?? null,
+    searchGlossary: aiConfig?.searchGlossary ?? null,
     scheduleStartHour: aiConfig?.scheduleStartHour ?? null,
     scheduleEndHour: aiConfig?.scheduleEndHour ?? null,
   };
