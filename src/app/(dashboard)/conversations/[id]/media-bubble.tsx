@@ -1,4 +1,4 @@
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, Mic } from "lucide-react";
 
 type Variant = "inbound" | "outbound";
 
@@ -9,6 +9,7 @@ type Props = {
   hasMedia: boolean;
   mediaUrl: string | null;
   fileName: string | null;
+  transcript?: string | null;
   variant?: Variant;
 };
 
@@ -27,6 +28,7 @@ export function MediaBubble({
   hasMedia,
   mediaUrl,
   fileName,
+  transcript,
   variant = "inbound",
 }: Props) {
   if (type === "text") {
@@ -61,21 +63,34 @@ export function MediaBubble({
     if (!src) {
       return <div className="text-xs italic opacity-70">[áudio indisponível]</div>;
     }
+    const hasTranscript = transcript && transcript.trim().length > 0;
     return (
-      <div
-        className={
-          isOutbound
-            ? "rounded-lg bg-black/20 p-1 -mx-1.5 -my-0.5"
-            : "rounded-lg bg-stone-100 dark:bg-stone-800/70 p-1 -mx-1.5 -my-0.5"
-        }
-      >
-        <audio
-          src={src}
-          controls
-          preload="none"
-          className="block w-[260px] max-w-full h-9"
-          style={{ colorScheme: isOutbound ? "dark" : undefined }}
-        />
+      <div className="space-y-1.5">
+        <div
+          className={
+            isOutbound
+              ? "rounded-lg bg-black/20 p-1 -mx-1.5 -my-0.5"
+              : "rounded-lg bg-stone-100 dark:bg-stone-800/70 p-1 -mx-1.5 -my-0.5"
+          }
+        >
+          <audio
+            src={src}
+            controls
+            preload="none"
+            className="block w-[260px] max-w-full h-9"
+            style={{ colorScheme: isOutbound ? "dark" : undefined }}
+          />
+        </div>
+        {hasTranscript && (
+          <div
+            className={`flex items-start gap-1.5 text-[12.5px] leading-relaxed italic ${
+              isOutbound ? "text-white/80" : "text-stone-600 dark:text-stone-400"
+            }`}
+          >
+            <Mic className="h-3 w-3 mt-0.5 shrink-0 opacity-60" />
+            <span className="whitespace-pre-wrap break-words">{transcript}</span>
+          </div>
+        )}
       </div>
     );
   }

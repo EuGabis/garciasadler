@@ -6,6 +6,7 @@ import { env } from "@/lib/env";
 import { publishRealtime } from "@/lib/pusher-server";
 import { runAutomations } from "@/lib/automations";
 import { invokeAiResponse } from "@/lib/ai-respond";
+import { transcribeAudio } from "@/lib/openai";
 import { buildEvolutionConfig } from "@/lib/workspace";
 import { logger, newRequestId } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -64,6 +65,7 @@ type ExtractedMessage = {
   mediaBase64: string | null;
   mediaUrl: string | null;
   fileName: string | null;
+  mimeType: string | null;
 };
 
 function extract(payload: EvolutionMessageUpsert): ExtractedMessage | null {
@@ -72,7 +74,7 @@ function extract(payload: EvolutionMessageUpsert): ExtractedMessage | null {
 
   // Texto puro
   if (msg.conversation) {
-    return { type: "text", content: msg.conversation, mediaBase64: null, mediaUrl: null, fileName: null };
+    return { type: "text", content: msg.conversation, mediaBase64: null, mediaUrl: null, fileName: null, mimeType: null };
   }
   if (msg.extendedTextMessage?.text) {
     return {
@@ -81,6 +83,7 @@ function extract(payload: EvolutionMessageUpsert): ExtractedMessage | null {
       mediaBase64: null,
       mediaUrl: null,
       fileName: null,
+      mimeType: null,
     };
   }
 
@@ -106,6 +109,7 @@ function extract(payload: EvolutionMessageUpsert): ExtractedMessage | null {
       mediaBase64: base64,
       mediaUrl: media.url ?? null,
       fileName: media.fileName ?? null,
+      mimeType: media.mimetype ?? null,
     };
   }
 
@@ -292,7 +296,47 @@ async function handleMessageUpsert(
   });
 
   if (conversation.aiEnabled && evolutionConfig) {
+    const audioSource =
+      extracted.type === "audio"
+        ? extracted.mediaBase64 ?? extracted.mediaUrl ?? null
+        : null;
+
     after(async () => {
+      // Se for audio, transcreve ANTES de chamar IA. Assim a IA le o texto
+      // real (via Message.transcript) em vez de "[audio]" placeholder.
+      if (audioSource) {
+        try {
+          const t = await transcribeAudio({
+            workspaceId,
+            source: audioSource,
+            mimeType: extracted.mimeType ?? undefined,
+          });
+          if (t.ok) {
+            await prisma.message.update({
+              where: { id: message.id },
+              data: { transcript: t.text },
+            });
+            // Notifica painel pra atualizar bolha de audio com transcricao
+            await publishRealtime(workspaceId, {
+              type: "message:new",
+              conversationId: conversation.id,
+              preview: `\u{1F399} ${t.text.slice(0, 60)}`,
+            });
+          } else {
+            logger("webhook").warn("audio transcribe skipped", {
+              workspaceId,
+              conversationId: conversation.id,
+              reason: t.reason,
+            });
+          }
+        } catch (e) {
+          logger("webhook").error("audio transcribe crashed", e, {
+            workspaceId,
+            conversationId: conversation.id,
+          });
+        }
+      }
+
       try {
         await invokeAiResponse({
           workspaceId,

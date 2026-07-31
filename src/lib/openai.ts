@@ -221,7 +221,15 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
     where: { conversationId: input.conversationId },
     orderBy: { createdAt: "desc" },
     take: MAX_HISTORY,
-    select: { role: true, direction: true, content: true, toolCalls: true, toolCallId: true },
+    select: {
+      role: true,
+      direction: true,
+      type: true,
+      content: true,
+      transcript: true,
+      toolCalls: true,
+      toolCallId: true,
+    },
   });
   recent.reverse();
 
@@ -239,9 +247,16 @@ export async function generateReply(input: GenerateReplyInput): Promise<Generate
           tool_calls: m.toolCalls as any,
         };
       }
+      // Pra audio: se ja transcrevemos, usa o texto. Se nao, mantem placeholder.
+      // Prefixo "[audio transcrito]" ajuda o modelo a entender o contexto
+      // (que o cliente MANDOU audio, mas o texto abaixo e o que ele disse).
+      const effectiveContent =
+        m.type === "audio" && m.transcript && m.transcript.trim().length > 0
+          ? `[audio transcrito] ${m.transcript}`
+          : m.content;
       return {
         role: m.role === "user" ? "user" : "assistant",
-        content: m.content,
+        content: effectiveContent,
       };
     }),
   ];
@@ -429,4 +444,97 @@ function sanitizeMessages(msgs: ChatCompletionMessageParam[]): ChatCompletionMes
   }
 
   return msgs.filter((_, idx) => valid[idx]);
+}
+
+// ============================================================
+// Transcricao de audio (Whisper)
+// ============================================================
+
+const MAX_AUDIO_BYTES = 24 * 1024 * 1024; // 24MB - limite Whisper e 25MB
+
+export type TranscribeResult =
+  | { ok: true; text: string; durationSec?: number }
+  | { ok: false; reason: "no-key" | "no-audio" | "too-big" | "empty" | "error"; error?: string };
+
+/**
+ * Transcreve audio via OpenAI Whisper (modelo whisper-1).
+ *
+ * `source` aceita:
+ *  - `base64:<string>`  → decodifica direto
+ *  - URL http(s)        → faz GET e usa o body como audio
+ *
+ * Retorna texto puro (sem timestamps). Idioma fixado em "pt" pra melhorar
+ * precisao em portugues brasileiro (Whisper detecta automatico mas passar
+ * o language reduz erro em audios curtos/ruidosos).
+ *
+ * Custo: $0.006 por minuto de audio (Whisper API).
+ */
+export async function transcribeAudio(params: {
+  workspaceId: string;
+  source: string; // base64 puro ou URL
+  mimeType?: string;
+}): Promise<TranscribeResult> {
+  const cfg = await getAgentConfig(params.workspaceId);
+  if (!cfg.apiKey) return { ok: false, reason: "no-key" };
+  if (!params.source) return { ok: false, reason: "no-audio" };
+
+  // Resolve o audio pra Buffer (ambos casos: base64 ou URL)
+  let audioBuf: Buffer;
+  try {
+    if (params.source.startsWith("http://") || params.source.startsWith("https://")) {
+      const r = await fetch(params.source);
+      if (!r.ok) {
+        return { ok: false, reason: "error", error: `fetch audio HTTP ${r.status}` };
+      }
+      const ab = await r.arrayBuffer();
+      audioBuf = Buffer.from(ab);
+    } else {
+      // Assume base64 (com ou sem prefixo data:audio/ogg;base64,)
+      const b64 = params.source.replace(/^data:[^;]+;base64,/, "");
+      audioBuf = Buffer.from(b64, "base64");
+    }
+  } catch (e) {
+    return { ok: false, reason: "error", error: (e as Error).message };
+  }
+
+  if (audioBuf.length === 0) return { ok: false, reason: "empty" };
+  if (audioBuf.length > MAX_AUDIO_BYTES) return { ok: false, reason: "too-big" };
+
+  // File API disponivel no Node 20+ (que a Vercel roda).
+  // Extensao no filename ajuda o Whisper a decodificar. Default ogg pq
+  // e o formato padrao do WhatsApp Business (voice notes = opus/ogg).
+  const ext = mimeToExt(params.mimeType ?? "audio/ogg");
+  const file = new File([new Uint8Array(audioBuf)], `voice.${ext}`, {
+    type: params.mimeType ?? "audio/ogg",
+  });
+
+  try {
+    const client = new OpenAI({ apiKey: cfg.apiKey });
+    const r = await client.audio.transcriptions.create({
+      file,
+      model: "whisper-1",
+      language: "pt",
+      response_format: "json",
+    });
+    const text = (r.text ?? "").trim();
+    if (!text) return { ok: false, reason: "empty" };
+    return { ok: true, text };
+  } catch (e) {
+    log.error("whisper transcribe failed", e, {
+      workspaceId: params.workspaceId,
+      bytes: audioBuf.length,
+    });
+    return { ok: false, reason: "error", error: (e as Error).message };
+  }
+}
+
+function mimeToExt(m: string): string {
+  const lower = m.toLowerCase();
+  if (lower.includes("ogg") || lower.includes("opus")) return "ogg";
+  if (lower.includes("mp3") || lower.includes("mpeg")) return "mp3";
+  if (lower.includes("wav")) return "wav";
+  if (lower.includes("m4a") || lower.includes("mp4") || lower.includes("aac")) return "m4a";
+  if (lower.includes("webm")) return "webm";
+  if (lower.includes("flac")) return "flac";
+  return "ogg";
 }

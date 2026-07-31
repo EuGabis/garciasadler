@@ -165,6 +165,7 @@ export default async function ConversationPage({ params }: { params: Promise<Par
                       hasMedia={m.type !== "text" && m.type !== "location"}
                       mediaUrl={m.mediaUrl}
                       fileName={m.fileName}
+                      transcript={m.transcript}
                       variant={isInbound ? "inbound" : "outbound"}
                     />
                     <div

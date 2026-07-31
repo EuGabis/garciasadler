@@ -94,6 +94,7 @@ export async function getConversationWithMessages(workspaceId: string, conversat
           content: true,
           mediaUrl: true,
           fileName: true,
+          transcript: true,
           createdAt: true,
           sender: { select: { name: true } },
         },

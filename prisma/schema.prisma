@@ -267,6 +267,10 @@ model Message {
   mediaUrl        String?
   mediaBase64     String?
   fileName        String?
+  // Transcricao gerada por Whisper pra type=audio. Popular via after()
+  // no webhook. IA usa isso como content efetivo (evita mostrar "[audio]"
+  // pro modelo). Null se ainda nao transcreveu ou se whisper falhou.
+  transcript      String?
 
   evolutionId     String?      @unique
   toolCalls       Json?
