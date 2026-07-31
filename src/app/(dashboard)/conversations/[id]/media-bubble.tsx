@@ -64,8 +64,12 @@ export function MediaBubble({
       return <div className="text-xs italic opacity-70">[áudio indisponível]</div>;
     }
     const hasTranscript = transcript && transcript.trim().length > 0;
+    // Wrapper com w-[260px] max-w-full: casa com a largura do <audio> e
+    // impede que uma transcricao longa estique o balao pra fora do 72%
+    // do container do chat. min-w-0 no span pro break-words funcionar
+    // dentro do flex.
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 w-[260px] max-w-full">
         <div
           className={
             isOutbound
@@ -77,7 +81,7 @@ export function MediaBubble({
             src={src}
             controls
             preload="none"
-            className="block w-[260px] max-w-full h-9"
+            className="block w-full h-9"
             style={{ colorScheme: isOutbound ? "dark" : undefined }}
           />
         </div>
@@ -88,7 +92,7 @@ export function MediaBubble({
             }`}
           >
             <Mic className="h-3 w-3 mt-0.5 shrink-0 opacity-60" />
-            <span className="whitespace-pre-wrap break-words">{transcript}</span>
+            <span className="min-w-0 whitespace-pre-wrap break-words">{transcript}</span>
           </div>
         )}
       </div>
