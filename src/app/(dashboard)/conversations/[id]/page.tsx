@@ -82,9 +82,9 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   return (
     <div className="h-full w-full flex-1 flex relative min-w-0">
       <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
-        {/* HEADER — border-bottom full-width, conteudo alinhado ao max-w-3xl do body */}
+        {/* HEADER — full-width dentro da coluna do chat */}
         <header className="border-b border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm">
-          <div className="mx-auto max-w-3xl px-3 md:px-6 py-3">
+          <div className="px-3 md:px-6 py-3">
             <div className="flex items-center gap-2 md:gap-3">
               <Link
                 href="/conversations"
@@ -143,9 +143,9 @@ export default async function ConversationPage({ params }: { params: Promise<Par
           </div>
         </header>
 
-        {/* TIMELINE — mesmo max-w-3xl do header, padding vertical menor pra reduzir buraco */}
+        {/* TIMELINE — full-width, mensagens alinham left/right dentro do proprio espaco */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-3xl px-3 md:px-6 py-4 md:py-5 space-y-3">
+          <div className="px-3 md:px-6 py-4 md:py-5 space-y-3">
             {conversation.messages.length === 0 ? (
               <div className="text-center text-sm text-stone-500 py-16">
                 Nenhuma mensagem ainda.

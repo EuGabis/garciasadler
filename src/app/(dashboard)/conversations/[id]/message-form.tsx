@@ -61,7 +61,7 @@ export function MessageForm({
         className="border-t border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm"
         encType="multipart/form-data"
       >
-        <div className="mx-auto max-w-3xl px-3 md:px-6 py-3 md:py-3.5">
+        <div className="px-3 md:px-6 py-3 md:py-3.5">
         <input type="hidden" name="conversationId" value={conversationId} />
         <input
           ref={fileInputRef}
@@ -127,7 +127,7 @@ export function MessageForm({
       action={textAction}
       className="relative border-t border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm"
     >
-      <div className="mx-auto max-w-3xl px-3 md:px-6 py-3 md:py-3.5">
+      <div className="px-3 md:px-6 py-3 md:py-3.5">
       <input type="hidden" name="conversationId" value={conversationId} />
       <input
         ref={fileInputRef}
