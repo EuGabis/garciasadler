@@ -58,9 +58,10 @@ export function MessageForm({
       <form
         ref={mediaFormRef}
         action={mediaAction}
-        className="border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3 md:py-3.5"
+        className="border-t border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm"
         encType="multipart/form-data"
       >
+        <div className="mx-auto max-w-3xl px-3 md:px-6 py-3 md:py-3.5">
         <input type="hidden" name="conversationId" value={conversationId} />
         <input
           ref={fileInputRef}
@@ -115,6 +116,7 @@ export function MessageForm({
           </button>
         </div>
         {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+        </div>
       </form>
     );
   }
@@ -123,8 +125,9 @@ export function MessageForm({
     <form
       ref={textFormRef}
       action={textAction}
-      className="relative border-t border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 px-3 md:px-6 py-3 md:py-3.5"
+      className="relative border-t border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm"
     >
+      <div className="mx-auto max-w-3xl px-3 md:px-6 py-3 md:py-3.5">
       <input type="hidden" name="conversationId" value={conversationId} />
       <input
         ref={fileInputRef}
@@ -207,6 +210,7 @@ export function MessageForm({
         </button>
       </div>
       {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+      </div>
     </form>
   );
 }

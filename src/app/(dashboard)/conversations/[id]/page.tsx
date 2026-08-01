@@ -82,68 +82,70 @@ export default async function ConversationPage({ params }: { params: Promise<Par
   return (
     <div className="h-full w-full flex-1 flex relative min-w-0">
       <div className="flex-1 min-w-0 flex flex-col bg-stone-50 dark:bg-stone-950">
-        {/* HEADER — 2 rows: identidade + toolbar */}
-        <header className="border-b border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm px-3 md:px-6 py-3">
-          <div className="flex items-center gap-2 md:gap-3">
-            <Link
-              href="/conversations"
-              className="md:hidden p-1.5 -ml-1 rounded-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors shrink-0"
-              aria-label="Voltar para conversas"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+        {/* HEADER — border-bottom full-width, conteudo alinhado ao max-w-3xl do body */}
+        <header className="border-b border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm">
+          <div className="mx-auto max-w-3xl px-3 md:px-6 py-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              <Link
+                href="/conversations"
+                className="md:hidden p-1.5 -ml-1 rounded-md text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors shrink-0"
+                aria-label="Voltar para conversas"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
 
-            <div
-              className={`h-9 w-9 md:h-10 md:w-10 rounded-full ring-1 text-sm font-semibold flex items-center justify-center shrink-0 ${headerAvatar.bg} ${headerAvatar.text} ${headerAvatar.ring}`}
-            >
-              {avatarInitial(conversation.contact.name)}
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <p className="text-[14px] font-semibold truncate text-stone-900 dark:text-stone-50 tracking-tight">
-                  {conversation.contact.name}
-                </p>
-                <span className="inline-flex items-center gap-1 text-[11px] text-stone-500 shrink-0">
-                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${statusDot}`} />
-                  {statusLabel}
-                </span>
+              <div
+                className={`h-9 w-9 md:h-10 md:w-10 rounded-full ring-1 text-sm font-semibold flex items-center justify-center shrink-0 ${headerAvatar.bg} ${headerAvatar.text} ${headerAvatar.ring}`}
+              >
+                {avatarInitial(conversation.contact.name)}
               </div>
-              <p className="text-[12px] text-stone-500 tabular-nums truncate">
-                {formatPhone(conversation.contact.phone)}
-              </p>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 min-w-0">
+                  <p className="text-[14px] font-semibold truncate text-stone-900 dark:text-stone-50 tracking-tight">
+                    {conversation.contact.name}
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-[11px] text-stone-500 shrink-0">
+                    <span className={`inline-block h-1.5 w-1.5 rounded-full ${statusDot}`} />
+                    {statusLabel}
+                  </span>
+                </div>
+                <p className="text-[12px] text-stone-500 tabular-nums truncate">
+                  {formatPhone(conversation.contact.phone)}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <AssignPicker
+                  conversationId={conversation.id}
+                  assigned={assignedUsers}
+                  team={team}
+                />
+                <LabelPicker
+                  conversationId={conversation.id}
+                  attached={attachedLabels}
+                  available={availableLabels}
+                />
+                <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
+              </div>
             </div>
 
-            <div className="flex items-center gap-1">
-              <AssignPicker
-                conversationId={conversation.id}
-                assigned={assignedUsers}
-                team={team}
-              />
-              <LabelPicker
-                conversationId={conversation.id}
-                attached={attachedLabels}
-                available={availableLabels}
-              />
-              <AiBadge conversationId={conversation.id} enabled={conversation.aiEnabled} />
-            </div>
+            {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
+              <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                {assignedUsers.length > 0 && (
+                  <AssignedBadges conversationId={conversation.id} assigned={assignedUsers} />
+                )}
+                {attachedLabels.length > 0 && (
+                  <AttachedLabels conversationId={conversation.id} labels={attachedLabels} />
+                )}
+              </div>
+            )}
           </div>
-
-          {(attachedLabels.length > 0 || assignedUsers.length > 0) && (
-            <div className="mt-2.5 flex flex-wrap items-center gap-2">
-              {assignedUsers.length > 0 && (
-                <AssignedBadges conversationId={conversation.id} assigned={assignedUsers} />
-              )}
-              {attachedLabels.length > 0 && (
-                <AttachedLabels conversationId={conversation.id} labels={attachedLabels} />
-              )}
-            </div>
-          )}
         </header>
 
-        {/* TIMELINE — coluna centralizada com padding generoso */}
+        {/* TIMELINE — mesmo max-w-3xl do header, padding vertical menor pra reduzir buraco */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-3xl px-3 md:px-6 py-6 md:py-8 space-y-3">
+          <div className="mx-auto max-w-3xl px-3 md:px-6 py-4 md:py-5 space-y-3">
             {conversation.messages.length === 0 ? (
               <div className="text-center text-sm text-stone-500 py-16">
                 Nenhuma mensagem ainda.
