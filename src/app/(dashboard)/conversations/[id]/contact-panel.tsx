@@ -132,27 +132,27 @@ export function ContactPanel({
           </p>
         </div>
 
-        {/* Status */}
-        <section className="px-5 py-4 border-b border-stone-200/80 dark:border-stone-800/80">
-          <FieldLabel>Status</FieldLabel>
-          <div className="mt-2 grid grid-cols-3 gap-1.5">
-            {statusOptions.map((s) => {
-              const active = contact.status === s.value;
-              return (
-                <button
-                  key={s.value}
-                  type="button"
-                  onClick={() => setStatus(s.value)}
-                  className={`px-2 py-1.5 rounded-md text-[11px] font-medium ring-1 transition ${
-                    active
-                      ? s.cls
-                      : "ring-stone-200 dark:ring-stone-800 text-stone-500 hover:bg-stone-50 dark:hover:bg-stone-800/50 hover:text-stone-700 dark:hover:text-stone-300"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              );
-            })}
+        {/* Status — dropdown discreto em vez de 3 botoes gordos */}
+        <section className="px-5 py-3 border-b border-stone-200/80 dark:border-stone-800/80">
+          <div className="flex items-center justify-between gap-3">
+            <FieldLabel>Status</FieldLabel>
+            <div className="relative">
+              <select
+                value={contact.status}
+                onChange={(e) => setStatus(e.target.value as Contact["status"])}
+                className="appearance-none pr-6 pl-2.5 py-1 text-[11.5px] font-medium rounded-md ring-1 ring-stone-200 dark:ring-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 cursor-pointer"
+              >
+                {statusOptions.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+              <svg
+                className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 h-3 w-3 text-stone-400"
+                fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           </div>
         </section>
 
@@ -317,10 +317,10 @@ export function ContactPanel({
 
       {/* Desktop sidebar */}
       {open && (
-        <aside className="hidden lg:flex w-[320px] shrink-0 border-l border-stone-200/80 dark:border-stone-800/80 bg-white dark:bg-stone-900 flex-col animate-slide-in-right">
-          <header className="px-5 py-3.5 border-b border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between">
-            <h3 className="text-[11px] uppercase tracking-[0.08em] font-semibold text-stone-500">
-              Perfil do contato
+        <aside className="hidden lg:flex w-[300px] shrink-0 border-l border-stone-200/60 dark:border-stone-800/60 bg-white/70 dark:bg-stone-900/70 backdrop-blur-sm flex-col animate-slide-in-right">
+          <header className="px-5 py-3.5 border-b border-stone-200/60 dark:border-stone-800/60 flex items-center justify-between">
+            <h3 className="text-[10.5px] uppercase tracking-[0.1em] font-semibold text-stone-400 dark:text-stone-500">
+              Perfil
             </h3>
             <button
               type="button"

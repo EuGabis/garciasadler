@@ -37,15 +37,15 @@ export default async function ConversationsLayout({ children }: { children: Reac
   const inbox = (
     <>
       <header className="px-5 pt-5 pb-3">
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+        <div className="flex items-baseline gap-2.5">
+          <h1 className="text-[17px] font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             Conversas
           </h1>
-          <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-medium tabular-nums text-stone-600 dark:text-stone-400">
+          <span className="text-[12px] font-medium tabular-nums text-stone-400 dark:text-stone-500">
             {total}
           </span>
         </div>
-        <p className="text-[12px] text-stone-500 dark:text-stone-400 mt-0.5">
+        <p className="text-[11.5px] text-stone-500 dark:text-stone-400 mt-1">
           {mineOnly ? "Atribuídas a você" : "Caixa de entrada"}
         </p>
       </header>

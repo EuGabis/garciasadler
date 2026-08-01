@@ -70,27 +70,16 @@ export function MediaBubble({
     // dentro do flex.
     return (
       <div className="space-y-1.5 w-[260px] max-w-full">
-        <div
-          className={
-            isOutbound
-              ? "rounded-lg bg-black/20 p-1 -mx-1.5 -my-0.5"
-              : "rounded-lg bg-stone-100 dark:bg-stone-800/70 p-1 -mx-1.5 -my-0.5"
-          }
-        >
+        <div className="rounded-lg bg-white/60 dark:bg-stone-900/60 p-1 -mx-1.5 -my-0.5 ring-1 ring-stone-200/50 dark:ring-stone-700/50">
           <audio
             src={src}
             controls
             preload="none"
             className="block w-full h-9"
-            style={{ colorScheme: isOutbound ? "dark" : undefined }}
           />
         </div>
         {hasTranscript && (
-          <div
-            className={`flex items-start gap-1.5 text-[12.5px] leading-relaxed italic ${
-              isOutbound ? "text-white/80" : "text-stone-600 dark:text-stone-400"
-            }`}
-          >
+          <div className="flex items-start gap-1.5 text-[12.5px] leading-relaxed italic text-stone-600 dark:text-stone-400">
             <Mic className="h-3 w-3 mt-0.5 shrink-0 opacity-60" />
             <span className="min-w-0 whitespace-pre-wrap break-words">{transcript}</span>
           </div>
@@ -125,26 +114,16 @@ export function MediaBubble({
       <a
         href={src ?? "#"}
         download={fileName ?? "documento"}
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-          isOutbound
-            ? "bg-white/15 hover:bg-white/25 text-white"
-            : "bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700"
-        }`}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg transition bg-white/60 dark:bg-stone-900/60 ring-1 ring-stone-200/50 dark:ring-stone-700/50 hover:ring-stone-300 dark:hover:ring-stone-600"
       >
-        <FileText
-          className={`h-5 w-5 shrink-0 ${isOutbound ? "text-white/80" : "text-stone-500"}`}
-        />
+        <FileText className="h-5 w-5 shrink-0 text-stone-500" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium truncate">{fileName ?? "documento"}</p>
           {content && content !== "[documento]" && (
-            <p className={`text-xs truncate ${isOutbound ? "text-white/70" : "opacity-70"}`}>
-              {content}
-            </p>
+            <p className="text-xs truncate opacity-70">{content}</p>
           )}
         </div>
-        <Download
-          className={`h-4 w-4 shrink-0 ${isOutbound ? "text-white/70" : "opacity-60"}`}
-        />
+        <Download className="h-4 w-4 shrink-0 opacity-60" />
       </a>
     );
   }
