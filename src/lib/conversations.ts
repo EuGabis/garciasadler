@@ -15,10 +15,28 @@ export type ConversationListItem = {
   assignedTo: AssignedUserInfo[];
 };
 
+export type ListConversationsOptions = {
+  includeArchived?: boolean;
+  assignedToUserId?: string;
+  offset?: number;
+  limit?: number;
+};
+
+export type ListConversationsResult = {
+  items: ConversationListItem[];
+  hasMore: boolean;
+};
+
+const DEFAULT_PAGE_SIZE = 50;
+
 export async function listConversations(
   workspaceId: string,
-  options: { includeArchived?: boolean; assignedToUserId?: string } = {}
-): Promise<ConversationListItem[]> {
+  options: ListConversationsOptions = {}
+): Promise<ListConversationsResult> {
+  const offset = Math.max(0, options.offset ?? 0);
+  const limit = Math.max(1, Math.min(200, options.limit ?? DEFAULT_PAGE_SIZE));
+  // Pega limit+1 pra saber se tem mais alem do batch atual sem precisar
+  // de count separado (que dobraria queries).
   const rows = await prisma.conversation.findMany({
     where: {
       workspaceId,
@@ -38,20 +56,27 @@ export async function listConversations(
       labels: { select: { label: { select: { id: true, name: true, color: true } } } },
       assignments: { select: { user: { select: { id: true, name: true } } } },
     },
-    take: 100,
+    skip: offset,
+    take: limit + 1,
   });
 
-  return rows.map((r) => ({
-    id: r.id,
-    contactName: r.contact.name,
-    contactPhone: r.contact.phone,
-    lastMessage: r.lastMessage,
-    lastMessageAt: r.lastMessageAt,
-    unreadCount: r.unreadCount,
-    status: r.status,
-    labels: r.labels.map((l) => l.label),
-    assignedTo: r.assignments.map((a) => a.user),
-  }));
+  const hasMore = rows.length > limit;
+  const trimmed = hasMore ? rows.slice(0, limit) : rows;
+
+  return {
+    items: trimmed.map((r) => ({
+      id: r.id,
+      contactName: r.contact.name,
+      contactPhone: r.contact.phone,
+      lastMessage: r.lastMessage,
+      lastMessageAt: r.lastMessageAt,
+      unreadCount: r.unreadCount,
+      status: r.status,
+      labels: r.labels.map((l) => l.label),
+      assignedTo: r.assignments.map((a) => a.user),
+    })),
+    hasMore,
+  };
 }
 
 export async function getConversationWithMessages(workspaceId: string, conversationId: string) {

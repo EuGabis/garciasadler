@@ -1,20 +1,13 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mic, Image as ImageIcon, Video, FileText, MapPin, Sticker, Inbox } from "lucide-react";
+import { Mic, Image as ImageIcon, Video, FileText, MapPin, Sticker, Inbox, Loader2 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/format";
 import { avatarColor, avatarInitial } from "@/lib/avatar-color";
-
-type ConversationItem = {
-  id: string;
-  contactName: string;
-  lastMessage: string | null;
-  lastMessageAt: Date | null;
-  unreadCount: number;
-  labels: Array<{ id: string; name: string; color: string }>;
-  assignedTo: Array<{ id: string; name: string }>;
-};
+import { loadMoreConversationsAction } from "./load-more-action";
+import type { ConversationListItem } from "@/lib/conversations";
 
 const MEDIA_PATTERNS: Array<{
   match: RegExp;
@@ -46,16 +39,77 @@ function MessagePreview({ text }: { text: string | null }) {
       );
     }
   }
-  return <span>{text}</span>;
+  return <span className="truncate">{text}</span>;
 }
 
-export function InboxList({ conversations }: { conversations: ConversationItem[] }) {
+type Props = {
+  initialItems: ConversationListItem[];
+  initialHasMore: boolean;
+  pageSize: number;
+  mineOnly: boolean;
+};
+
+export function InboxList({ initialItems, initialHasMore, pageSize, mineOnly }: Props) {
   const pathname = usePathname();
   const activeId = pathname?.startsWith("/conversations/")
     ? pathname.split("/")[2]
     : null;
 
-  if (conversations.length === 0) {
+  const [items, setItems] = useState<ConversationListItem[]>(initialItems);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Reset quando o SSR trocar (mineOnly muda ou refresh de rota)
+  useEffect(() => {
+    setItems(initialItems);
+    setHasMore(initialHasMore);
+    setLoadError(null);
+  }, [initialItems, initialHasMore]);
+
+  const sentinelRef = useRef<HTMLLIElement | null>(null);
+  const loadingRef = useRef(false);
+
+  const loadMore = useCallback(() => {
+    // Guard: pending in-flight ou nao tem mais nada
+    if (loadingRef.current || !hasMore) return;
+    loadingRef.current = true;
+    setLoadError(null);
+    startTransition(async () => {
+      try {
+        const r = await loadMoreConversationsAction({
+          offset: items.length,
+          limit: pageSize,
+          mineOnly,
+        });
+        if (!r.ok) {
+          setLoadError(r.error);
+          return;
+        }
+        setItems((prev) => [...prev, ...r.items]);
+        setHasMore(r.hasMore);
+      } catch (e) {
+        setLoadError((e as Error).message);
+      } finally {
+        loadingRef.current = false;
+      }
+    });
+  }, [items.length, hasMore, pageSize, mineOnly]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "200px 0px" } // dispara 200px antes do sentinel entrar
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [loadMore]);
+
+  if (items.length === 0) {
     return (
       <div className="px-6 py-16 text-center">
         <div className="mx-auto h-10 w-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-3">
@@ -71,7 +125,7 @@ export function InboxList({ conversations }: { conversations: ConversationItem[]
 
   return (
     <ul>
-      {conversations.map((c) => {
+      {items.map((c) => {
         const isActive = activeId === c.id;
         const color = avatarColor(c.contactName);
         return (
@@ -163,6 +217,33 @@ export function InboxList({ conversations }: { conversations: ConversationItem[]
           </li>
         );
       })}
+
+      {/* Sentinel + estado de load more */}
+      {hasMore && (
+        <li ref={sentinelRef} className="px-5 py-4 flex items-center justify-center">
+          {isPending ? (
+            <span className="inline-flex items-center gap-2 text-[11.5px] text-stone-500">
+              <Loader2 className="h-3 w-3 animate-spin" /> Carregando…
+            </span>
+          ) : loadError ? (
+            <button
+              type="button"
+              onClick={loadMore}
+              className="text-[11.5px] text-red-600 hover:underline"
+            >
+              Erro ao carregar. Tentar de novo
+            </button>
+          ) : (
+            <span className="text-[11.5px] text-stone-400">Role pra ver mais</span>
+          )}
+        </li>
+      )}
+
+      {!hasMore && items.length > pageSize && (
+        <li className="px-5 py-4 text-center text-[11px] text-stone-400">
+          Fim da lista
+        </li>
+      )}
     </ul>
   );
 }

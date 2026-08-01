@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { listConversations } from "@/lib/conversations";
 import { ConversationsRealtime } from "./realtime";
 import { FilterTabs } from "./filter-tabs";
@@ -8,14 +9,30 @@ import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 50;
+
 export default async function ConversationsLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const workspaceId = session!.user.workspaceId;
   const cookieStore = await cookies();
   const mineOnly = cookieStore.get("conv_mine_only")?.value === "1";
-  const conversations = await listConversations(workspaceId, {
-    assignedToUserId: mineOnly ? session!.user.id : undefined,
-  });
+
+  // Primeira pagina + total em paralelo. Total serve so pro contador (nao
+  // pra paginacao, que usa hasMore do proprio batch).
+  const [firstPage, total] = await Promise.all([
+    listConversations(workspaceId, {
+      assignedToUserId: mineOnly ? session!.user.id : undefined,
+      offset: 0,
+      limit: PAGE_SIZE,
+    }),
+    prisma.conversation.count({
+      where: {
+        workspaceId,
+        status: { in: ["open", "pending"] },
+        ...(mineOnly ? { assignments: { some: { userId: session!.user.id } } } : {}),
+      },
+    }),
+  ]);
 
   const inbox = (
     <>
@@ -25,7 +42,7 @@ export default async function ConversationsLayout({ children }: { children: Reac
             Conversas
           </h1>
           <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-md bg-stone-100 dark:bg-stone-800 text-[11px] font-medium tabular-nums text-stone-600 dark:text-stone-400">
-            {conversations.length}
+            {total}
           </span>
         </div>
         <p className="text-[12px] text-stone-500 dark:text-stone-400 mt-0.5">
@@ -36,7 +53,12 @@ export default async function ConversationsLayout({ children }: { children: Reac
       <FilterTabs mineOnly={mineOnly} />
 
       <div className="flex-1 overflow-y-auto">
-        <InboxList conversations={conversations} />
+        <InboxList
+          initialItems={firstPage.items}
+          initialHasMore={firstPage.hasMore}
+          pageSize={PAGE_SIZE}
+          mineOnly={mineOnly}
+        />
       </div>
 
       <footer className="px-5 py-2.5 border-t border-stone-200/80 dark:border-stone-800/80 flex items-center gap-2 text-[11px] text-stone-500">
